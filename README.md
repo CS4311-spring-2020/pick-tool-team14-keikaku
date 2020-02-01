@@ -10,5 +10,5 @@ The University of Texas at El Paso (UTEP) and LSH are collaborating to develop P
 * Anthony DesArmier
 * David Rayner
 * Jorge Garcia
-* Angle Villalpando
+* [Angel Villalpando](https://www.linkedin.com/in/avillalpando/)
 * Mario Delgado
