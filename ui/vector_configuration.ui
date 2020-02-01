@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Frame</class>
- <widget class="QFrame" name="Frame">
+ <class>deleteVectorButton</class>
+ <widget class="QFrame" name="deleteVectorButton">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +9,11 @@
     <width>612</width>
     <height>446</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Verdana</family>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Vector Configuration</string>
@@ -21,7 +26,12 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QScrollArea" name="scrollArea">
+    <widget class="QScrollArea" name="vectorTableScrollArea">
+     <property name="font">
+      <font>
+       <family>Verdana</family>
+      </font>
+     </property>
      <property name="sizeAdjustPolicy">
       <enum>QAbstractScrollArea::AdjustToContents</enum>
      </property>
@@ -42,12 +52,17 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QTableWidget" name="tableWidget">
+        <widget class="QTableWidget" name="vectorTableWidget">
          <property name="minimumSize">
           <size>
            <width>560</width>
            <height>0</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Verdana</family>
+          </font>
          </property>
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
@@ -152,6 +167,11 @@
           <property name="text">
            <string>Include</string>
           </property>
+          <property name="font">
+           <font>
+            <family>Verdana</family>
+           </font>
+          </property>
           <property name="textAlignment">
            <set>AlignCenter</set>
           </property>
@@ -160,6 +180,11 @@
           <property name="text">
            <string>Vector Name</string>
           </property>
+          <property name="font">
+           <font>
+            <family>Verdana</family>
+           </font>
+          </property>
           <property name="textAlignment">
            <set>AlignCenter</set>
           </property>
@@ -167,6 +192,11 @@
          <column>
           <property name="text">
            <string>Description</string>
+          </property>
+          <property name="font">
+           <font>
+            <family>Verdana</family>
+           </font>
           </property>
           <property name="textAlignment">
            <set>AlignCenter</set>
@@ -216,11 +246,17 @@
           </property>
          </item>
          <item row="4" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
          </item>
          <item row="5" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
@@ -234,41 +270,65 @@
           </property>
          </item>
          <item row="7" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
          </item>
          <item row="8" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
          </item>
          <item row="9" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
          </item>
          <item row="10" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
          </item>
          <item row="11" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
          </item>
          <item row="12" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
          </item>
          <item row="13" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
          </item>
          <item row="14" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="checkState">
            <enum>Unchecked</enum>
           </property>
@@ -282,7 +342,12 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="addVectorButton">
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+        </font>
+       </property>
        <property name="text">
         <string>Add Vector</string>
        </property>
@@ -290,13 +355,23 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton">
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+        </font>
+       </property>
        <property name="text">
         <string>Delete Vector</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="editVectorButton">
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+        </font>
+       </property>
        <property name="text">
         <string>Edit Vector</string>
        </property>
