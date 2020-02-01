@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>filterConfigurationDialog</class>
+ <widget class="QDialog" name="filterConfigurationDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>326</width>
-    <height>432</height>
+    <width>388</width>
+    <height>376</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,10 +23,19 @@
    <bool>false</bool>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>-1</number>
+   </property>
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="1" column="2">
       <widget class="QGroupBox" name="eventTypeGroupBox">
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <property name="styleSheet">
         <string notr="true">font: 13pt &quot;Verdana&quot;;</string>
        </property>
@@ -50,6 +59,9 @@
         </property>
         <property name="text">
          <string>Red </string>
+        </property>
+        <property name="autoRepeatDelay">
+         <number>292</number>
         </property>
        </widget>
        <widget class="QCheckBox" name="eventTypeWhiteCheckBox">
@@ -94,61 +106,6 @@
        <property name="text">
         <string>Apply Filter</string>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QGroupBox" name="creatorGroupBox">
-       <property name="styleSheet">
-        <string notr="true">font: 13pt &quot;Verdana&quot;;</string>
-       </property>
-       <property name="title">
-        <string>Creator</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignHCenter|Qt::AlignTop</set>
-       </property>
-       <widget class="QCheckBox" name="creatorRedCheckBox_2">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>30</y>
-          <width>49</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Red</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="creatorWhiteCheckBox">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>50</y>
-          <width>62</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>White </string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="creatorBlueCheckBox">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>70</y>
-          <width>51</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">font: 13pt &quot;Verdana&quot;;</string>
-        </property>
-        <property name="text">
-         <string>Blue</string>
-        </property>
-       </widget>
       </widget>
      </item>
      <item row="0" column="1" rowspan="2">
@@ -221,6 +178,12 @@
        </item>
        <item>
         <widget class="QLabel" name="startTimeStampLabel">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="font">
           <font>
            <family>Verdana</family>
@@ -236,13 +199,20 @@
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
+         <property name="lineWidth">
+          <number>0</number>
+         </property>
          <property name="text">
           <string>Start timestamp</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QDateTimeEdit" name="startDateTimeEdit"/>
+        <widget class="QDateTimeEdit" name="startDateTimeEdit">
+         <property name="wrapping">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="endTimeStampLabel">
@@ -261,6 +231,61 @@
         <widget class="QDateTimeEdit" name="endDateTimeEdit"/>
        </item>
       </layout>
+     </item>
+     <item row="0" column="2">
+      <widget class="QGroupBox" name="creatorGroupBox">
+       <property name="styleSheet">
+        <string notr="true">font: 13pt &quot;Verdana&quot;;</string>
+       </property>
+       <property name="title">
+        <string>Creator</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
+       </property>
+       <widget class="QCheckBox" name="creatorRedCheckBox_2">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>49</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Red</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="creatorWhiteCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>50</y>
+          <width>62</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>White </string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="creatorBlueCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>70</y>
+          <width>51</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font: 13pt &quot;Verdana&quot;;</string>
+        </property>
+        <property name="text">
+         <string>Blue</string>
+        </property>
+       </widget>
+      </widget>
      </item>
     </layout>
    </item>
