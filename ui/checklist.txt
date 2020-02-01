@@ -1,0 +1,15 @@
+Team Configuration - Jorge (Done)
+Event Configuration - Anthony (Done)
+Directory Configuration -
+Vector Configuration - Angel (Done)
+Log File Configuration -
+Filter Configuration -
+Log Entry Configuration -
+Export Configuration - Jorge (Done)
+Change Configuration - Valentin (Done)
+Vector DB Configuration -
+Icon Configuration -
+Graph Builder Configuration -
+Nodes Configuration in Tabular Format -
+Nodes Configuration in Graphical Format -
+Relationship Configuration -
