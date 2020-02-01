@@ -16,13 +16,24 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item alignment="Qt::AlignHCenter">
     <widget class="QLabel" name="ChangeListLabel">
+     <property name="font">
+      <font>
+       <family>Verdana</family>
+      </font>
+     </property>
      <property name="text">
       <string>Change List</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QTextEdit" name="ChangeListText"/>
+    <widget class="QTextEdit" name="ChangeListText">
+     <property name="font">
+      <font>
+       <family>Verdana</family>
+      </font>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QFrame" name="ButtonFrame">
@@ -47,6 +58,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
+        </property>
         <property name="text">
          <string>Undo</string>
         </property>
@@ -59,6 +75,11 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
         </property>
         <property name="text">
          <string>Commit</string>
