@@ -6,9 +6,9 @@ The Lethality, Survivability, and HSI Directorate (LSH) recognizes the complexit
 The University of Texas at El Paso (UTEP) and LSH are collaborating to develop Prevent, Mitigate, and Recover (PMR) Insight Collective Knowledge System (PICK) that will provide the ability to correlate red team’s activities to blue team’s responses and graphically represent the events that took place during an adversarial assessment.
 
 ## Collaborators
-**[Valentin Becerra](https://www.linkedin.com/in/valentin-becerra-ep/)
-**Anthony DesArmier
-**David Rayner
-**Jorge Garcia
-**Angle Villalpando
-**Mario Delgado
+* [Valentin Becerra](https://www.linkedin.com/in/valentin-becerra-ep/)
+* Anthony DesArmier
+* David Rayner
+* Jorge Garcia
+* Angle Villalpando
+* Mario Delgado
