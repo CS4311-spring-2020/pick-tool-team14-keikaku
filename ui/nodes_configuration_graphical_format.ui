@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>921</width>
-    <height>659</height>
+    <width>1270</width>
+    <height>693</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,20 +47,20 @@
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QTableView" name="tableView"/>
-       </item>
-       <item row="0" column="1">
+       <item row="1" column="1">
         <widget class="QGraphicsView" name="graph"/>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QScrollBar" name="horizontalScrollBar">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" alignment="Qt::AlignHCenter">
+       <item row="1" column="0">
+        <widget class="QTableView" name="tableView"/>
+       </item>
+       <item row="2" column="1" alignment="Qt::AlignHCenter">
         <widget class="QFrame" name="frame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -96,6 +96,13 @@
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Intervals</string>
+         </property>
         </widget>
        </item>
       </layout>
