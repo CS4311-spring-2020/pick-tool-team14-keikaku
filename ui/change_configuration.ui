@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>changeConfigurationDialog</class>
- <widget class="QDialog" name="changeConfigurationDialog">
+ <class>changeConfigDialog</class>
+ <widget class="QDialog" name="changeConfigDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -27,7 +27,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTextEdit" name="ChangeListText">
+    <widget class="QTextEdit" name="changeListText">
      <property name="font">
       <font>
        <family>Verdana</family>

@@ -155,7 +155,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="leadIPText"/>
+      <widget class="QLineEdit" name="leadIPText">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+        </font>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -166,6 +172,11 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <family>Verdana</family>
+      </font>
      </property>
      <property name="text">
       <string>Connect</string>
