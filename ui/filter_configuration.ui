@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>filterConfigDialog</class>
- <widget class="QDialog" name="filterConfigDialog">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,12 +9,6 @@
     <width>721</width>
     <height>258</height>
    </rect>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>721</width>
-    <height>258</height>
-   </size>
   </property>
   <property name="font">
    <font>
@@ -39,9 +33,9 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <layout class="QFormLayout" name="topFL">
+    <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
-      <widget class="QLabel" name="keywordSearchLabel">
+      <widget class="QLabel" name="label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -53,7 +47,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="keywordSearchTextLine">
+      <widget class="QLineEdit" name="lineEdit">
        <property name="minimumSize">
         <size>
          <width>400</width>
@@ -74,9 +68,9 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="middleHL">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="startTimeLabel">
+      <widget class="QLabel" name="label_2">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -88,7 +82,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDateTimeEdit" name="startDateTimeEdit">
+      <widget class="QDateTimeEdit" name="dateTimeEdit">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -97,7 +91,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="endTimeLabel">
+      <widget class="QLabel" name="label_3">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -109,7 +103,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDateTimeEdit" name="endDateTimeEdit">
+      <widget class="QDateTimeEdit" name="dateTimeEdit_2">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -120,9 +114,9 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="bottomHL">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QGroupBox" name="creatorGroupBox">
+      <widget class="QGroupBox" name="groupBox">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -133,7 +127,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QCheckBox" name="redCreatorCheckBox">
+         <widget class="QCheckBox" name="checkBox">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -145,7 +139,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="whiteCheckBox">
+         <widget class="QCheckBox" name="checkBox_2">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -157,7 +151,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="blueCreatorCheckBox">
+         <widget class="QCheckBox" name="checkBox_3">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -172,7 +166,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="eventTypeGroupBox">
+      <widget class="QGroupBox" name="groupBox_2">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -183,7 +177,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QCheckBox" name="redEventCheckBox">
+         <widget class="QCheckBox" name="checkBox_6">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -195,7 +189,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="whiteEventCheckBox">
+         <widget class="QCheckBox" name="checkBox_5">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -207,7 +201,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="blueEventCheckBox">
+         <widget class="QCheckBox" name="checkBox_4">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -224,7 +218,7 @@
     </layout>
    </item>
    <item alignment="Qt::AlignHCenter">
-    <widget class="QPushButton" name="applyFilterButton">
+    <widget class="QPushButton" name="pushButton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
