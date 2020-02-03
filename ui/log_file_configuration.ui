@@ -1,330 +1,434 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>logFileConfigDialog</class>
+ <widget class="QDialog" name="logFileConfigDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1125</width>
-    <height>490</height>
+    <width>925</width>
+    <height>675</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>400</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Log File Configuration</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1">
-    <widget class="QLabel" name="eARTableLabel">
-     <property name="font">
-      <font>
-       <family>Verdana</family>
-      </font>
-     </property>
-     <property name="text">
-      <string>Enforcement Action Reports</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QTableWidget" name="logFileTable">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="sizeAdjustPolicy">
-      <enum>QAbstractScrollArea::AdjustIgnored</enum>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <row>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>2</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>3</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>4</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>5</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>6</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>7</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>8</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>9</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>10</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>11</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>12</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>13</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>14</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>15</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>16</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>17</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>18</string>
-      </property>
-     </row>
-     <column>
-      <property name="text">
-       <string>File name</string>
-      </property>
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Source</string>
-      </property>
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Cleansing Status</string>
-      </property>
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Validation Status</string>
-      </property>
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Ingestion Status</string>
-      </property>
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>View EAR</string>
-      </property>
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string/>
-      </property>
-     </column>
-     <item row="0" column="5">
-      <property name="flags">
-       <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-      </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,0,0">
+   <item>
+    <layout class="QVBoxLayout" name="topVL">
+     <item>
+      <widget class="QLabel" name="logFileTableLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>Log Files</string>
+       </property>
+      </widget>
      </item>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="logFileTableLabel">
-     <property name="font">
-      <font>
-       <family>Verdana</family>
-      </font>
-     </property>
-     <property name="text">
-      <string>Log Files</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QTableWidget" name="eARTable">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="sizeAdjustPolicy">
-      <enum>QAbstractScrollArea::AdjustToContents</enum>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="rowCount">
-      <number>15</number>
-     </property>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <column>
-      <property name="text">
-       <string>Line Number</string>
-      </property>
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-       </font>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Error Message </string>
-      </property>
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-       </font>
-      </property>
-     </column>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QFrame" name="eARFileValidator">
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="lineWidth">
-      <number>1</number>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="chosenFileLabel">
+     <item>
+      <widget class="QTableWidget" name="logFileTable">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>801</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::AdjustIgnored</enum>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+        <bool>true</bool>
+       </attribute>
+       <row>
         <property name="text">
-         <string>File Name:</string>
+         <string>1</string>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="chosenFileDisplayer"/>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="validateButton">
+       </row>
+       <row>
         <property name="text">
-         <string>Validate</string>
+         <string>2</string>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="cancelButton">
+       </row>
+       <row>
         <property name="text">
-         <string>Cancel</string>
+         <string>3</string>
         </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+       </row>
+       <row>
+        <property name="text">
+         <string>4</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>5</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>6</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>7</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>8</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>9</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>10</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>11</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>12</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>13</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>14</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>15</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>16</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>17</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>18</string>
+        </property>
+       </row>
+       <column>
+        <property name="text">
+         <string>File name</string>
+        </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Source</string>
+        </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Cleansing Status</string>
+        </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Validation Status</string>
+        </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Ingestion Status</string>
+        </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>View EAR</string>
+        </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
+        </property>
+       </column>
+       <item row="0" column="5">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="middleVL">
+     <item>
+      <widget class="QLabel" name="eARTableLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>Enforcement Action Reports</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="eARTable">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::AdjustToContents</enum>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="rowCount">
+        <number>15</number>
+       </property>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+        <bool>true</bool>
+       </attribute>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <column>
+        <property name="text">
+         <string>Line Number</string>
+        </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Error Message </string>
+        </property>
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+         </font>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="middleHL">
+     <item>
+      <widget class="QLabel" name="chosenFileLabel">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>File Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="chosenFilePathLabel">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>C:&lt;pathtofile&gt;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="bottomHL">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="validateButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>Validate</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-/venv/
-/.idea
-=======
 # Environments
 .env
 .venv
@@ -103,4 +99,3 @@ fabric.properties
 .idea/**/markdown-navigator/
 
 # End of https://www.gitignore.io/api/pycharm
->>>>>>> eb1b8d1babeee2c020650e003b4e0b98237f68fc

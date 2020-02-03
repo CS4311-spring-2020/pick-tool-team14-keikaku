@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>vectorDBConfigLeadFrame</class>
+ <widget class="QFrame" name="vectorDBConfigLeadFrame">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>859</width>
+    <height>351</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>720</width>
+    <height>200</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Approval Sync</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTableWidget" name="tableWidget">
+     <row>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>2</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>3</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>Select</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Verdana</family>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Source IP</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Verdana</family>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Request Timestamp</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Verdana</family>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Vector</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Verdana</family>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Description</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Verdana</family>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Graph</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Verdana</family>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Change Summary</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Verdana</family>
+       </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Sync Status</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Verdana</family>
+       </font>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="checkState">
+       <enum>Unchecked</enum>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="checkState">
+       <enum>Unchecked</enum>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="checkState">
+       <enum>Unchecked</enum>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item alignment="Qt::AlignHCenter">
+    <widget class="QPushButton" name="pushButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <family>Verdana</family>
+      </font>
+     </property>
+     <property name="text">
+      <string>Commit</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
