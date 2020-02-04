@@ -55,6 +55,7 @@ class Ui_mainWindow(object):
         self.filterButton.setIcon(icon)
         self.filterButton.setObjectName("filterButton")
         self.topHL.addWidget(self.filterButton)
+        self.filterButton.clicked.connect(self.show_filter_dialog)
         self.commitButton = QtWidgets.QPushButton(self.mainWidget)
         self.commitButton.setObjectName("commitButton")
         self.topHL.addWidget(self.commitButton)
@@ -927,6 +928,13 @@ class Ui_mainWindow(object):
     def show_event_dialog(self):
         dialog = QtWidgets.QDialog()
         dialog.ui = eventConfigDialog()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
+        dialog.show()
+
+    def show_filter_dialog(self):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = filter_dialog()
         dialog.ui.setupUi(dialog)
         dialog.exec_()
         dialog.show()
