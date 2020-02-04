@@ -8,6 +8,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from team_configuration import  Ui_teamConfigDialog
 
 
 class Ui_mainWindow(object):
@@ -27,6 +28,7 @@ class Ui_mainWindow(object):
         self.teamButton.setFont(font)
         self.teamButton.setObjectName("teamButton")
         self.topHL.addWidget(self.teamButton)
+        self.teamButton.clicked.connect(self.show_team_dialog)
         self.eventButton = QtWidgets.QPushButton(self.mainWidget)
         font = QtGui.QFont()
         font.setFamily("Verdana")
@@ -904,6 +906,14 @@ class Ui_mainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.nodeConfigTab), _translate("mainWindow", "Node Configuration"))
         self.menuFile.setTitle(_translate("mainWindow", "File"))
         self.actionExit.setText(_translate("mainWindow", "Exit"))
+
+    def show_team_dialog(self):
+        Ui_teamConfigDialog
+        dialog = QtWidgets.QDialog()
+        dialog.ui = Ui_teamConfigDialog()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
+        dialog.show()
 
 
 if __name__ == "__main__":
