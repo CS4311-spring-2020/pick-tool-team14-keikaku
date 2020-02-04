@@ -102,7 +102,7 @@
       <number>4</number>
      </property>
      <attribute name="horizontalHeaderVisible">
-      <bool>true</bool>
+      <bool>false</bool>
      </attribute>
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>false</bool>
@@ -266,7 +266,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Delect Icon</string>
+        <string>Delete Icon</string>
        </property>
       </widget>
      </item>
