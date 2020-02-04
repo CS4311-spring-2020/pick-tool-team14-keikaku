@@ -20,7 +20,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Filter Configuration</string>
+   <string>Filter</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>

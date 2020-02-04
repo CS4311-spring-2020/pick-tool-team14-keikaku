@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>directoryConfigurationDialogWindow</class>
- <widget class="QDialog" name="directoryConfigurationDialogWindow">
+ <class>directoryConfigDialog</class>
+ <widget class="QDialog" name="directoryConfigDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
-    <height>243</height>
+    <width>422</width>
+    <height>274</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -25,11 +25,17 @@
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>243</height>
+    <height>16777215</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <family>Verdana</family>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Directory Configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -46,12 +52,12 @@
       </font>
      </property>
      <property name="text">
-      <string>Root Directory</string>
+      <string>Root Directory:</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="RootDirectoryTextLine">
+    <widget class="QLineEdit" name="rootDirectoryTextLine">
      <property name="minimumSize">
       <size>
        <width>400</width>
@@ -79,7 +85,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Red Team Folder</string>
+      <string>Red Team Folder:</string>
      </property>
     </widget>
    </item>
@@ -112,7 +118,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Blue Team Folder</string>
+      <string>Blue Team Folder:</string>
      </property>
     </widget>
    </item>
@@ -145,7 +151,7 @@
       </font>
      </property>
      <property name="text">
-      <string>White Team Folder</string>
+      <string>White Team Folder:</string>
      </property>
     </widget>
    </item>
@@ -164,46 +170,28 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QFrame" name="frame">
+   <item alignment="Qt::AlignHCenter">
+    <widget class="QPushButton" name="startDataIngestionButton">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>60</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="font">
       <font>
        <family>Verdana</family>
       </font>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+     <property name="text">
+      <string>Start Data Ingestion</string>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="startDataIngestionButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Start Data Ingestion</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

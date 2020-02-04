@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>exportConfigDialog</class>
+ <widget class="QDialog" name="exportConfigDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>785</width>
-    <height>485</height>
+    <width>745</width>
+    <height>490</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,276 +16,240 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle">
-   <string>Dialog</string>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>300</height>
+   </size>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <property name="windowTitle">
+   <string>Export</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,0">
    <item>
-    <widget class="QFrame" name="frame">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>350</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <widget class="QTreeWidget" name="treeWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="sizeIncrement">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <column>
+       <property name="text">
+        <string>C:</string>
+       </property>
+      </column>
       <item>
-       <widget class="QTreeWidget" name="treeWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <property name="text">
+        <string>Users</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>Desktop</string>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>300</height>
-         </size>
-        </property>
-        <property name="sizeIncrement">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <column>
-         <property name="text">
-          <string>C:</string>
-         </property>
-        </column>
         <item>
          <property name="text">
-          <string>Users</string>
+          <string>Graphs</string>
          </property>
          <item>
           <property name="text">
-           <string>Desktop</string>
+           <string>Red_Team(1/31/20).jpeg</string>
           </property>
-          <item>
-           <property name="text">
-            <string>Graphs</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>Red_Team(1/31/20).jpeg</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Red_Team(1/25/20).jpeg</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Blue_Team(1/24/20).png</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>Reports</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>Attack_Report(1/24/20).docx</string>
-            </property>
-           </item>
-          </item>
-          <item>
-           <property name="text">
-            <string>White Team Eval.</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>Input_documents</string>
-            </property>
-           </item>
-          </item>
+         </item>
+         <item>
+          <property name="text">
+           <string>Red_Team(1/25/20).jpeg</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Blue_Team(1/24/20).png</string>
+          </property>
          </item>
         </item>
-       </widget>
+        <item>
+         <property name="text">
+          <string>Reports</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Attack_Report(1/24/20).docx</string>
+          </property>
+         </item>
+        </item>
+        <item>
+         <property name="text">
+          <string>White Team Eval.</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Input_documents</string>
+          </property>
+         </item>
+        </item>
+       </item>
+      </item>
+     </widget>
+     <widget class="QListWidget" name="itemSaved">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>0</height>
+       </size>
+      </property>
+      <item>
+       <property name="text">
+        <string>Red_Team(1/31/20).jpeg</string>
+       </property>
       </item>
       <item>
-       <widget class="QListWidget" name="itemSaved">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>480</width>
-          <height>300</height>
-         </size>
-        </property>
-        <item>
-         <property name="text">
-          <string>Red_Team(1/31/20).jpeg</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Red_Team(1/25/20).jpeg</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Blue_Team(1/24/20).png</string>
-         </property>
-        </item>
-       </widget>
+       <property name="text">
+        <string>Red_Team(1/25/20).jpeg</string>
+       </property>
       </item>
-     </layout>
+      <item>
+       <property name="text">
+        <string>Blue_Team(1/24/20).png</string>
+       </property>
+      </item>
+     </widget>
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame_3">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>50</height>
-      </size>
+    <widget class="QLineEdit" name="exportFileName">
+     <property name="text">
+      <string>Blue_Team(1/31/20).csv</string>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item alignment="Qt::AlignHCenter">
-       <widget class="QTextBrowser" name="textBrowser">
-        <property name="minimumSize">
-         <size>
-          <width>500</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>500</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="html">
-         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Blue_Team(1/31/20).csv&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame_2">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>50</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QComboBox" name="formatSelection">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>400</width>
-          <height>30</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;Arial&quot;;</string>
-        </property>
-        <property name="currentText">
-         <string>Export Format</string>
-        </property>
-        <property name="maxVisibleItems">
-         <number>15</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>Export Format</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>CSV</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>JPEG</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>PNG</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="exportButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">font: 12pt &quot;Arial&quot;;</string>
-        </property>
+    <layout class="QHBoxLayout" name="bottomHL">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="exportFormatLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Export Format:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="exportFormatComboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="currentText">
+        <string>CSV</string>
+       </property>
+       <property name="maxVisibleItems">
+        <number>15</number>
+       </property>
+       <item>
         <property name="text">
-         <string>Export</string>
+         <string>CSV</string>
         </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+       </item>
+       <item>
+        <property name="text">
+         <string>JPEG</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>PNG</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>Verdana</family>
+         <pointsize>9</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Export</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
