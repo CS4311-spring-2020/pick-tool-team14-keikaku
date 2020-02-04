@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_teamConfigDialog(object):
+class teamConfigDialog(object):
     def setupUi(self, teamConfigDialog):
         teamConfigDialog.setObjectName("teamConfigDialog")
         teamConfigDialog.resize(522, 143)
@@ -119,3 +119,4 @@ class Ui_teamConfigDialog(object):
         self.establishedConnectionsNumberLabel.setText(_translate("teamConfigDialog", "2"))
         self.leadIPLabel.setText(_translate("teamConfigDialog", "Lead IP address:"))
         self.connectButton.setText(_translate("teamConfigDialog", "Connect"))
+

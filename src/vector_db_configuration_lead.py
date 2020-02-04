@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_vectorDBConfigLeadFrame(object):
+class vector_db_lead(object):
     def setupUi(self, vectorDBConfigLeadFrame):
         vectorDBConfigLeadFrame.setObjectName("vectorDBConfigLeadFrame")
         vectorDBConfigLeadFrame.resize(859, 351)
@@ -122,12 +122,3 @@ class Ui_vectorDBConfigLeadFrame(object):
         self.tableWidget.setSortingEnabled(__sortingEnabled)
         self.pushButton.setText(_translate("vectorDBConfigLeadFrame", "Commit"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    vectorDBConfigLeadFrame = QtWidgets.QFrame()
-    ui = Ui_vectorDBConfigLeadFrame()
-    ui.setupUi(vectorDBConfigLeadFrame)
-    vectorDBConfigLeadFrame.show()
-    sys.exit(app.exec_())

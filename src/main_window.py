@@ -8,7 +8,16 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from team_configuration import  Ui_teamConfigDialog
+from src.change_configuration import changeConfigDialog
+from src.directory_configuration import directoryConfigDialog
+from src.event_configuration import eventConfigDialog
+from src.export_configuration import exportConfigDialog
+from src.filter_configuration import filter_dialog
+from src.relationship_configuration import relationshipConfigFrame
+from src.team_configuration import teamConfigDialog
+from src.vector_configuration import vectorConfigFrame
+from src.vector_db_configuration_analyst import vector_db_analyst
+from src.vector_db_configuration_lead import vector_db_lead
 
 
 class Ui_mainWindow(object):
@@ -908,9 +917,8 @@ class Ui_mainWindow(object):
         self.actionExit.setText(_translate("mainWindow", "Exit"))
 
     def show_team_dialog(self):
-        Ui_teamConfigDialog
         dialog = QtWidgets.QDialog()
-        dialog.ui = Ui_teamConfigDialog()
+        dialog.ui = teamConfigDialog()
         dialog.ui.setupUi(dialog)
         dialog.exec_()
         dialog.show()

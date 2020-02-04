@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_iconConfigDialog(object):
+class iconConfigDialog(object):
     def setupUi(self, iconConfigDialog):
         iconConfigDialog.setObjectName("iconConfigDialog")
         iconConfigDialog.resize(547, 237)
@@ -158,12 +158,3 @@ class Ui_iconConfigDialog(object):
         self.editIconButton.setText(_translate("iconConfigDialog", "Delete Icon"))
         self.deleteIconButton.setText(_translate("iconConfigDialog", "Edit Icon"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    iconConfigDialog = QtWidgets.QDialog()
-    ui = Ui_iconConfigDialog()
-    ui.setupUi(iconConfigDialog)
-    iconConfigDialog.show()
-    sys.exit(app.exec_())

@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_RelationshipConfigFrame(object):
+class relationshipConfigFrame(object):
     def setupUi(self, RelationshipConfigFrame):
         RelationshipConfigFrame.setObjectName("RelationshipConfigFrame")
         RelationshipConfigFrame.resize(624, 361)
@@ -283,12 +283,3 @@ class Ui_RelationshipConfigFrame(object):
         self.editRelationPushButton.setText(_translate("RelationshipConfigFrame", "Edit relationship"))
         self.deleteRelationPushButton.setText(_translate("RelationshipConfigFrame", "Delete relationship"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    RelationshipConfigFrame = QtWidgets.QFrame()
-    ui = Ui_RelationshipConfigFrame()
-    ui.setupUi(RelationshipConfigFrame)
-    RelationshipConfigFrame.show()
-    sys.exit(app.exec_())

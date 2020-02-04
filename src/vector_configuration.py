@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_vectorConfigFrame(object):
+class vectorConfigFrame(object):
     def setupUi(self, vectorConfigFrame):
         vectorConfigFrame.setObjectName("vectorConfigFrame")
         vectorConfigFrame.resize(524, 225)
@@ -269,12 +269,3 @@ class Ui_vectorConfigFrame(object):
         self.deleteVectorButton.setText(_translate("vectorConfigFrame", "Delete Vector"))
         self.editVectorButton.setText(_translate("vectorConfigFrame", "Edit Vector"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    vectorConfigFrame = QtWidgets.QFrame()
-    ui = Ui_vectorConfigFrame()
-    ui.setupUi(vectorConfigFrame)
-    vectorConfigFrame.show()
-    sys.exit(app.exec_())

@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_exportConfigDialog(object):
+class exportConfigDialog(object):
     def setupUi(self, exportConfigDialog):
         exportConfigDialog.setObjectName("exportConfigDialog")
         exportConfigDialog.resize(745, 490)
@@ -152,12 +152,3 @@ class Ui_exportConfigDialog(object):
         self.exportFormatComboBox.setItemText(2, _translate("exportConfigDialog", "PNG"))
         self.exportButton.setText(_translate("exportConfigDialog", "Export"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    exportConfigDialog = QtWidgets.QDialog()
-    ui = Ui_exportConfigDialog()
-    ui.setupUi(exportConfigDialog)
-    exportConfigDialog.show()
-    sys.exit(app.exec_())

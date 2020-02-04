@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_changeConfigDialog(object):
+class changeConfigDialog(object):
     def setupUi(self, changeConfigDialog):
         changeConfigDialog.setObjectName("changeConfigDialog")
         changeConfigDialog.resize(472, 283)
@@ -64,12 +64,3 @@ class Ui_changeConfigDialog(object):
         self.undoButton.setText(_translate("changeConfigDialog", "Undo"))
         self.commitButton.setText(_translate("changeConfigDialog", "Commit"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    changeConfigDialog = QtWidgets.QDialog()
-    ui = Ui_changeConfigDialog()
-    ui.setupUi(changeConfigDialog)
-    changeConfigDialog.show()
-    sys.exit(app.exec_())

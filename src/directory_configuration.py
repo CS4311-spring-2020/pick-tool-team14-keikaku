@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_directoryConfigDialog(object):
+class directoryConfigDialog(object):
     def setupUi(self, directoryConfigDialog):
         directoryConfigDialog.setObjectName("directoryConfigDialog")
         directoryConfigDialog.resize(422, 274)
@@ -124,12 +124,3 @@ class Ui_directoryConfigDialog(object):
         self.whiteTeamLabel.setText(_translate("directoryConfigDialog", "White Team Folder:"))
         self.startDataIngestionButton.setText(_translate("directoryConfigDialog", "Start Data Ingestion"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    directoryConfigDialog = QtWidgets.QDialog()
-    ui = Ui_directoryConfigDialog()
-    ui.setupUi(directoryConfigDialog)
-    directoryConfigDialog.show()
-    sys.exit(app.exec_())

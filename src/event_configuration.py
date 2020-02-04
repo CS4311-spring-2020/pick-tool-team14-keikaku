@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_eventConfigDialog(object):
+class eventConfigDialog(object):
     def setupUi(self, eventConfigDialog):
         eventConfigDialog.setObjectName("eventConfigDialog")
         eventConfigDialog.setEnabled(True)
@@ -117,12 +117,3 @@ class Ui_eventConfigDialog(object):
         self.eventEndLabel.setText(_translate("eventConfigDialog", "Event End Timestamp:"))
         self.saveButton.setText(_translate("eventConfigDialog", "Save Event"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    eventConfigDialog = QtWidgets.QDialog()
-    ui = Ui_eventConfigDialog()
-    ui.setupUi(eventConfigDialog)
-    eventConfigDialog.show()
-    sys.exit(app.exec_())
