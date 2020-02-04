@@ -45,6 +45,7 @@ class Ui_mainWindow(object):
         self.eventButton.setFont(font)
         self.eventButton.setObjectName("eventButton")
         self.topHL.addWidget(self.eventButton)
+        self.eventButton.clicked.connect(self.show_event_dialog)
         self.vectorButton = QtWidgets.QPushButton(self.mainWidget)
         self.vectorButton.setObjectName("vectorButton")
         self.topHL.addWidget(self.vectorButton)
@@ -919,6 +920,13 @@ class Ui_mainWindow(object):
     def show_team_dialog(self):
         dialog = QtWidgets.QDialog()
         dialog.ui = teamConfigDialog()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
+        dialog.show()
+
+    def show_event_dialog(self):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = eventConfigDialog()
         dialog.ui.setupUi(dialog)
         dialog.exec_()
         dialog.show()
