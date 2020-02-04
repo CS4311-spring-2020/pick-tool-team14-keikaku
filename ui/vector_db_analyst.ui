@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>vector_db_analyst</class>
- <widget class="QFrame" name="vector_db_analyst">
+ <class>vectorDBAnalystFrame</class>
+ <widget class="QFrame" name="vectorDBAnalystFrame">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="topHL">
      <item>
       <widget class="QLabel" name="label">
        <property name="sizePolicy">
@@ -63,9 +63,9 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="middleHL">
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="pullTableLabel">
        <property name="font">
         <font>
          <family>Verdana</family>
@@ -91,7 +91,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pullButton">
        <property name="text">
         <string>Pull</string>
        </property>
@@ -100,7 +100,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QTableWidget" name="tableWidget">
+    <widget class="QTableWidget" name="pullTableWidget">
      <row>
       <property name="text">
        <string>1</string>
@@ -183,9 +183,9 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="bottomHL">
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="pushTableLabel">
        <property name="font">
         <font>
          <family>Verdana</family>
@@ -220,7 +220,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QTableWidget" name="tableWidget_2">
+    <widget class="QTableWidget" name="pushTableWidget">
      <row>
       <property name="text">
        <string>1</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>vectorDBConfigLeadFrame</class>
- <widget class="QFrame" name="vectorDBConfigLeadFrame">
+ <class>vectorDBLeadFrame</class>
+ <widget class="QFrame" name="vectorDBLeadFrame">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTableWidget" name="tableWidget">
+    <widget class="QTableWidget" name="vectorDBTableWidget">
      <row>
       <property name="text">
        <string>1</string>

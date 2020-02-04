@@ -45,6 +45,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="vectorButton">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Vector</string>
         </property>
@@ -52,6 +58,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="filterButton">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Filter</string>
         </property>
@@ -63,6 +75,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="commitButton">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Commit</string>
         </property>
@@ -70,6 +88,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="syncButton">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Sync</string>
         </property>
@@ -81,6 +105,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="exportButton">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Export</string>
         </property>
@@ -90,6 +120,12 @@
     </item>
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="font">
+       <font>
+        <family>Verdana</family>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -456,6 +492,12 @@
          <layout class="QHBoxLayout" name="bottomHL">
           <item>
            <widget class="QPushButton" name="directoryButton">
+            <property name="font">
+             <font>
+              <family>Verdana</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Directory</string>
             </property>
@@ -485,6 +527,7 @@
             <property name="font">
              <font>
               <family>Verdana</family>
+              <pointsize>9</pointsize>
              </font>
             </property>
             <property name="text">
@@ -503,6 +546,7 @@
             <property name="font">
              <font>
               <family>Verdana</family>
+              <pointsize>9</pointsize>
              </font>
             </property>
             <property name="text">
@@ -891,11 +935,6 @@
          <layout class="QHBoxLayout" name="nodeTopHL">
           <item>
            <widget class="QLabel" name="vectorLabel">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Vector:</string>
             </property>
@@ -903,12 +942,6 @@
           </item>
           <item>
            <widget class="QComboBox" name="vectorComboBox">
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <item>
              <property name="text">
               <string>SQL Injection</string>
@@ -925,7 +958,6 @@
            <widget class="QLabel" name="descriptionLabel">
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
               <italic>false</italic>
              </font>
             </property>
@@ -1247,12 +1279,6 @@
          <layout class="QHBoxLayout" name="nodeMiddleHL">
           <item>
            <widget class="QLabel" name="timelineLabel">
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Timeline Orientation:</string>
             </property>
@@ -1260,12 +1286,6 @@
           </item>
           <item>
            <widget class="QComboBox" name="timelineOrientationComboBox">
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <item>
              <property name="text">
               <string>Horizontal</string>
@@ -1280,12 +1300,6 @@
           </item>
           <item>
            <widget class="QLabel" name="intervalUnitsLabel">
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Interval Units:</string>
             </property>
@@ -1293,12 +1307,6 @@
           </item>
           <item>
            <widget class="QComboBox" name="intervalUnitsComboBox">
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <item>
              <property name="text">
               <string>Days</string>
@@ -1323,12 +1331,6 @@
           </item>
           <item>
            <widget class="QLabel" name="intervalLabel">
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Interval:</string>
             </property>
@@ -1365,12 +1367,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Zoom In</string>
             </property>
@@ -1384,12 +1380,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Zoom Out</string>
             </property>
@@ -1401,12 +1391,6 @@
          <layout class="QHBoxLayout" name="nodeBottomHL">
           <item>
            <widget class="QPushButton" name="relationshipsButton">
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Relationships</string>
             </property>
@@ -1427,12 +1411,6 @@
           </item>
           <item>
            <widget class="QPushButton" name="iconButton">
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Icon</string>
             </property>
@@ -1445,11 +1423,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
             </property>
             <property name="text">
              <string>Add node</string>
@@ -1464,11 +1437,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Edit node</string>
             </property>
@@ -1481,11 +1449,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
             </property>
             <property name="text">
              <string>Delete node</string>
