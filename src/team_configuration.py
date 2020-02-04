@@ -119,13 +119,3 @@ class Ui_teamConfigDialog(object):
         self.establishedConnectionsNumberLabel.setText(_translate("teamConfigDialog", "2"))
         self.leadIPLabel.setText(_translate("teamConfigDialog", "Lead IP address:"))
         self.connectButton.setText(_translate("teamConfigDialog", "Connect"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    teamConfigDialog = QtWidgets.QDialog()
-    ui = Ui_teamConfigDialog()
-    ui.setupUi(teamConfigDialog)
-    teamConfigDialog.show()
-    sys.exit(app.exec_())
