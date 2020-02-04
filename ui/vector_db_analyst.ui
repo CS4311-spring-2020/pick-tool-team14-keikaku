@@ -23,7 +23,7 @@
    <item>
     <layout class="QHBoxLayout" name="topHL">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="connectionLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -48,7 +48,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="connectionStatusLabel">
        <property name="font">
         <font>
          <family>Verdana</family>
@@ -211,7 +211,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="pushButton">
        <property name="text">
         <string>Push</string>
        </property>
