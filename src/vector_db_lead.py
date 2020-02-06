@@ -1,9 +1,30 @@
+"""vector_db_lead.py: Handles the lead's vector db window.
+
+    Classes
+    ----------
+    UiVectorDBLead(QFrame)
+        The lead vector db window which handles the accepting of queued
+        analyst push requests.
+"""
+
+__author__ = "Team Keikaku"
+
+__version__ = "0.1"
+
 from PyQt5.QtWidgets import QApplication, QFrame
 from PyQt5.uic import loadUi
 
 
 class UiVectorDBLead(QFrame):
+    """The lead vector db window which handles the accepting of queued
+    analyst push requests.
+    """
+
     def __init__(self):
+        """Initialize the lead vector db window and set all signals and slots
+        associated with it.
+        """
+
         super(UiVectorDBLead, self).__init__()
         loadUi('../ui/vector_db_lead.ui', self)
 

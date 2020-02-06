@@ -1,9 +1,30 @@
+"""export_config.py: Handles the export window.
+
+    Classes
+    ----------
+    UiExportConfig(QDialog)
+        The export window which handles exporting vector and entry
+        data to an external file.
+"""
+
+__author__ = "Team Keikaku"
+
+__version__ = "0.1"
+
 from PyQt5.QtWidgets import QApplication, QDialog
 from PyQt5.uic import loadUi
 
 
 class UiExportConfig(QDialog):
+    """The export window which handles exporting vector and entry
+    data to an external file.
+    """
+
     def __init__(self):
+        """Initialize the export window and set all signals and slots
+        associated with it.
+        """
+
         super(UiExportConfig, self).__init__()
         loadUi('../ui/export_config.ui', self)
 
