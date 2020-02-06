@@ -11,7 +11,7 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.2"
 
-from PyQt5.QtWidgets import QApplication, QDialog, QCheckBox, QLabel, QLineEdit
+from PyQt5.QtWidgets import QApplication, QDialog, QCheckBox, QLabel, QLineEdit, QPushButton
 from PyQt5.uic import loadUi
 from src import settings
 
@@ -32,19 +32,25 @@ class UiTeamConfig(QDialog):
         self.leadCheckBox = self.findChild(QCheckBox, 'leadCheckBox')
         self.leadCheckBox.setCheckState(settings.lead_status)
         self.leadCheckBox.stateChanged.connect(self.__toggle_lead)
+
         self.leadIPLabel = self.findChild(QLabel, 'leadIPLabel')
         self.leadIPText = self.findChild(QLineEdit, 'leadIPText')
+        self.connectButton = self.findChild(QPushButton, 'connectButton')
         if settings.lead_status:
             self.leadIPLabel.setEnabled(False)
             self.leadIPText.setEnabled(False)
+            self.connectButton.setEnabled(False)
 
         self.show()
 
     def __toggle_lead(self):
-        """Toggle the host IP label and text line, then toggle lead_status."""
+        """Toggle the host IP label, text line, and connect button;
+        then toggle lead_status.
+        """
 
         self.leadIPLabel.setEnabled(not self.leadIPLabel.isEnabled())
         self.leadIPText.setEnabled(not self.leadIPText.isEnabled())
+        self.connectButton.setEnabled(not self.connectButton.isEnabled())
         settings.toggle_lead()
 
 
