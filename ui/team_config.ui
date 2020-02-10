@@ -11,15 +11,15 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>522</width>
-    <height>143</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -77,15 +77,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="yourIPNumberLabel">
+      <widget class="QLineEdit" name="yourIPText">
        <property name="font">
         <font>
-         <family>Verdana</family>
-         <pointsize>10</pointsize>
+         <family>Arial</family>
         </font>
        </property>
        <property name="text">
-        <string>192.168.0.1</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -95,6 +94,9 @@
     <layout class="QHBoxLayout" name="middleHL">
      <item>
       <widget class="QLabel" name="establishedConnectionsLabel">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -143,6 +145,9 @@
     <layout class="QHBoxLayout" name="bottomHL">
      <item>
       <widget class="QLabel" name="leadIPLabel">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="font">
         <font>
          <family>Verdana</family>
@@ -156,10 +161,16 @@
      </item>
      <item>
       <widget class="QLineEdit" name="leadIPText">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="font">
         <font>
          <family>Arial</family>
         </font>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>

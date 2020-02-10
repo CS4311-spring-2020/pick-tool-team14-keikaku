@@ -8,7 +8,7 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.2"
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction
 from PyQt5.uic import loadUi
 from src import settings
 from src.change_config import UiChangeConfig
@@ -37,10 +37,13 @@ class Ui(QMainWindow):
         super(Ui, self).__init__()
         loadUi('../ui/main_window.ui', self)
 
-        self.teamButton = self.findChild(QPushButton, 'teamButton')
-        self.teamButton.clicked.connect(self.__execute_team_config)
-        self.eventButton = self.findChild(QPushButton, 'eventButton')
-        self.eventButton.clicked.connect(self.__execute_event_config)
+        self.teamAction = self.findChild(QAction, 'teamAction')
+        self.teamAction.triggered.connect(self.__execute_team_config)
+        self.eventAction = self.findChild(QAction, 'eventAction')
+        self.eventAction.triggered.connect(self.__execute_event_config)
+        self.exportAction = self.findChild(QAction, 'exportAction')
+        self.exportAction.triggered.connect(self.__execute_export_config)
+
         self.vectorButton = self.findChild(QPushButton, 'vectorButton')
         self.vectorButton.clicked.connect(self.__execute_vector_config)
         self.filterButton = self.findChild(QPushButton, 'filterButton')
@@ -49,14 +52,14 @@ class Ui(QMainWindow):
         self.commitButton.clicked.connect(self.__execute_change_config)
         self.syncButton = self.findChild(QPushButton, 'syncButton')
         self.syncButton.clicked.connect(self.__execute_vector_db)
-        self.exportButton = self.findChild(QPushButton, 'exportButton')
-        self.exportButton.clicked.connect(self.__execute_export_config)
         self.directoryButton = self.findChild(QPushButton, 'directoryButton')
         self.directoryButton.clicked.connect(self.__execute_directory_config)
         self.iconButton = self.findChild(QPushButton, 'iconButton')
         self.iconButton.clicked.connect(self.__execute_icon_config)
         self.relationshipButton = self.findChild(QPushButton, 'relationshipsButton')
         self.relationshipButton.clicked.connect(self.__execute_relationship_config)
+
+        settings.tab_index = 0
 
         self.show()
 

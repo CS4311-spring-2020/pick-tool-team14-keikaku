@@ -9,7 +9,7 @@
 
 __author__ = "Team Keikaku"
 
-__version__ = "0.2"
+__version__ = "0.3"
 
 from PyQt5.QtWidgets import QApplication, QDialog, QCheckBox, QLabel, QLineEdit, QPushButton
 from PyQt5.uic import loadUi
@@ -36,10 +36,19 @@ class UiTeamConfig(QDialog):
         self.leadIPLabel = self.findChild(QLabel, 'leadIPLabel')
         self.leadIPText = self.findChild(QLineEdit, 'leadIPText')
         self.connectButton = self.findChild(QPushButton, 'connectButton')
+        self.yourIPLabel = self.findChild(QLabel, 'yourIPLabel')
+        self.yourIPText = self.findChild(QLineEdit, 'yourIPText')
         if settings.lead_status:
             self.leadIPLabel.setEnabled(False)
             self.leadIPText.setEnabled(False)
             self.connectButton.setEnabled(False)
+        else:
+            self.yourIPLabel.setEnabled(False)
+            self.yourIPText.setEnabled(False)
+
+        self.yourIPText = self.findChild(QLineEdit, 'yourIPText')
+        self.yourIPText.insert(settings.host_ip_address)
+        self.yourIPText.editingFinished.connect(self.__set_ip)
 
         self.show()
 
@@ -51,7 +60,13 @@ class UiTeamConfig(QDialog):
         self.leadIPLabel.setEnabled(not self.leadIPLabel.isEnabled())
         self.leadIPText.setEnabled(not self.leadIPText.isEnabled())
         self.connectButton.setEnabled(not self.connectButton.isEnabled())
+        self.yourIPLabel.setEnabled(not self.yourIPLabel.isEnabled())
+        self.yourIPText.setEnabled(not self.yourIPText.isEnabled())
         settings.toggle_lead()
+
+    def __set_ip(self):
+        """Sets the ip_address to yourIPText's text."""
+        settings.host_ip_address = self.yourIPText.text()
 
 
 if __name__ == "__main__":
