@@ -8,7 +8,9 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.2"
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
+    QTabWidget, QCheckBox, QWidget, QHBoxLayout
+from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from src import settings
 from src.change_config import UiChangeConfig
@@ -59,7 +61,53 @@ class Ui(QMainWindow):
         self.relationshipButton = self.findChild(QPushButton, 'relationshipsButton')
         self.relationshipButton.clicked.connect(self.__execute_relationship_config)
 
-        settings.tab_index = 0
+        self.logFileTable = self.findChild(QTableWidget, 'logFileTable')
+        self.logFileTable.setColumnWidth(0, 100)
+        self.logFileTable.setColumnWidth(1, 100)
+        self.logFileTable.setColumnWidth(2, 160)
+        self.logFileTable.setColumnWidth(3, 160)
+        self.logFileTable.setColumnWidth(4, 160)
+        self.earTable = self.findChild(QTableWidget, 'earTable')
+        self.earTable.setColumnWidth(0, 120)
+        self.logEntryTable = self.findChild(QTableWidget, 'logEntryTable')
+        self.logEntryTable.setColumnWidth(0, 30)
+        self.logEntryTable.setColumnWidth(1, 120)
+        self.logEntryTable.setColumnWidth(2, 180)
+        self.logEntryTable.setColumnWidth(3, 160)
+        self.nodeTable = self.findChild(QTableWidget, 'nodeTable')
+        self.nodeTable.setColumnWidth(0, 80)
+        self.nodeTable.setColumnWidth(1, 120)
+        self.nodeTable.setColumnWidth(2, 160)
+        self.nodeTable.setColumnWidth(3, 160)
+        self.nodeTable.setColumnWidth(4, 200)
+        self.nodeTable.setColumnWidth(5, 120)
+        self.nodeTable.setColumnWidth(6, 120)
+        self.nodeTable.setColumnWidth(7, 120)
+        self.nodeTable.setColumnWidth(8, 120)
+        self.nodeTable.setColumnWidth(9, 150)
+
+        for row in range(self.logEntryTable.rowCount()):
+            cell_widget = QWidget()
+            checkbox = QCheckBox()
+            checkbox.setCheckState(Qt.Unchecked)
+            layout = QHBoxLayout(cell_widget)
+            layout.addWidget(checkbox)
+            layout.setAlignment(Qt.AlignCenter)
+            layout.setContentsMargins(0, 0, 0, 0)
+            self.logEntryTable.setCellWidget(row, 0, cell_widget)
+
+        for row in range(self.nodeTable.rowCount()):
+            cell_widget = QWidget()
+            checkbox = QCheckBox()
+            checkbox.setCheckState(Qt.Checked)
+            layout = QHBoxLayout(cell_widget)
+            layout.addWidget(checkbox)
+            layout.setAlignment(Qt.AlignCenter)
+            layout.setContentsMargins(0, 0, 0, 0)
+            self.nodeTable.setCellWidget(row, 9, cell_widget)
+
+        self.tabWidget = self.findChild(QTabWidget, 'tabWidget')
+        self.tabWidget.setCurrentIndex(settings.tab_index)
 
         self.show()
 

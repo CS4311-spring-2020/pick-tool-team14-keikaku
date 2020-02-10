@@ -132,7 +132,7 @@
         <string notr="true"/>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>-1</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
