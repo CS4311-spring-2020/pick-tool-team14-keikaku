@@ -6,10 +6,12 @@
         Signifies if lead (2) or not lead (0).
     tab_index : int
         Signifies the current tab index to display.
-    hostname : int
-        Signifies the current tab index to display.
-    host_ip_address : int
-        Signifies the current tab index to display.
+    hostname : str
+        Host name of the current system.
+    host_ip_address : str
+        IP address of the local host.
+    target_ip_address : str
+        IP address of the target system to connect to.
 
     Methods
     -------
@@ -26,6 +28,7 @@ lead_status: int = 0
 tab_index: int = 0
 hostname: str = socket.gethostname()
 host_ip_address: str = socket.gethostbyname(hostname)
+target_ip_address: str = '127.0.0.1'
 
 
 def toggle_lead():

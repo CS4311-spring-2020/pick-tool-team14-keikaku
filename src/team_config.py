@@ -48,7 +48,11 @@ class UiTeamConfig(QDialog):
 
         self.yourIPText = self.findChild(QLineEdit, 'yourIPText')
         self.yourIPText.insert(settings.host_ip_address)
-        self.yourIPText.editingFinished.connect(self.__set_ip)
+        self.yourIPText.editingFinished.connect(self.__set_host_ip)
+
+        self.leadIPText = self.findChild(QLineEdit, 'leadIPText')
+        self.leadIPText.insert(settings.target_ip_address)
+        self.leadIPText.editingFinished.connect(self.__set_target_ip)
 
         self.show()
 
@@ -64,9 +68,15 @@ class UiTeamConfig(QDialog):
         self.yourIPText.setEnabled(not self.yourIPText.isEnabled())
         settings.toggle_lead()
 
-    def __set_ip(self):
-        """Sets the ip_address to yourIPText's text."""
+    def __set_host_ip(self):
+        """Sets the target_ip_address to yourIPText's text."""
+
         settings.host_ip_address = self.yourIPText.text()
+
+    def __set_target_ip(self):
+        """Sets the target_ip_address to leadIPText's text."""
+
+        settings.target_ip_address = self.leadIPText.text()
 
 
 if __name__ == "__main__":
