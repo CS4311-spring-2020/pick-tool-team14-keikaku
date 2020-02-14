@@ -13,7 +13,7 @@ __version__ = "0.1"
 
 from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit
 from PyQt5.uic import loadUi
-from src import settings
+from src.model import settings
 
 
 class UiDirectoryConfig(QDialog):

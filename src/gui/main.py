@@ -12,18 +12,18 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTa
     QTabWidget, QCheckBox, QWidget, QHBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
-from src import settings
-from src.change_config import UiChangeConfig
-from src.directory_config import UiDirectoryConfig
-from src.event_config import UiEventConfig
-from src.export_config import UiExportConfig
-from src.filter_config import UiFilterConfig
-from src.icon_config import UiIconConfig
-from src.relationship_config import UiRelationshipConfig
-from src.team_config import UiTeamConfig
-from src.vector_config import UiVectorConfig
-from src.vector_db_analyst import UiVectorDBAnalyst
-from src.vector_db_lead import UiVectorDBLead
+from src.model import settings
+from src.gui.change_config import UiChangeConfig
+from src.gui.directory_config import UiDirectoryConfig
+from src.gui.event_config import UiEventConfig
+from src.gui.export_config import UiExportConfig
+from src.gui.filter_config import UiFilterConfig
+from src.gui.icon_config import UiIconConfig
+from src.gui.relationship_config import UiRelationshipConfig
+from src.gui.team_config import UiTeamConfig
+from src.gui.vector_config import UiVectorConfig
+from src.gui.vector_db_analyst import UiVectorDBAnalyst
+from src.gui.vector_db_lead import UiVectorDBLead
 
 
 class Ui(QMainWindow):

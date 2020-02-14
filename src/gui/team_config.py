@@ -13,7 +13,7 @@ __version__ = "0.3"
 
 from PyQt5.QtWidgets import QApplication, QDialog, QCheckBox, QLabel, QLineEdit, QPushButton
 from PyQt5.uic import loadUi
-from src import settings
+from src.model import settings
 
 
 class UiTeamConfig(QDialog):
