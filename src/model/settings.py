@@ -26,8 +26,11 @@ __version__ = "0.2"
 
 lead_status: int = 0
 tab_index: int = 0
-hostname: str = socket.gethostname()
-host_ip_address: str = socket.gethostbyname(hostname)
+try:
+    hostname: str = socket.gethostname()
+    host_ip_address: str = socket.gethostbyname(hostname)
+except:
+    host_ip_address: str = '127.0.0.1'
 target_ip_address: str = '127.0.0.1'
 red_team_folder: str = 'RedTeam'
 blue_team_folder: str = 'BlueTeam'

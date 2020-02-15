@@ -11,9 +11,11 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.1"
 
+import os
 from PyQt5.QtWidgets import QApplication, QDialog, QTableWidget, QWidget, QCheckBox, QHBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
+from definitions import UI_PATH
 
 
 class UiIconConfig(QDialog):
@@ -25,22 +27,12 @@ class UiIconConfig(QDialog):
         """
 
         super(UiIconConfig, self).__init__()
-        loadUi('../ui/icon_config.ui', self)
+        loadUi(os.path.join(UI_PATH, 'icon_config.ui'), self)
 
         self.iconTable = self.findChild(QTableWidget, 'iconTable')
         self.iconTable.setColumnWidth(0, 30)
         self.iconTable.setColumnWidth(1, 120)
         self.iconTable.setColumnWidth(2, 120)
-
-        for row in range(self.iconTable.rowCount()):
-            cell_widget = QWidget()
-            checkbox = QCheckBox()
-            checkbox.setCheckState(Qt.Unchecked)
-            layout = QHBoxLayout(cell_widget)
-            layout.addWidget(checkbox)
-            layout.setAlignment(Qt.AlignCenter)
-            layout.setContentsMargins(0, 0, 0, 0)
-            self.iconTable.setCellWidget(row, 0, cell_widget)
 
         self.show()
 

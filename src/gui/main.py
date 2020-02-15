@@ -8,10 +8,12 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.2"
 
+import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
     QTabWidget, QCheckBox, QWidget, QHBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
+from definitions import UI_PATH
 from src.model import settings
 from src.gui.change_config import UiChangeConfig
 from src.gui.directory_config import UiDirectoryConfig
@@ -37,7 +39,7 @@ class Ui(QMainWindow):
         """
 
         super(Ui, self).__init__()
-        loadUi('../ui/main_window.ui', self)
+        loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
         self.teamAction = self.findChild(QAction, 'teamAction')
         self.teamAction.triggered.connect(self.__execute_team_config)
@@ -56,8 +58,6 @@ class Ui(QMainWindow):
         self.syncButton.clicked.connect(self.__execute_vector_db)
         self.directoryButton = self.findChild(QPushButton, 'directoryButton')
         self.directoryButton.clicked.connect(self.__execute_directory_config)
-        self.iconButton = self.findChild(QPushButton, 'iconButton')
-        self.iconButton.clicked.connect(self.__execute_icon_config)
         self.relationshipButton = self.findChild(QPushButton, 'relationshipsButton')
         self.relationshipButton.clicked.connect(self.__execute_relationship_config)
 
@@ -70,10 +70,9 @@ class Ui(QMainWindow):
         self.earTable = self.findChild(QTableWidget, 'earTable')
         self.earTable.setColumnWidth(0, 120)
         self.logEntryTable = self.findChild(QTableWidget, 'logEntryTable')
-        self.logEntryTable.setColumnWidth(0, 30)
-        self.logEntryTable.setColumnWidth(1, 120)
-        self.logEntryTable.setColumnWidth(2, 180)
-        self.logEntryTable.setColumnWidth(3, 160)
+        self.logEntryTable.setColumnWidth(0, 120)
+        self.logEntryTable.setColumnWidth(1, 180)
+        self.logEntryTable.setColumnWidth(2, 160)
         self.nodeTable = self.findChild(QTableWidget, 'nodeTable')
         self.nodeTable.setColumnWidth(0, 80)
         self.nodeTable.setColumnWidth(1, 120)
@@ -85,16 +84,6 @@ class Ui(QMainWindow):
         self.nodeTable.setColumnWidth(7, 120)
         self.nodeTable.setColumnWidth(8, 120)
         self.nodeTable.setColumnWidth(9, 150)
-
-        for row in range(self.logEntryTable.rowCount()):
-            cell_widget = QWidget()
-            checkbox = QCheckBox()
-            checkbox.setCheckState(Qt.Unchecked)
-            layout = QHBoxLayout(cell_widget)
-            layout.addWidget(checkbox)
-            layout.setAlignment(Qt.AlignCenter)
-            layout.setContentsMargins(0, 0, 0, 0)
-            self.logEntryTable.setCellWidget(row, 0, cell_widget)
 
         for row in range(self.nodeTable.rowCount()):
             cell_widget = QWidget()
@@ -140,12 +129,6 @@ class Ui(QMainWindow):
 
         self.filter_window = UiFilterConfig()
         self.filter_window.show()
-
-    def __execute_icon_config(self):
-        """Open the icon configuration window."""
-
-        self.icon_window = UiIconConfig()
-        self.icon_window.show()
 
     def __execute_relationship_config(self):
         """Open the relationship configuration window."""

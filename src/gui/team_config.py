@@ -11,9 +11,11 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.3"
 
+import os
 from PyQt5.QtWidgets import QApplication, QDialog, QCheckBox, QLabel, QLineEdit, QPushButton
 from PyQt5.uic import loadUi
 from src.model import settings
+from definitions import UI_PATH
 
 
 class UiTeamConfig(QDialog):
@@ -27,7 +29,7 @@ class UiTeamConfig(QDialog):
         """
 
         super(UiTeamConfig, self).__init__()
-        loadUi('../ui/team_config.ui', self)
+        loadUi(os.path.join(UI_PATH, 'team_config.ui'), self)
 
         self.leadCheckBox = self.findChild(QCheckBox, 'leadCheckBox')
         self.leadCheckBox.setCheckState(settings.lead_status)

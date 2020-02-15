@@ -11,8 +11,10 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.1"
 
+import os
 from PyQt5.QtWidgets import QApplication, QFrame
 from PyQt5.uic import loadUi
+from definitions import UI_PATH
 
 
 class UiVectorDBLead(QFrame):
@@ -26,7 +28,7 @@ class UiVectorDBLead(QFrame):
         """
 
         super(UiVectorDBLead, self).__init__()
-        loadUi('../ui/vector_db_lead.ui', self)
+        loadUi(os.path.join(UI_PATH, 'vector_db_lead.ui'), self)
 
         self.show()
 

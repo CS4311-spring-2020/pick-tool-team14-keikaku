@@ -73,7 +73,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Pulled Vector DB Table (Analyst)</string>
+        <string>Pulled Vector DB Table (Lead)</string>
        </property>
       </widget>
      </item>
@@ -160,24 +160,15 @@
       <property name="text">
        <string/>
       </property>
-      <property name="checkState">
-       <enum>Unchecked</enum>
-      </property>
      </item>
      <item row="1" column="0">
       <property name="text">
        <string/>
       </property>
-      <property name="checkState">
-       <enum>Unchecked</enum>
-      </property>
      </item>
      <item row="2" column="0">
       <property name="text">
        <string/>
-      </property>
-      <property name="checkState">
-       <enum>Unchecked</enum>
       </property>
      </item>
     </widget>
@@ -280,24 +271,15 @@
       <property name="text">
        <string/>
       </property>
-      <property name="checkState">
-       <enum>Unchecked</enum>
-      </property>
      </item>
      <item row="1" column="0">
       <property name="text">
        <string/>
       </property>
-      <property name="checkState">
-       <enum>Unchecked</enum>
-      </property>
      </item>
      <item row="2" column="0">
       <property name="text">
        <string/>
-      </property>
-      <property name="checkState">
-       <enum>Unchecked</enum>
       </property>
      </item>
     </widget>

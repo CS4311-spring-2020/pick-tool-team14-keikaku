@@ -11,8 +11,10 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.1"
 
+import os
 from PyQt5.QtWidgets import QApplication, QDialog
 from PyQt5.uic import loadUi
+from definitions import UI_PATH
 
 
 class UiEventConfig(QDialog):
@@ -26,7 +28,7 @@ class UiEventConfig(QDialog):
         """
 
         super(UiEventConfig, self).__init__()
-        loadUi('../ui/event_config.ui', self)
+        loadUi(os.path.join(UI_PATH, 'event_config.ui'), self)
 
         self.show()
 
