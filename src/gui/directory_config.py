@@ -11,8 +11,11 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.1"
 
-from PyQt5.QtWidgets import QApplication, QDialog
+import os
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit
 from PyQt5.uic import loadUi
+from src.model import settings
+from definitions import UI_PATH
 
 
 class UiDirectoryConfig(QDialog):
@@ -26,7 +29,14 @@ class UiDirectoryConfig(QDialog):
         """
 
         super(UiDirectoryConfig, self).__init__()
-        loadUi('../ui/directory_config.ui', self)
+        loadUi(os.path.join(UI_PATH, 'directory_config.ui'), self)
+
+        self.redTeamText = self.findChild(QLineEdit, 'redTeamText')
+        self.redTeamText.insert(settings.red_team_folder)
+        self.blueTeamText = self.findChild(QLineEdit, 'blueTeamText')
+        self.blueTeamText.insert(settings.blue_team_folder)
+        self.whiteTeamText = self.findChild(QLineEdit, 'whiteTeamText')
+        self.whiteTeamText.insert(settings.white_team_folder)
 
         self.show()
 

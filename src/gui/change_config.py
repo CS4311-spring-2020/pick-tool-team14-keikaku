@@ -11,8 +11,10 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.1"
 
+import os
 from PyQt5.QtWidgets import QApplication, QDialog
 from PyQt5.uic import loadUi
+from definitions import UI_PATH
 
 
 class UiChangeConfig(QDialog):
@@ -26,7 +28,7 @@ class UiChangeConfig(QDialog):
         """
 
         super(UiChangeConfig, self).__init__()
-        loadUi('../ui/change_config.ui', self)
+        loadUi(os.path.join(UI_PATH, 'change_config.ui'), self)
 
         self.show()
 

@@ -11,8 +11,10 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.1"
 
-from PyQt5.QtWidgets import QApplication, QFrame
+import os
+from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget
 from PyQt5.uic import loadUi
+from definitions import UI_PATH
 
 
 class UiVectorConfig(QFrame):
@@ -26,7 +28,11 @@ class UiVectorConfig(QFrame):
         """
 
         super(UiVectorConfig, self).__init__()
-        loadUi('../ui/vector_config.ui', self)
+        loadUi(os.path.join(UI_PATH, 'vector_config.ui'), self)
+
+        self.iconTable = self.findChild(QTableWidget, 'vectorTable')
+        self.iconTable.setColumnWidth(0, 120)
+        self.iconTable.setColumnWidth(1, 120)
 
         self.show()
 

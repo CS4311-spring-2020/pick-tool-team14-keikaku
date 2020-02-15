@@ -57,7 +57,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="rootDirectoryTextLine">
+    <widget class="QLineEdit" name="rootDirectoryText">
      <property name="minimumSize">
       <size>
        <width>400</width>
@@ -90,7 +90,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="redTeamTextLine">
+    <widget class="QLineEdit" name="redTeamText">
      <property name="minimumSize">
       <size>
        <width>400</width>
@@ -101,6 +101,9 @@
       <font>
        <family>Verdana</family>
       </font>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
@@ -123,7 +126,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="blueTeamTextLine">
+    <widget class="QLineEdit" name="blueTeamText">
      <property name="minimumSize">
       <size>
        <width>400</width>
@@ -134,6 +137,9 @@
       <font>
        <family>Verdana</family>
       </font>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
@@ -156,7 +162,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="whiteTeamTextLine">
+    <widget class="QLineEdit" name="whiteTeamText">
      <property name="minimumSize">
       <size>
        <width>400</width>
@@ -167,6 +173,9 @@
       <font>
        <family>Verdana</family>
       </font>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

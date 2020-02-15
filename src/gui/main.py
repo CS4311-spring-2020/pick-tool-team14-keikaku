@@ -8,20 +8,24 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.2"
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
+import os
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
+    QTabWidget, QCheckBox, QWidget, QHBoxLayout
+from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
-from src import settings
-from src.change_config import UiChangeConfig
-from src.directory_config import UiDirectoryConfig
-from src.event_config import UiEventConfig
-from src.export_config import UiExportConfig
-from src.filter_config import UiFilterConfig
-from src.icon_config import UiIconConfig
-from src.relationship_config import UiRelationshipConfig
-from src.team_config import UiTeamConfig
-from src.vector_config import UiVectorConfig
-from src.vector_db_analyst import UiVectorDBAnalyst
-from src.vector_db_lead import UiVectorDBLead
+from definitions import UI_PATH
+from src.model import settings
+from src.gui.change_config import UiChangeConfig
+from src.gui.directory_config import UiDirectoryConfig
+from src.gui.event_config import UiEventConfig
+from src.gui.export_config import UiExportConfig
+from src.gui.filter_config import UiFilterConfig
+from src.gui.icon_config import UiIconConfig
+from src.gui.relationship_config import UiRelationshipConfig
+from src.gui.team_config import UiTeamConfig
+from src.gui.vector_config import UiVectorConfig
+from src.gui.vector_db_analyst import UiVectorDBAnalyst
+from src.gui.vector_db_lead import UiVectorDBLead
 
 
 class Ui(QMainWindow):
@@ -35,12 +39,15 @@ class Ui(QMainWindow):
         """
 
         super(Ui, self).__init__()
-        loadUi('../ui/main_window.ui', self)
+        loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
-        self.teamButton = self.findChild(QPushButton, 'teamButton')
-        self.teamButton.clicked.connect(self.__execute_team_config)
-        self.eventButton = self.findChild(QPushButton, 'eventButton')
-        self.eventButton.clicked.connect(self.__execute_event_config)
+        self.teamAction = self.findChild(QAction, 'teamAction')
+        self.teamAction.triggered.connect(self.__execute_team_config)
+        self.eventAction = self.findChild(QAction, 'eventAction')
+        self.eventAction.triggered.connect(self.__execute_event_config)
+        self.exportAction = self.findChild(QAction, 'exportAction')
+        self.exportAction.triggered.connect(self.__execute_export_config)
+
         self.vectorButton = self.findChild(QPushButton, 'vectorButton')
         self.vectorButton.clicked.connect(self.__execute_vector_config)
         self.filterButton = self.findChild(QPushButton, 'filterButton')
@@ -49,14 +56,47 @@ class Ui(QMainWindow):
         self.commitButton.clicked.connect(self.__execute_change_config)
         self.syncButton = self.findChild(QPushButton, 'syncButton')
         self.syncButton.clicked.connect(self.__execute_vector_db)
-        self.exportButton = self.findChild(QPushButton, 'exportButton')
-        self.exportButton.clicked.connect(self.__execute_export_config)
         self.directoryButton = self.findChild(QPushButton, 'directoryButton')
         self.directoryButton.clicked.connect(self.__execute_directory_config)
-        self.iconButton = self.findChild(QPushButton, 'iconButton')
-        self.iconButton.clicked.connect(self.__execute_icon_config)
         self.relationshipButton = self.findChild(QPushButton, 'relationshipsButton')
         self.relationshipButton.clicked.connect(self.__execute_relationship_config)
+
+        self.logFileTable = self.findChild(QTableWidget, 'logFileTable')
+        self.logFileTable.setColumnWidth(0, 100)
+        self.logFileTable.setColumnWidth(1, 100)
+        self.logFileTable.setColumnWidth(2, 160)
+        self.logFileTable.setColumnWidth(3, 160)
+        self.logFileTable.setColumnWidth(4, 160)
+        self.earTable = self.findChild(QTableWidget, 'earTable')
+        self.earTable.setColumnWidth(0, 120)
+        self.logEntryTable = self.findChild(QTableWidget, 'logEntryTable')
+        self.logEntryTable.setColumnWidth(0, 120)
+        self.logEntryTable.setColumnWidth(1, 180)
+        self.logEntryTable.setColumnWidth(2, 160)
+        self.nodeTable = self.findChild(QTableWidget, 'nodeTable')
+        self.nodeTable.setColumnWidth(0, 80)
+        self.nodeTable.setColumnWidth(1, 120)
+        self.nodeTable.setColumnWidth(2, 160)
+        self.nodeTable.setColumnWidth(3, 160)
+        self.nodeTable.setColumnWidth(4, 200)
+        self.nodeTable.setColumnWidth(5, 120)
+        self.nodeTable.setColumnWidth(6, 120)
+        self.nodeTable.setColumnWidth(7, 120)
+        self.nodeTable.setColumnWidth(8, 120)
+        self.nodeTable.setColumnWidth(9, 150)
+
+        for row in range(self.nodeTable.rowCount()):
+            cell_widget = QWidget()
+            checkbox = QCheckBox()
+            checkbox.setCheckState(Qt.Checked)
+            layout = QHBoxLayout(cell_widget)
+            layout.addWidget(checkbox)
+            layout.setAlignment(Qt.AlignCenter)
+            layout.setContentsMargins(0, 0, 0, 0)
+            self.nodeTable.setCellWidget(row, 9, cell_widget)
+
+        self.tabWidget = self.findChild(QTabWidget, 'tabWidget')
+        self.tabWidget.setCurrentIndex(settings.tab_index)
 
         self.show()
 
@@ -89,12 +129,6 @@ class Ui(QMainWindow):
 
         self.filter_window = UiFilterConfig()
         self.filter_window.show()
-
-    def __execute_icon_config(self):
-        """Open the icon configuration window."""
-
-        self.icon_window = UiIconConfig()
-        self.icon_window.show()
 
     def __execute_relationship_config(self):
         """Open the relationship configuration window."""
