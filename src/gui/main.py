@@ -85,6 +85,13 @@ class Ui(QMainWindow):
         self.nodeTable.setColumnWidth(8, 120)
         self.nodeTable.setColumnWidth(9, 150)
 
+        self.addNodeButton = self.findChild(QPushButton, 'addNodeButton')
+        self.addNodeButton.setShortcut("Ctrl+Return")
+        self.addNodeButton.clicked.connect(self.__add_node)
+        self.deleteNodeButton = self.findChild(QPushButton, 'deleteNodeButton')
+        self.deleteNodeButton.setShortcut("Ctrl+Backspace")
+        self.deleteNodeButton.clicked.connect(self.__delete_node)
+
         for row in range(self.nodeTable.rowCount()):
             cell_widget = QWidget()
             checkbox = QCheckBox()
@@ -160,6 +167,20 @@ class Ui(QMainWindow):
         else:
             self.vector_db_window = UiVectorDBAnalyst()
         self.vector_db_window.show()
+
+    def __add_node(self):
+        """add node table entry"""
+
+        row_position = self.nodeTable.rowCount()
+        self.nodeTable.insertRow(row_position)
+
+    def __delete_node(self):
+        """delete node table entry"""
+
+        indexes = self.nodeTable.selectionModel().selectedRows()
+        if indexes is not None:
+            for index in sorted(indexes):
+                self.nodeTable.removeRow(index.row())
 
 
 if __name__ == "__main__":

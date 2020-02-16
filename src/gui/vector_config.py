@@ -49,7 +49,6 @@ class UiVectorConfig(QFrame):
         row_position = self.vectorTable.rowCount()
         self.vectorTable.insertRow(row_position)
 
-
     def __delete_row(self):
         """Remove selected table entry from vector table"""
 
@@ -57,7 +56,6 @@ class UiVectorConfig(QFrame):
         if indexes is not None:
             for index in sorted(indexes):
                 self.vectorTable.removeRow(index.row())
-
 
 
 if __name__ == "__main__":
