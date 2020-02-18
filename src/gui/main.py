@@ -20,7 +20,6 @@ from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
 from src.gui.filter_config import UiFilterConfig
-from src.gui.icon_config import UiIconConfig
 from src.gui.relationship_config import UiRelationshipConfig
 from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
@@ -104,49 +103,41 @@ class Ui(QMainWindow):
         """Open the change configuration window."""
 
         self.change_window = UiChangeConfig()
-        self.change_window.show()
 
     def __execute_directory_config(self):
         """Open the directory configuration window."""
 
         self.directory_window = UiDirectoryConfig()
-        self.directory_window.show()
 
     def __execute_event_config(self):
         """Open the event configuration window."""
 
         self.event_window = UiEventConfig()
-        self.event_window.show()
 
     def __execute_export_config(self):
         """Open the export configuration window."""
 
         self.export_window = UiExportConfig()
-        self.export_window.show()
 
     def __execute_filter_config(self):
         """Open the filter configuration window."""
 
         self.filter_window = UiFilterConfig()
-        self.filter_window.show()
 
     def __execute_relationship_config(self):
         """Open the relationship configuration window."""
 
         self.relationship_window = UiRelationshipConfig()
-        self.relationship_window.show()
 
     def __execute_team_config(self):
         """Open the team configuration window."""
 
         self.team_window = UiTeamConfig()
-        self.team_window.show()
 
     def __execute_vector_config(self):
         """Open the vector configuration window."""
 
         self.vector_window = UiVectorConfig()
-        self.vector_window.show()
 
     def __execute_vector_db(self):
         """Open the vector db configuration window.
