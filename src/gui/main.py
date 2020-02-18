@@ -30,7 +30,14 @@ from src.gui.vector_db_lead import UiVectorDBLead
 class Ui(QMainWindow):
     """The main window which serves as an entry point to the application
     and provides the bulk of the system's interface.
+
+    Parameters
+    ----------
+    rowPosition_node : int
+        The index of the last row on the node table.
     """
+
+    rowPosition_node: int
 
     def __init__(self):
         """Initialize the main window and set all signals and slots
@@ -83,6 +90,14 @@ class Ui(QMainWindow):
         self.nodeTable.setColumnWidth(7, 120)
         self.nodeTable.setColumnWidth(8, 120)
         self.nodeTable.setColumnWidth(9, 150)
+        self.rowPosition = self.nodeTable.rowCount()
+
+        self.addNodeButton = self.findChild(QPushButton, 'addNodeButton')
+        self.addNodeButton.setShortcut("Ctrl+Return")
+        self.addNodeButton.clicked.connect(self.__add_node)
+        self.deleteNodeButton = self.findChild(QPushButton, 'deleteNodeButton')
+        self.deleteNodeButton.setShortcut("Ctrl+Backspace")
+        self.deleteNodeButton.clicked.connect(self.__delete_node)
 
         for row in range(self.nodeTable.rowCount()):
             cell_widget = QWidget()
@@ -151,6 +166,32 @@ class Ui(QMainWindow):
         else:
             self.vector_db_window = UiVectorDBAnalyst()
         self.vector_db_window.show()
+
+    def __add_node(self):
+        """Adds a node to the node table and to the node dictionary."""
+
+        self.nodeTable.blockSignals(True)
+        self.nodeTable.insertRow(self.rowPosition)
+        # new_uuid = uuid.uuid4().__str__()
+        # TODO: add node to node dictionary
+        self.rowPosition += 1
+        self.nodeTable.blockSignals(False)
+
+    def __delete_node(self):
+        """Removes the selected node from the node table and from the node dictionary."""
+
+        self.nodeTable.blockSignals(True)
+        if self.nodeTable.selectionModel().hasSelection():
+            rows = self.nodeTable.selectionModel().selectedRows()
+            indexes = []
+            for row in rows:
+                indexes.append(row.row())
+            indexes = sorted(indexes, reverse=True)
+            for rowid in indexes:
+                # TODO: remove node from node dictionary
+                self.nodeTable.removeRow(rowid)
+                self.rowPosition -= 1
+        self.nodeTable.blockSignals(False)
 
 
 if __name__ == "__main__":
