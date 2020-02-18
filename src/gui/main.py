@@ -10,11 +10,11 @@ __version__ = "0.2"
 
 import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
-    QTabWidget, QCheckBox, QWidget, QHBoxLayout
+    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QLabel
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from definitions import UI_PATH
-from src.model import settings
+from src.model import settings, vector
 from src.gui.change_config import UiChangeConfig
 from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
@@ -38,6 +38,8 @@ class Ui(QMainWindow):
     """
 
     rowPosition_node: int
+    vector_index_dict: dict
+    active_vector: str
 
     def __init__(self):
         """Initialize the main window and set all signals and slots
@@ -73,12 +75,15 @@ class Ui(QMainWindow):
         self.logFileTable.setColumnWidth(2, 160)
         self.logFileTable.setColumnWidth(3, 160)
         self.logFileTable.setColumnWidth(4, 160)
+
         self.earTable = self.findChild(QTableWidget, 'earTable')
         self.earTable.setColumnWidth(0, 120)
+
         self.logEntryTable = self.findChild(QTableWidget, 'logEntryTable')
         self.logEntryTable.setColumnWidth(0, 120)
         self.logEntryTable.setColumnWidth(1, 180)
         self.logEntryTable.setColumnWidth(2, 160)
+
         self.nodeTable = self.findChild(QTableWidget, 'nodeTable')
         self.nodeTable.setColumnWidth(0, 80)
         self.nodeTable.setColumnWidth(1, 120)
@@ -90,7 +95,19 @@ class Ui(QMainWindow):
         self.nodeTable.setColumnWidth(7, 120)
         self.nodeTable.setColumnWidth(8, 120)
         self.nodeTable.setColumnWidth(9, 150)
-        self.rowPosition = self.nodeTable.rowCount()
+        self.rowPosition_node = self.nodeTable.rowCount()
+
+        for row in range(self.nodeTable.rowCount()):
+            self.__insert_checkbox(row, 9)
+
+        self.descriptionLabel = self.findChild(QLabel, 'descriptionLabel_2')
+
+        self.vector_index_dict = {}
+        self.active_vector = ''
+        self.vectorComboBox = self.findChild(QComboBox, 'vectorComboBox')
+        for v in vector.vectors.values():
+            self.vectorComboBox.addItem(v.name)
+        self.vectorComboBox.currentIndexChanged.connect(self.__update_vector_view)
 
         self.addNodeButton = self.findChild(QPushButton, 'addNodeButton')
         self.addNodeButton.setShortcut("Ctrl+Return")
@@ -99,18 +116,9 @@ class Ui(QMainWindow):
         self.deleteNodeButton.setShortcut("Ctrl+Backspace")
         self.deleteNodeButton.clicked.connect(self.__delete_node)
 
-        for row in range(self.nodeTable.rowCount()):
-            cell_widget = QWidget()
-            checkbox = QCheckBox()
-            checkbox.setCheckState(Qt.Checked)
-            layout = QHBoxLayout(cell_widget)
-            layout.addWidget(checkbox)
-            layout.setAlignment(Qt.AlignCenter)
-            layout.setContentsMargins(0, 0, 0, 0)
-            self.nodeTable.setCellWidget(row, 9, cell_widget)
-
         self.tabWidget = self.findChild(QTabWidget, 'tabWidget')
         self.tabWidget.setCurrentIndex(settings.tab_index)
+        self.tabWidget.tabBarClicked.connect(self.__update_tab)
 
         self.show()
 
@@ -171,10 +179,11 @@ class Ui(QMainWindow):
         """Adds a node to the node table and to the node dictionary."""
 
         self.nodeTable.blockSignals(True)
-        self.nodeTable.insertRow(self.rowPosition)
+        self.nodeTable.insertRow(self.rowPosition_node)
+        self.__insert_checkbox(self.rowPosition_node, 9)
         # new_uuid = uuid.uuid4().__str__()
         # TODO: add node to node dictionary
-        self.rowPosition += 1
+        self.rowPosition_node += 1
         self.nodeTable.blockSignals(False)
 
     def __delete_node(self):
@@ -190,8 +199,59 @@ class Ui(QMainWindow):
             for rowid in indexes:
                 # TODO: remove node from node dictionary
                 self.nodeTable.removeRow(rowid)
-                self.rowPosition -= 1
+                self.rowPosition_node -= 1
         self.nodeTable.blockSignals(False)
+
+    def __insert_checkbox(self, row: int, col: int):
+        """"""
+
+        cell_widget = QWidget()
+        checkbox = QCheckBox()
+        checkbox.setCheckState(Qt.Checked)
+        layout = QHBoxLayout(cell_widget)
+        layout.addWidget(checkbox)
+        layout.setAlignment(Qt.AlignCenter)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.nodeTable.setCellWidget(row, col, cell_widget)
+
+    def __update_tab(self, index: int):
+        self.vectorComboBox.blockSignals(True)
+        if index == 0:
+            pass
+        elif index == 1:
+            pass
+        elif index == 2:
+            if bool(vector.vectors):
+                i = 0
+                self.vector_index_dict.clear()
+                self.vectorComboBox.clear()
+                for vector_id, v in vector.vectors.items():
+                    self.vectorComboBox.addItem(v.name)
+                    self.vector_index_dict[i] = vector_id
+                    i += 1
+        elif index == -1:
+            pass
+        else:
+            print('Invalid tab')
+        self.vectorComboBox.blockSignals(False)
+        print(self.vector_index_dict)
+        if bool(vector.vectors):
+            if self.active_vector == '':
+                self.active_vector = self.vector_index_dict[0]
+                self.__update_vector_view(0)
+            else:
+                for vector_index, vector_id in self.vector_index_dict.items():
+                    if vector_id == self.active_vector:
+                        self.__update_vector_view(vector_index)
+                        return
+                self.__update_vector_view(0)
+
+
+    def __update_vector_view(self, index: int):
+        self.active_vector = self.vector_index_dict[index]
+        print('Active vector set: ' + str(self.active_vector))
+        v = vector.vectors.get(self.vector_index_dict[index])
+        self.descriptionLabel.setText(v.description)
 
 
 if __name__ == "__main__":

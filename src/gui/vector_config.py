@@ -52,12 +52,12 @@ class UiVectorConfig(QFrame):
 
         # reconstruct vector table.
         for vector_id, v in vector.vectors.items():
-            print(vector_id, v)
+            #print(vector_id, v)
             self.vectorTable.insertRow(self.rowPosition)
-            print(self.rowPosition)
-            print(vector_id)
-            print(v.name)
-            print(v.description)
+            #print(self.rowPosition)
+            #print(vector_id)
+            #print(v.name)
+            #print(v.description)
             self.vectorTable.setItem(self.rowPosition, 0, QTableWidgetItem(vector_id))
             self.vectorTable.setItem(self.rowPosition, 1, QTableWidgetItem(v.name))
             self.vectorTable.setItem(self.rowPosition, 2, QTableWidgetItem(v.description))

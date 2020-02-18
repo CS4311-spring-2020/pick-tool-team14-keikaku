@@ -68,7 +68,7 @@ def edit_vector_desc(vector_id: str, vector_desc: str):
     """
 
     vectors[vector_id].description = vector_desc
-    print('Changed vector description to: ' + str(vectors[vector_id].description))
+    # print('Changed vector description to: ' + str(vectors[vector_id].description))
 
 
 class Vector:

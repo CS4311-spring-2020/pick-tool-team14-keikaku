@@ -88,7 +88,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="logFileTab">
        <attribute name="title">
@@ -492,18 +492,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="vectorComboBox">
-            <item>
-             <property name="text">
-              <string>SQL Injection</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Denial-of-Service</string>
-             </property>
-            </item>
-           </widget>
+           <widget class="QComboBox" name="vectorComboBox"/>
           </item>
           <item>
            <widget class="QLabel" name="descriptionLabel">
@@ -518,7 +507,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="descriptionLabel_2">
             <property name="text">
              <string>&lt;Description&gt;</string>
             </property>
@@ -1197,7 +1186,7 @@
      <x>0</x>
      <y>0</y>
      <width>949</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
