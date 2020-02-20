@@ -21,7 +21,7 @@ class UiRelationshipConfig(QFrame):
     """The relationship window which handles the relationship table
     for the active vector.
 
-    Parameters
+    Attributes
     ----------
     rowPosition : int
         The index of the last row on the relation table.

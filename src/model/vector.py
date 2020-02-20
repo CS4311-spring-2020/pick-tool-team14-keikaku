@@ -1,74 +1,95 @@
-"""vector.py: A dictionary of vectors.
+"""vector.py: A vector dictionary and vector object."""
+
+__author__ = "Team Keikaku"
+
+__version__ = "0.6"
+
+from PyQt5.QtCore import QObject, pyqtSignal
+from src.model.node import Node
+
+
+class VectorDictionary(QObject):
+    """A dictionary of vectors and associated UUIDs.
 
     Attributes
     ----------
     vectors : dict
-        A dictionary of vectors.
-"""
-
-__author__ = "Team Keikaku"
-
-__version__ = "0.5"
-
-vectors: dict = {}
-
-
-def add_vector(vector_id: str, vector_name: str):
-    """Adds a new vector to the vector dictionary.
-
-    Parameters
-    ----------
-    vector_id : str
-        UUID of the vector.
-    vector_name : str
-        Name of the vector.
+        A dictionary of vectors and their associated UUIDs.
+    added_vector : pyqtSignal
+        A pyQT signal emitted when a vector is added.
+    removed_vector : pyqtSignal
+        A pyQT signal emitted when a vector is removed.
+    edited_vector : pyqtSignal
+        A pyQT signal emitted when a vector is edited.
     """
 
-    # print('Adding vector : ' + str(vector_id))
-    vectors[vector_id] = Vector(vector_name)
+    vectors: dict
 
+    added_vector = pyqtSignal()
+    removed_vector = pyqtSignal()
+    edited_vector = pyqtSignal()
 
-def delete_vector(vector_id: str):
-    """Removes a vector from the vector dictionary.
+    def __init__(self):
+        """Initializes the vector dictionary and pyQT signals."""
 
-    Parameters
-    ----------
-    vector_id : str
-        UUID of the vector.
-    """
+        QObject.__init__(self)
+        self.vectors = {}
 
-    # print('Removing vector : ' + str(vector_id))
-    vectors.pop(vector_id)
+    def items(self):
+        """Retrieves all items in the vector dictionary.
 
+        :return Vector
+            Vector associated with the given UUID.
+        """
 
-def edit_vector_name(vector_id: str, vector_name: str):
-    """Updates the name of a vector.
+        return self.vectors.items()
 
-    Parameters
-    ----------
-    vector_id : str
-        UUID of the vector.
-    vector_name : str
-        Name of the vector.
-    """
+    def get(self, vector_id: str):
+        """Retrieves a vector given it's UUID.
 
-    vectors[vector_id].name = vector_name
-    # print('Changed vector name to: ' + str(vectors[vector_id].name))
+        :param vector_id : str
+            UUID of the vector.
+        :return Vector
+            Vector associated with the given UUID.
+        """
 
+        return self.vectors.get(vector_id)
 
-def edit_vector_desc(vector_id: str, vector_desc: str):
-    """Updates the description of a vector.
+    def empty(self) -> bool:
+        """Determines of the dictionary is empty.
 
-    Parameters
-    ----------
-    vector_id : str
-        UUID of the vector.
-    vector_desc : str
-        Description of the vector.
-    """
+        :return
+            True if vector dictionary is empty; false otherwise.
+        """
 
-    vectors[vector_id].description = vector_desc
-    # print('Changed vector description to: ' + str(vectors[vector_id].description))
+        return not bool(self.vectors)
+
+    def add_vector(self, vector_id: str, vector_name: str):
+        """Adds a new vector to the vector dictionary. Emits added_vector.
+
+        :param vector_id : str
+            UUID of the vector.
+        :param vector_name : str
+            Name of the vector.
+        """
+
+        self.vectors[vector_id] = Vector(vector_name)
+        self.added_vector.emit()
+
+    def delete_vector(self, vector_id: str):
+        """Removes a vector from the vector dictionary. Emits removed_vector.
+
+        :param vector_id : str
+            UUID of the vector.
+        """
+
+        self.vectors.pop(vector_id)
+        self.removed_vector.emit()
+
+    def edit_vector(self):
+        """Emits edited_vector that a vector in the dictionary was edited."""
+
+        self.edited_vector.emit()
 
 
 class Vector:
@@ -96,13 +117,69 @@ class Vector:
 
     def __init__(self, vector_name: str = 'New Vector', vector_desc: str = ''):
         """
-        Parameters
-        ----------
-        vector_name : str, optional (default is 'New Vector')
+        :param vector_name : str, optional (default is 'New Vector')
             Name of the vector.
-        vector_desc : str, optional
+        :param vector_desc : str, optional
             Description of the vector (default is '').
         """
 
         self.name = vector_name
         self.description = vector_desc
+        self.nodes = {}
+        self.relations = {}
+
+    def edit_name(self, vector_name: str):
+        """Updates the name of a vector.
+
+        :param vector_name : str
+            Name of the vector.
+        """
+
+        self.name = vector_name
+
+    def edit_desc(self, vector_desc: str):
+        """Updates the description of a vector.
+
+        :param vector_desc : str
+            Description of the vector.
+        """
+
+        self.description = vector_desc
+
+    def add_node(self, node_id: str):
+        """Adds a new node to the vector dictionary.
+
+        :param node_id: str
+            UUID of the node.
+        """
+
+        self.nodes[node_id] = Node()
+
+    def delete_node(self, node_id: str):
+        """Removes a node from the node dictionary.
+
+        :param node_id: str
+            UUID of the node.
+        """
+
+        self.nodes.pop(node_id)
+
+    def node_items(self):
+        """Retrieves all items in the node dictionary.
+
+        :return Node
+            Node associated with the given UUID.
+        """
+
+        return self.nodes.items()
+
+    def node_get(self, node_id: str):
+        """Retrieves a vector given it's UUID.
+
+        :param node_id : str
+            UUID of the node.
+        :return Node
+            Node associated with the given UUID.
+        """
+
+        return self.nodes.get(node_id)

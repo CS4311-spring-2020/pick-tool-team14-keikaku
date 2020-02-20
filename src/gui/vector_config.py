@@ -9,7 +9,7 @@
 
 __author__ = "Team Keikaku"
 
-__version__ = "1.0"
+__version__ = "2.0"
 
 import os
 import uuid
@@ -17,7 +17,7 @@ import uuid
 from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTableWidgetItem
 from PyQt5.uic import loadUi
 from definitions import UI_PATH
-from src.model import vector
+from src.model.vector import VectorDictionary
 
 
 class UiVectorConfig(QFrame):
@@ -28,17 +28,25 @@ class UiVectorConfig(QFrame):
     ----------
     rowPosition : int
         The index of the last row on the vector table.
+    vector_dictionary : VectorDictionary
+        Vector dictionary to interface with.
     """
 
     rowPosition: int
+    vector_dictionary: VectorDictionary
 
-    def __init__(self):
+    def __init__(self, vector_dictionary: VectorDictionary):
         """Initialize the vector window and set all signals and slots
         associated with it.
+
+        :param
+            Vector dictionary to interface with.
         """
 
         super(UiVectorConfig, self).__init__()
         loadUi(os.path.join(UI_PATH, 'vector_config.ui'), self)
+
+        self.vector_dictionary = vector_dictionary
 
         self.vectorTable = self.findChild(QTableWidget, 'vectorTable')
         # self.iconTable.setColumnHidden(0, True)
@@ -51,13 +59,8 @@ class UiVectorConfig(QFrame):
         self.deleteButton.clicked.connect(self.__delete_vector)
 
         # reconstruct vector table.
-        for vector_id, v in vector.vectors.items():
-            #print(vector_id, v)
+        for vector_id, v in self.vector_dictionary.items():
             self.vectorTable.insertRow(self.rowPosition)
-            #print(self.rowPosition)
-            #print(vector_id)
-            #print(v.name)
-            #print(v.description)
             self.vectorTable.setItem(self.rowPosition, 0, QTableWidgetItem(vector_id))
             self.vectorTable.setItem(self.rowPosition, 1, QTableWidgetItem(v.name))
             self.vectorTable.setItem(self.rowPosition, 2, QTableWidgetItem(v.description))
@@ -73,7 +76,7 @@ class UiVectorConfig(QFrame):
         self.vectorTable.blockSignals(True)
         self.vectorTable.insertRow(self.rowPosition)
         new_uuid = uuid.uuid4().__str__()
-        vector.add_vector(new_uuid, 'New Vector')
+        self.vector_dictionary.add_vector(new_uuid, 'New Vector')
         self.vectorTable.setItem(self.rowPosition, 0, QTableWidgetItem(new_uuid))
         self.vectorTable.setItem(self.rowPosition, 1, QTableWidgetItem('New Vector'))
         self.rowPosition += 1
@@ -90,20 +93,29 @@ class UiVectorConfig(QFrame):
                 indexes.append(row.row())
             indexes = sorted(indexes, reverse=True)
             for rowid in indexes:
-                vector.delete_vector(self.vectorTable.item(rowid, 0).text())
+                self.vector_dictionary.delete_vector(self.vectorTable.item(rowid, 0).text())
                 self.vectorTable.removeRow(rowid)
                 self.rowPosition -= 1
         self.vectorTable.blockSignals(False)
 
     def __update_cell(self, item: QTableWidgetItem):
-        """Updates the vector information from the cell that was just edited."""
+        """Updates the vector information from the cell that was just edited.
 
+        Parameters
+        ----------
+        item : QTableWidgetItem
+            The item in the table cell which contains the information to update.
+        """
+
+        v = self.vector_dictionary.get(self.vectorTable.item(item.row(), 0).text())
         if item.column() == 1:
-            vector.edit_vector_name(self.vectorTable.item(item.row(), 0).text(), item.text())
+            v.edit_name(item.text())
         elif item.column() == 2:
-            vector.edit_vector_desc(self.vectorTable.item(item.row(), 0).text(), item.text())
+            v.edit_desc(item.text())
         else:
             print('Invalid column')
+            return
+        self.vector_dictionary.edit_vector()
 
 
 if __name__ == "__main__":

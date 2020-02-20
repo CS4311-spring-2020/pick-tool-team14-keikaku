@@ -6,15 +6,18 @@ system.
 
 __author__ = "Team Keikaku"
 
-__version__ = "0.2"
+__version__ = "0.5"
 
 import os
+import uuid
+
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
-    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QLabel
+    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QLabel, QTableWidgetItem
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from definitions import UI_PATH
-from src.model import settings, vector
+from src.model import settings
+from src.model.vector import VectorDictionary
 from src.gui.change_config import UiChangeConfig
 from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
@@ -31,15 +34,22 @@ class Ui(QMainWindow):
     """The main window which serves as an entry point to the application
     and provides the bulk of the system's interface.
 
-    Parameters
+    Attributes
     ----------
     rowPosition_node : int
         The index of the last row on the node table.
+    active_vector : str
+        UUID of the actively displaying vector.
+    vector_dictionary : VectorDictionary
+        Vector dictionary to interface with.
+    vector_dropdown_dictionary : dict
+        Dictionary of current vector indices and corresponding vector UUIDs.
     """
 
     rowPosition_node: int
-    vector_index_dict: dict
     active_vector: str
+    vector_dictionary: VectorDictionary
+    vector_dropdown_dictionary: dict
 
     def __init__(self):
         """Initialize the main window and set all signals and slots
@@ -48,6 +58,12 @@ class Ui(QMainWindow):
 
         super(Ui, self).__init__()
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
+
+        self.active_vector = ''
+        self.vector_dictionary = VectorDictionary()
+        self.vector_dictionary.added_vector.connect(self.__update_all_vector_info)
+        self.vector_dictionary.removed_vector.connect(self.__update_all_vector_info)
+        self.vector_dictionary.edited_vector.connect(self.__refresh_vector_info)
 
         self.teamAction = self.findChild(QAction, 'teamAction')
         self.teamAction.triggered.connect(self.__execute_team_config)
@@ -97,17 +113,11 @@ class Ui(QMainWindow):
         self.nodeTable.setColumnWidth(9, 150)
         self.rowPosition_node = self.nodeTable.rowCount()
 
-        for row in range(self.nodeTable.rowCount()):
-            self.__insert_checkbox(row, 9)
-
         self.descriptionLabel = self.findChild(QLabel, 'descriptionLabel_2')
 
-        self.vector_index_dict = {}
-        self.active_vector = ''
+        self.vector_dropdown_dictionary = {}
         self.vectorComboBox = self.findChild(QComboBox, 'vectorComboBox')
-        for v in vector.vectors.values():
-            self.vectorComboBox.addItem(v.name)
-        self.vectorComboBox.currentIndexChanged.connect(self.__update_vector_view)
+        self.vectorComboBox.currentIndexChanged.connect(self.__update_vector_display)
 
         self.addNodeButton = self.findChild(QPushButton, 'addNodeButton')
         self.addNodeButton.setShortcut("Ctrl+Return")
@@ -118,7 +128,8 @@ class Ui(QMainWindow):
 
         self.tabWidget = self.findChild(QTabWidget, 'tabWidget')
         self.tabWidget.setCurrentIndex(settings.tab_index)
-        self.tabWidget.tabBarClicked.connect(self.__update_tab)
+
+        self.__update_all_vector_info()
 
         self.show()
 
@@ -160,7 +171,7 @@ class Ui(QMainWindow):
     def __execute_vector_config(self):
         """Open the vector configuration window."""
 
-        self.vector_window = UiVectorConfig()
+        self.vector_window = UiVectorConfig(self.vector_dictionary)
 
     def __execute_vector_db(self):
         """Open the vector db configuration window.
@@ -173,37 +184,124 @@ class Ui(QMainWindow):
             self.vector_db_window = UiVectorDBLead()
         else:
             self.vector_db_window = UiVectorDBAnalyst()
-        self.vector_db_window.show()
+
+    def __refresh_vector_info(self):
+        """Refreshes the active vector's displayed name and description."""
+
+        self.__update_vector_dropdown()
+        self.__update_vector_description()
+
+    def __update_all_vector_info(self):
+        """Updates all vector related displays."""
+
+        self.__update_vector_dropdown()
+        self.__update_vector_display()
+
+    def __update_vector_dropdown(self):
+        """Updates the vector dropdown menu."""
+
+        if not self.vector_dictionary.empty():  # If vector dictionary is not empty
+            self.vectorComboBox.blockSignals(True)
+            i = 0
+            self.vectorComboBox.clear()
+            self.vector_dropdown_dictionary = {}
+            for vector_id, v in self.vector_dictionary.items():
+                self.vectorComboBox.addItem(v.name)
+                self.vector_dropdown_dictionary[i] = vector_id
+                if vector_id == self.active_vector:
+                    self.vectorComboBox.setCurrentIndex(i)
+                i += 1
+            self.vectorComboBox.blockSignals(False)
+
+    def __update_vector_display(self):
+        """Updates the displayed vector information."""
+
+        if self.vector_dictionary.empty():  # If vector dictionary is empty
+            self.active_vector = ''
+            self.descriptionLabel.setText('')
+            self.vectorComboBox.clear()
+            self.nodeTable.setRowCount(0)
+            self.rowPosition_node = 0
+        else:
+            if not self.active_vector == self.vector_dropdown_dictionary.get(self.vectorComboBox.currentIndex()):
+                self.active_vector = self.vector_dropdown_dictionary.get(self.vectorComboBox.currentIndex())
+                self.__update_vector_description()
+                self.__construct_node_table()
+
+    def __update_vector_description(self):
+        """Updates the vector description to that of the active vector's."""
+
+        v = self.vector_dictionary.get(self.active_vector)
+        self.descriptionLabel.setText(v.description)
+
+    def __construct_node_table(self):
+        """Constructs the node table for the active vector."""
+
+        self.nodeTable.setRowCount(0)
+        self.rowPosition_node = 0
+        v = self.vector_dictionary.get(self.active_vector)
+        # print('Constructing node table for: ' + str(v.name))
+        # reconstruct vector table.
+        for node_id, n in v.nodes.items():
+            self.nodeTable.insertRow(self.rowPosition_node)
+            self.nodeTable.setItem(self.rowPosition_node, 0, QTableWidgetItem(node_id))
+            # self.nodeTable.setItem(self.rowPosition_node, 1, QTableWidgetItem(n.name))
+            # self.nodeTable.setItem(self.rowPosition_node, 2, QTableWidgetItem(n.timestamp))
+            # self.nodeTable.setItem(self.rowPosition_node, 3, QTableWidgetItem(n.description))
+            # self.nodeTable.setItem(self.rowPosition_node, 4, QTableWidgetItem(n.log_entry_reference))
+            # self.nodeTable.setItem(self.rowPosition_node, 5, QTableWidgetItem(n.log_creator))
+            # self.nodeTable.setItem(self.rowPosition_node, 6, QTableWidgetItem(n.event_type))
+            # self.nodeTable.setItem(self.rowPosition_node, 7, QTableWidgetItem(n.icon_type))
+            # self.nodeTable.setItem(self.rowPosition_node, 8, QTableWidgetItem(n.source))
+            self.rowPosition_node += 1
+        for row in range(self.nodeTable.rowCount()):
+            self.__insert_checkbox(row, 9, self.nodeTable)
 
     def __add_node(self):
-        """Adds a node to the node table and to the node dictionary."""
+        """Adds a blank node to the node table and to the node dictionary."""
 
-        self.nodeTable.blockSignals(True)
-        self.nodeTable.insertRow(self.rowPosition_node)
-        self.__insert_checkbox(self.rowPosition_node, 9)
-        # new_uuid = uuid.uuid4().__str__()
-        # TODO: add node to node dictionary
-        self.rowPosition_node += 1
-        self.nodeTable.blockSignals(False)
+        if self.active_vector:
+            self.nodeTable.blockSignals(True)
+            self.nodeTable.insertRow(self.rowPosition_node)
+            self.__insert_checkbox(self.rowPosition_node, 9, self.nodeTable)
+            new_uuid = uuid.uuid4().__str__()
+            v = self.vector_dictionary.get(self.active_vector)
+            # print('Adding node to: ' + str(v.name))
+            v.add_node(new_uuid)
+            self.nodeTable.setItem(self.rowPosition_node, 0, QTableWidgetItem(new_uuid))
+            self.rowPosition_node += 1
+            self.nodeTable.blockSignals(False)
 
     def __delete_node(self):
         """Removes the selected node from the node table and from the node dictionary."""
 
-        self.nodeTable.blockSignals(True)
-        if self.nodeTable.selectionModel().hasSelection():
-            rows = self.nodeTable.selectionModel().selectedRows()
-            indexes = []
-            for row in rows:
-                indexes.append(row.row())
-            indexes = sorted(indexes, reverse=True)
-            for rowid in indexes:
-                # TODO: remove node from node dictionary
-                self.nodeTable.removeRow(rowid)
-                self.rowPosition_node -= 1
-        self.nodeTable.blockSignals(False)
+        if self.active_vector:
+            self.nodeTable.blockSignals(True)
+            if self.nodeTable.selectionModel().hasSelection():
+                rows = self.nodeTable.selectionModel().selectedRows()
+                indexes = []
+                for row in rows:
+                    indexes.append(row.row())
+                indexes = sorted(indexes, reverse=True)
+                for rowid in indexes:
+                    v = self.vector_dictionary.get(self.active_vector)
+                    # print('Removing node from: ' + str(v.name))
+                    v.delete_node(self.nodeTable.item(rowid, 0).text())
+                    self.nodeTable.removeRow(rowid)
+                    self.rowPosition_node -= 1
+            self.nodeTable.blockSignals(False)
 
-    def __insert_checkbox(self, row: int, col: int):
-        """"""
+    @staticmethod
+    def __insert_checkbox(row: int, col: int, table: QTableWidget):
+        """Inserts a centered checkbox into a given table cell.
+
+        :param row : int
+            Row index.
+        :param col : int
+            Column index.
+        :param table : QTableWidget
+            Table to insert to.
+        """
 
         cell_widget = QWidget()
         checkbox = QCheckBox()
@@ -212,46 +310,7 @@ class Ui(QMainWindow):
         layout.addWidget(checkbox)
         layout.setAlignment(Qt.AlignCenter)
         layout.setContentsMargins(0, 0, 0, 0)
-        self.nodeTable.setCellWidget(row, col, cell_widget)
-
-    def __update_tab(self, index: int):
-        self.vectorComboBox.blockSignals(True)
-        if index == 0:
-            pass
-        elif index == 1:
-            pass
-        elif index == 2:
-            if bool(vector.vectors):
-                i = 0
-                self.vector_index_dict.clear()
-                self.vectorComboBox.clear()
-                for vector_id, v in vector.vectors.items():
-                    self.vectorComboBox.addItem(v.name)
-                    self.vector_index_dict[i] = vector_id
-                    i += 1
-        elif index == -1:
-            pass
-        else:
-            print('Invalid tab')
-        self.vectorComboBox.blockSignals(False)
-        print(self.vector_index_dict)
-        if bool(vector.vectors):
-            if self.active_vector == '':
-                self.active_vector = self.vector_index_dict[0]
-                self.__update_vector_view(0)
-            else:
-                for vector_index, vector_id in self.vector_index_dict.items():
-                    if vector_id == self.active_vector:
-                        self.__update_vector_view(vector_index)
-                        return
-                self.__update_vector_view(0)
-
-
-    def __update_vector_view(self, index: int):
-        self.active_vector = self.vector_index_dict[index]
-        print('Active vector set: ' + str(self.active_vector))
-        v = vector.vectors.get(self.vector_index_dict[index])
-        self.descriptionLabel.setText(v.description)
+        table.setCellWidget(row, col, cell_widget)
 
 
 if __name__ == "__main__":
