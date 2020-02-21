@@ -2,10 +2,11 @@
 
 __author__ = "Team Keikaku"
 
-__version__ = "0.6"
+__version__ = "0.7"
 
 from PyQt5.QtCore import QObject, pyqtSignal
 from src.model.node import Node
+from src.model.relationship import Relationship
 
 
 class VectorDictionary(QObject):
@@ -24,7 +25,6 @@ class VectorDictionary(QObject):
     """
 
     vectors: dict
-
     added_vector = pyqtSignal()
     removed_vector = pyqtSignal()
     edited_vector = pyqtSignal()
@@ -106,14 +106,14 @@ class Vector:
         Description of the vector.
     nodes : dict
         A dictionary of nodes.
-    relations : dict
-        A dictionary of relations.
+    relationships : dict
+        A dictionary of relationships.
     """
 
     name: str
     description: str
     nodes: dict
-    relations: dict
+    relationships: dict
 
     def __init__(self, vector_name: str = 'New Vector', vector_desc: str = ''):
         """
@@ -126,7 +126,7 @@ class Vector:
         self.name = vector_name
         self.description = vector_desc
         self.nodes = {}
-        self.relations = {}
+        self.relationships = {}
 
     def edit_name(self, vector_name: str):
         """Updates the name of a vector.
@@ -147,7 +147,7 @@ class Vector:
         self.description = vector_desc
 
     def add_node(self, node_id: str):
-        """Adds a new node to the vector dictionary.
+        """Adds a new node to the node dictionary.
 
         :param node_id: str
             UUID of the node.
@@ -174,7 +174,7 @@ class Vector:
         return self.nodes.items()
 
     def node_get(self, node_id: str):
-        """Retrieves a vector given it's UUID.
+        """Retrieves a node given it's UUID.
 
         :param node_id : str
             UUID of the node.
@@ -183,3 +183,78 @@ class Vector:
         """
 
         return self.nodes.get(node_id)
+
+    def add_relationship(self, relationship_id: str):
+        """Adds a new relationship to the relationship dictionary.
+
+        :param relationship_id: str
+            UUID of the relationship.
+        """
+
+        self.relationships[relationship_id] = Relationship()
+
+    def delete_relationship(self, relationship_id: str):
+        """Removes a relationship from the relationship dictionary.
+
+        :param relationship_id: str
+            UUID of the relationship.
+        """
+
+        self.relationships.pop(relationship_id)
+
+    def relationship_items(self):
+        """Retrieves all items in the relationship dictionary.
+
+        :return relationship
+            Relationship associated with the given UUID.
+        """
+
+        return self.relationships.items()
+
+    def relationship_get(self, relationship_id: str):
+        """Retrieves a vector given it's UUID.
+
+        :param relationship_id : str
+            UUID of the relationship.
+        :return Relationship
+            Relationship associated with the given UUID.
+        """
+
+        return self.relationships.get(relationship_id)
+
+
+class ActiveVector:
+    """An active vector which displays across the system.
+
+    Attributes
+    ----------
+    vector : Vector
+        The active vector.
+    vector_id : str
+        The UUID of the active vector.
+    """
+
+    vector: Vector
+    vector_id: str
+
+    def __init__(self, vector: Vector = None, vector_id: str = ''):
+        """
+        :param vector (default is None)
+            The vector to set active.
+        :param vector_id (default is '')
+            The UUID of the vector to set active.
+        """
+
+        self.set(vector, vector_id)
+
+    def set(self, vector: Vector = None, vector_id: str = ''):
+        """Sets the active vector and its UUID.
+
+        :param vector (default is None)
+            The vector to set active.
+        :param vector_id (default is '')
+            The UUID of the vector to set active.
+        """
+
+        self.vector = vector
+        self.vector_id = vector_id

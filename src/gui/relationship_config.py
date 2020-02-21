@@ -9,12 +9,15 @@
 
 __author__ = "Team Keikaku"
 
-__version__ = "0.1"
+__version__ = "0.5"
 
 import os
-from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton
+import uuid
+
+from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTableWidgetItem
 from PyQt5.uic import loadUi
 from definitions import UI_PATH
+from src.model.vector import Vector
 
 
 class UiRelationshipConfig(QFrame):
@@ -25,13 +28,19 @@ class UiRelationshipConfig(QFrame):
     ----------
     rowPosition : int
         The index of the last row on the relation table.
+    vector : Vector
+        The vector for whom to display its relationship table.
     """
 
     rowPosition: int
+    vector: Vector
 
-    def __init__(self):
+    def __init__(self, vector: Vector):
         """Initialize the relationship window and set all signals and slots
         associated with it.
+
+        :param
+            The vector for whom to display its relationship table.
         """
 
         super(UiRelationshipConfig, self).__init__()
@@ -48,15 +57,47 @@ class UiRelationshipConfig(QFrame):
         self.deleteRelationButton.setShortcut("Ctrl+Backspace")
         self.deleteRelationButton.clicked.connect(self.__delete_relation)
 
+        # self.vector = vector
+        if vector:
+            self.construct_relationship_table(vector)
+
         self.show()
+
+    def construct_relationship_table(self, vector: Vector):
+        """Constructs the relationship table for the active vector.
+
+        :param
+            The vector for whom to display its relationship table.
+        """
+
+        self.vector = vector
+        self.relationshipTable.setRowCount(0)
+        self.rowPosition = 0
+        # print('Constructing relationship table for: ' + str(vector.name))
+        # construct vector table.
+        for relationship_id, relationship in vector.relationship_items():
+            self.relationshipTable.insertRow(self.rowPosition)
+            self.relationshipTable.setItem(self.rowPosition, 0, QTableWidgetItem(relationship_id))
+            self.relationshipTable.setItem(self.rowPosition, 1, QTableWidgetItem(relationship.parent))
+            self.relationshipTable.setItem(self.rowPosition, 2, QTableWidgetItem(relationship.child))
+            self.relationshipTable.setItem(self.rowPosition, 2, QTableWidgetItem(relationship.label))
+            self.rowPosition += 1
+
+    def clear(self):
+        """Clears the relationship table."""
+
+        self.vector = None
+        self.relationshipTable.setRowCount(0)
+        self.rowPosition = 0
 
     def __add_relation(self):
         """Adds a relation to the relation table and to the relation dictionary."""
 
         self.relationshipTable.blockSignals(True)
         self.relationshipTable.insertRow(self.rowPosition)
-        # new_uuid = uuid.uuid4().__str__()
-        # TODO: add relation to relation dictionary
+        new_uuid = uuid.uuid4().__str__()
+        self.vector.add_relationship(new_uuid)
+        self.relationshipTable.setItem(self.rowPosition, 0, QTableWidgetItem(new_uuid))
         self.rowPosition += 1
         self.relationshipTable.blockSignals(False)
 
@@ -71,7 +112,7 @@ class UiRelationshipConfig(QFrame):
                 indexes.append(row.row())
             indexes = sorted(indexes, reverse=True)
             for rowid in indexes:
-                # TODO: remove relation from relation dictionary
+                self.vector.delete_relationship(self.relationshipTable.item(rowid, 0).text())
                 self.relationshipTable.removeRow(rowid)
                 self.rowPosition -= 1
         self.relationshipTable.blockSignals(False)

@@ -58,7 +58,7 @@ class UiVectorConfig(QFrame):
         self.deleteButton = self.findChild(QPushButton, 'deleteVectorButton')
         self.deleteButton.clicked.connect(self.__delete_vector)
 
-        # reconstruct vector table.
+        # construct vector table.
         for vector_id, v in self.vector_dictionary.items():
             self.vectorTable.insertRow(self.rowPosition)
             self.vectorTable.setItem(self.rowPosition, 0, QTableWidgetItem(vector_id))

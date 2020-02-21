@@ -17,7 +17,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from definitions import UI_PATH
 from src.model import settings
-from src.model.vector import VectorDictionary
+from src.model.vector import VectorDictionary, ActiveVector
 from src.gui.change_config import UiChangeConfig
 from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
@@ -38,8 +38,8 @@ class Ui(QMainWindow):
     ----------
     rowPosition_node : int
         The index of the last row on the node table.
-    active_vector : str
-        UUID of the actively displaying vector.
+    active_vector : ActiveVector
+        The actively displaying vector.
     vector_dictionary : VectorDictionary
         Vector dictionary to interface with.
     vector_dropdown_dictionary : dict
@@ -47,7 +47,7 @@ class Ui(QMainWindow):
     """
 
     rowPosition_node: int
-    active_vector: str
+    active_vector: ActiveVector
     vector_dictionary: VectorDictionary
     vector_dropdown_dictionary: dict
 
@@ -59,7 +59,7 @@ class Ui(QMainWindow):
         super(Ui, self).__init__()
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
-        self.active_vector = ''
+        self.active_vector = ActiveVector()
         self.vector_dictionary = VectorDictionary()
         self.vector_dictionary.added_vector.connect(self.__update_all_vector_info)
         self.vector_dictionary.removed_vector.connect(self.__update_all_vector_info)
@@ -114,6 +114,7 @@ class Ui(QMainWindow):
         self.rowPosition_node = self.nodeTable.rowCount()
 
         self.descriptionLabel = self.findChild(QLabel, 'descriptionLabel_2')
+        self.descriptionLabel.setText('')
 
         self.vector_dropdown_dictionary = {}
         self.vectorComboBox = self.findChild(QComboBox, 'vectorComboBox')
@@ -161,7 +162,7 @@ class Ui(QMainWindow):
     def __execute_relationship_config(self):
         """Open the relationship configuration window."""
 
-        self.relationship_window = UiRelationshipConfig()
+        self.relationship_window = UiRelationshipConfig(self.active_vector.vector)
 
     def __execute_team_config(self):
         """Open the team configuration window."""
@@ -189,7 +190,7 @@ class Ui(QMainWindow):
         """Refreshes the active vector's displayed name and description."""
 
         self.__update_vector_dropdown()
-        self.__update_vector_description()
+        self.descriptionLabel.setText(self.active_vector.vector.description)
 
     def __update_all_vector_info(self):
         """Updates all vector related displays."""
@@ -208,7 +209,7 @@ class Ui(QMainWindow):
             for vector_id, v in self.vector_dictionary.items():
                 self.vectorComboBox.addItem(v.name)
                 self.vector_dropdown_dictionary[i] = vector_id
-                if vector_id == self.active_vector:
+                if vector_id == self.active_vector.vector_id:
                     self.vectorComboBox.setCurrentIndex(i)
                 i += 1
             self.vectorComboBox.blockSignals(False)
@@ -217,42 +218,41 @@ class Ui(QMainWindow):
         """Updates the displayed vector information."""
 
         if self.vector_dictionary.empty():  # If vector dictionary is empty
-            self.active_vector = ''
+            self.active_vector.set()
             self.descriptionLabel.setText('')
             self.vectorComboBox.clear()
             self.nodeTable.setRowCount(0)
             self.rowPosition_node = 0
+            if hasattr(self, 'relationship_window'):
+                self.relationship_window.clear()
         else:
-            if not self.active_vector == self.vector_dropdown_dictionary.get(self.vectorComboBox.currentIndex()):
-                self.active_vector = self.vector_dropdown_dictionary.get(self.vectorComboBox.currentIndex())
-                self.__update_vector_description()
+            if not self.active_vector.vector_id == self.vector_dropdown_dictionary \
+                    .get(self.vectorComboBox.currentIndex()):
+                v_id = self.vector_dropdown_dictionary.get(self.vectorComboBox.currentIndex())
+                self.active_vector.set(self.vector_dictionary.get(v_id), v_id)  # update active vector
+                self.descriptionLabel.setText(self.active_vector.vector.description)
                 self.__construct_node_table()
-
-    def __update_vector_description(self):
-        """Updates the vector description to that of the active vector's."""
-
-        v = self.vector_dictionary.get(self.active_vector)
-        self.descriptionLabel.setText(v.description)
+                if hasattr(self, 'relationship_window'):
+                    self.relationship_window.construct_relationship_table(self.active_vector.vector)
 
     def __construct_node_table(self):
         """Constructs the node table for the active vector."""
 
         self.nodeTable.setRowCount(0)
         self.rowPosition_node = 0
-        v = self.vector_dictionary.get(self.active_vector)
         # print('Constructing node table for: ' + str(v.name))
-        # reconstruct vector table.
-        for node_id, n in v.nodes.items():
+        # construct node table.
+        for node_id, n in self.active_vector.vector.node_items():
             self.nodeTable.insertRow(self.rowPosition_node)
             self.nodeTable.setItem(self.rowPosition_node, 0, QTableWidgetItem(node_id))
-            # self.nodeTable.setItem(self.rowPosition_node, 1, QTableWidgetItem(n.name))
-            # self.nodeTable.setItem(self.rowPosition_node, 2, QTableWidgetItem(n.timestamp))
-            # self.nodeTable.setItem(self.rowPosition_node, 3, QTableWidgetItem(n.description))
-            # self.nodeTable.setItem(self.rowPosition_node, 4, QTableWidgetItem(n.log_entry_reference))
-            # self.nodeTable.setItem(self.rowPosition_node, 5, QTableWidgetItem(n.log_creator))
-            # self.nodeTable.setItem(self.rowPosition_node, 6, QTableWidgetItem(n.event_type))
-            # self.nodeTable.setItem(self.rowPosition_node, 7, QTableWidgetItem(n.icon_type))
-            # self.nodeTable.setItem(self.rowPosition_node, 8, QTableWidgetItem(n.source))
+            self.nodeTable.setItem(self.rowPosition_node, 1, QTableWidgetItem(n.name))
+            self.nodeTable.setItem(self.rowPosition_node, 2, QTableWidgetItem(n.time_string()))
+            self.nodeTable.setItem(self.rowPosition_node, 3, QTableWidgetItem(n.description))
+            self.nodeTable.setItem(self.rowPosition_node, 4, QTableWidgetItem(n.log_entry_reference))
+            self.nodeTable.setItem(self.rowPosition_node, 5, QTableWidgetItem(n.log_creator))
+            self.nodeTable.setItem(self.rowPosition_node, 6, QTableWidgetItem(n.event_type))
+            self.nodeTable.setItem(self.rowPosition_node, 7, QTableWidgetItem(n.icon_type))
+            self.nodeTable.setItem(self.rowPosition_node, 8, QTableWidgetItem(n.source))
             self.rowPosition_node += 1
         for row in range(self.nodeTable.rowCount()):
             self.__insert_checkbox(row, 9, self.nodeTable)
@@ -260,14 +260,13 @@ class Ui(QMainWindow):
     def __add_node(self):
         """Adds a blank node to the node table and to the node dictionary."""
 
-        if self.active_vector:
+        if self.active_vector.vector:
             self.nodeTable.blockSignals(True)
             self.nodeTable.insertRow(self.rowPosition_node)
             self.__insert_checkbox(self.rowPosition_node, 9, self.nodeTable)
             new_uuid = uuid.uuid4().__str__()
-            v = self.vector_dictionary.get(self.active_vector)
             # print('Adding node to: ' + str(v.name))
-            v.add_node(new_uuid)
+            self.active_vector.vector.add_node(new_uuid)
             self.nodeTable.setItem(self.rowPosition_node, 0, QTableWidgetItem(new_uuid))
             self.rowPosition_node += 1
             self.nodeTable.blockSignals(False)
@@ -275,7 +274,7 @@ class Ui(QMainWindow):
     def __delete_node(self):
         """Removes the selected node from the node table and from the node dictionary."""
 
-        if self.active_vector:
+        if self.active_vector.vector:
             self.nodeTable.blockSignals(True)
             if self.nodeTable.selectionModel().hasSelection():
                 rows = self.nodeTable.selectionModel().selectedRows()
@@ -284,9 +283,8 @@ class Ui(QMainWindow):
                     indexes.append(row.row())
                 indexes = sorted(indexes, reverse=True)
                 for rowid in indexes:
-                    v = self.vector_dictionary.get(self.active_vector)
                     # print('Removing node from: ' + str(v.name))
-                    v.delete_node(self.nodeTable.item(rowid, 0).text())
+                    self.active_vector.vector.delete_node(self.nodeTable.item(rowid, 0).text())
                     self.nodeTable.removeRow(rowid)
                     self.rowPosition_node -= 1
             self.nodeTable.blockSignals(False)

@@ -17,7 +17,9 @@ __author__ = "Team Keikaku"
 
 __version__ = "0.1"
 
-name: str
-description: str
-start_time: str
-end_time: str
+from PyQt5.QtCore import QDateTime
+
+name: str = ''
+description: str = ''
+start_time: QDateTime = QDateTime()
+end_time: QDateTime = QDateTime()
