@@ -101,21 +101,9 @@
    </item>
    <item>
     <widget class="QTableWidget" name="pullTableWidget">
-     <row>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>2</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>3</string>
-      </property>
-     </row>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
      <column>
       <property name="text">
        <string>Select</string>
@@ -156,21 +144,6 @@
        </font>
       </property>
      </column>
-     <item row="0" column="0">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="1" column="0">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="2" column="0">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
     </widget>
    </item>
    <item>
@@ -212,21 +185,9 @@
    </item>
    <item>
     <widget class="QTableWidget" name="pushTableWidget">
-     <row>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>2</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>3</string>
-      </property>
-     </row>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
      <column>
       <property name="text">
        <string>Select</string>
@@ -267,21 +228,6 @@
        </font>
       </property>
      </column>
-     <item row="0" column="0">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="1" column="0">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="2" column="0">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
     </widget>
    </item>
   </layout>
