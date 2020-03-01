@@ -4,9 +4,15 @@ from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QApplication
-from src.gui.graph.node_graphics_scene import QNodeGraphicsScence
+from src.gui.graph.attack_graph_scene import AttackGraphScence
 
 class GraphEditorWindow(QWidget):
+    """
+    Temporary class windows used to develop the attack graph scene.
+    Once the attack graph feature is complete all usability will be transferred
+    to the main GUI class.
+    """
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.init_ui()
@@ -21,7 +27,7 @@ class GraphEditorWindow(QWidget):
         self.setLayout(self.layout)
 
         # Create graphics scene
-        self.grScence = QNodeGraphicsScence()
+        self.grScence = AttackGraphScence()
 
         # Create graphics view
         self.view = QGraphicsView(self)
