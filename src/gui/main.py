@@ -17,7 +17,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from definitions import UI_PATH
 from src.model import settings
-from src.model.vector import VectorDictionary, ActiveVector
+from src.model.id_dictionary import IDDict
+from src.model.vector import ActiveVector
 from src.gui.change_config import UiChangeConfig
 from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
@@ -40,7 +41,7 @@ class Ui(QMainWindow):
         The index of the last row on the node table.
     active_vector : ActiveVector
         The actively displaying vector.
-    vector_dictionary : VectorDictionary
+    vector_dictionary : IDDictionary
         Vector dictionary to interface with.
     vector_dropdown_dictionary : dict
         Dictionary of current vector indices and corresponding vector UUIDs.
@@ -48,7 +49,7 @@ class Ui(QMainWindow):
 
     rowPosition_node: int
     active_vector: ActiveVector
-    vector_dictionary: VectorDictionary
+    vector_dictionary: IDDict
     vector_dropdown_dictionary: dict
 
     def __init__(self):
@@ -60,10 +61,10 @@ class Ui(QMainWindow):
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
         self.active_vector = ActiveVector()
-        self.vector_dictionary = VectorDictionary()
-        self.vector_dictionary.added_vector.connect(self.__update_all_vector_info)
-        self.vector_dictionary.removed_vector.connect(self.__update_all_vector_info)
-        self.vector_dictionary.edited_vector.connect(self.__refresh_vector_info)
+        self.vector_dictionary = IDDict()
+        self.vector_dictionary.added.connect(self.__update_all_vector_info)
+        self.vector_dictionary.removed.connect(self.__update_all_vector_info)
+        self.vector_dictionary.edited.connect(self.__refresh_vector_info)
 
         self.teamAction = self.findChild(QAction, 'teamAction')
         self.teamAction.triggered.connect(self.__execute_team_config)
@@ -301,11 +302,11 @@ class Ui(QMainWindow):
             Table to insert to.
         """
 
-        cell_widget = QWidget()
+        cell_widget = QWidget(flags=0)
         checkbox = QCheckBox()
         checkbox.setCheckState(Qt.Checked)
         layout = QHBoxLayout(cell_widget)
-        layout.addWidget(checkbox)
+        layout.addWidget(checkbox, alignment=0)
         layout.setAlignment(Qt.AlignCenter)
         layout.setContentsMargins(0, 0, 0, 0)
         table.setCellWidget(row, col, cell_widget)

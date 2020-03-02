@@ -17,7 +17,8 @@ import uuid
 from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTableWidgetItem
 from PyQt5.uic import loadUi
 from definitions import UI_PATH
-from src.model.vector import VectorDictionary
+from src.model.id_dictionary import IDDict
+from src.model.vector import Vector
 
 
 class UiVectorConfig(QFrame):
@@ -33,9 +34,9 @@ class UiVectorConfig(QFrame):
     """
 
     rowPosition: int
-    vector_dictionary: VectorDictionary
+    vector_dictionary: IDDict
 
-    def __init__(self, vector_dictionary: VectorDictionary):
+    def __init__(self, vector_dictionary: IDDict):
         """Initialize the vector window and set all signals and slots
         associated with it.
 
@@ -76,7 +77,7 @@ class UiVectorConfig(QFrame):
         self.vectorTable.blockSignals(True)
         self.vectorTable.insertRow(self.rowPosition)
         new_uuid = uuid.uuid4().__str__()
-        self.vector_dictionary.add_vector(new_uuid, 'New Vector')
+        self.vector_dictionary.add(new_uuid, Vector('New Vector'))
         self.vectorTable.setItem(self.rowPosition, 0, QTableWidgetItem(new_uuid))
         self.vectorTable.setItem(self.rowPosition, 1, QTableWidgetItem('New Vector'))
         self.rowPosition += 1
@@ -93,7 +94,7 @@ class UiVectorConfig(QFrame):
                 indexes.append(row.row())
             indexes = sorted(indexes, reverse=True)
             for rowid in indexes:
-                self.vector_dictionary.delete_vector(self.vectorTable.item(rowid, 0).text())
+                self.vector_dictionary.delete(self.vectorTable.item(rowid, 0).text())
                 self.vectorTable.removeRow(rowid)
                 self.rowPosition -= 1
         self.vectorTable.blockSignals(False)
@@ -115,7 +116,7 @@ class UiVectorConfig(QFrame):
         else:
             print('Invalid column')
             return
-        self.vector_dictionary.edit_vector()
+        self.vector_dictionary.edit()
 
 
 if __name__ == "__main__":
