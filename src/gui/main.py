@@ -9,7 +9,6 @@ __author__ = "Team Keikaku"
 __version__ = "0.5"
 
 import os
-import uuid
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
     QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QLabel, QTableWidgetItem
@@ -265,10 +264,10 @@ class Ui(QMainWindow):
             self.nodeTable.blockSignals(True)
             self.nodeTable.insertRow(self.rowPosition_node)
             self.__insert_checkbox(self.rowPosition_node, 9, self.nodeTable)
-            new_uuid = uuid.uuid4().__str__()
+
             # print('Adding node to: ' + str(v.name))
-            self.active_vector.vector.add_node(new_uuid)
-            self.nodeTable.setItem(self.rowPosition_node, 0, QTableWidgetItem(new_uuid))
+            uid = self.active_vector.vector.add_node()
+            self.nodeTable.setItem(self.rowPosition_node, 0, QTableWidgetItem(uid))
             self.rowPosition_node += 1
             self.nodeTable.blockSignals(False)
 
@@ -302,11 +301,11 @@ class Ui(QMainWindow):
             Table to insert to.
         """
 
-        cell_widget = QWidget(flags=0)
+        cell_widget = QWidget()
         checkbox = QCheckBox()
         checkbox.setCheckState(Qt.Checked)
         layout = QHBoxLayout(cell_widget)
-        layout.addWidget(checkbox, alignment=0)
+        layout.addWidget(checkbox)
         layout.setAlignment(Qt.AlignCenter)
         layout.setContentsMargins(0, 0, 0, 0)
         table.setCellWidget(row, col, cell_widget)

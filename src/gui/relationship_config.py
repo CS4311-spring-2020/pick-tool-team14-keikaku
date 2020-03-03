@@ -12,7 +12,6 @@ __author__ = "Team Keikaku"
 __version__ = "0.5"
 
 import os
-import uuid
 
 from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTableWidgetItem
 from PyQt5.uic import loadUi
@@ -95,9 +94,8 @@ class UiRelationshipConfig(QFrame):
 
         self.relationshipTable.blockSignals(True)
         self.relationshipTable.insertRow(self.rowPosition)
-        new_uuid = uuid.uuid4().__str__()
-        self.vector.add_relationship(new_uuid)
-        self.relationshipTable.setItem(self.rowPosition, 0, QTableWidgetItem(new_uuid))
+        uid = self.vector.add_relationship()
+        self.relationshipTable.setItem(self.rowPosition, 0, QTableWidgetItem(uid))
         self.rowPosition += 1
         self.relationshipTable.blockSignals(False)
 

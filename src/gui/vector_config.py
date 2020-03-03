@@ -12,7 +12,6 @@ __author__ = "Team Keikaku"
 __version__ = "2.0"
 
 import os
-import uuid
 
 from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTableWidgetItem
 from PyQt5.uic import loadUi
@@ -76,9 +75,8 @@ class UiVectorConfig(QFrame):
 
         self.vectorTable.blockSignals(True)
         self.vectorTable.insertRow(self.rowPosition)
-        new_uuid = uuid.uuid4().__str__()
-        self.vector_dictionary.add(new_uuid, Vector('New Vector'))
-        self.vectorTable.setItem(self.rowPosition, 0, QTableWidgetItem(new_uuid))
+        uid = self.vector_dictionary.add(Vector('New Vector'))
+        self.vectorTable.setItem(self.rowPosition, 0, QTableWidgetItem(uid))
         self.vectorTable.setItem(self.rowPosition, 1, QTableWidgetItem('New Vector'))
         self.rowPosition += 1
         self.vectorTable.blockSignals(False)

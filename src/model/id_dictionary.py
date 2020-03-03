@@ -1,4 +1,5 @@
 """id_dictionary.py: A UID keyed dictionary that emits pyQT signals."""
+import uuid
 from typing import Any
 
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -59,19 +60,19 @@ class IDDict(QObject):
 
 		return not bool(self.dictionary)
 
-	def add(self, uid: str, thing: Any):
+	def add(self, thing: Any) -> str:
 		"""Adds a new object to the dictionary. Emits added.
 
-		:param uid : str
-			UID of the object.
 		:param thing: Any
 			Object to insert.
-		:param
-			Keyword
+		:return
+			A UID associated with the object added.
 		"""
 
+		uid = uuid.uuid4().__str__()
 		self.dictionary[uid] = thing
 		self.added.emit()
+		return uid
 
 	def delete(self, uid: str):
 		"""Removes an object from the dictionary. Emits removed.

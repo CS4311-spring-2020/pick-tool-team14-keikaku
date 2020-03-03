@@ -64,14 +64,14 @@ class Vector:
 
         self.description = vector_desc
 
-    def add_node(self, node_id: str):
+    def add_node(self) -> str:
         """Adds a new node to the node dictionary.
 
-        :param node_id: str
-            UID of the node.
+        :return
+            A UID associated with the object added.
         """
 
-        self.nodes.add(node_id, Node())
+        return self.nodes.add(Node())
 
     def delete_node(self, node_id: str):
         """Removes a node from the node dictionary.
@@ -102,14 +102,14 @@ class Vector:
 
         return self.nodes.get(node_id)
 
-    def add_relationship(self, relationship_id: str):
+    def add_relationship(self) -> str:
         """Adds a new relationship to the relationship dictionary.
 
-        :param relationship_id: str
-            UID of the relationship.
+        :return
+            A UID associated with the object added.
         """
 
-        self.relationships.add(relationship_id, Relationship())
+        return self.relationships.add(Relationship())
 
     def delete_relationship(self, relationship_id: str):
         """Removes a relationship from the relationship dictionary.
