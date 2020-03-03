@@ -67,6 +67,7 @@ class AttackGraphScence(QGraphicsScene):
     def drawBackground(self, painter: QPainter, rect: QRectF):
         """
         Draws the grid of the graphics scene background.
+        TODO fix background cache
 
         Parameters
         ----------
