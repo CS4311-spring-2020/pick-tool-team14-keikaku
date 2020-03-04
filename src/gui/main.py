@@ -46,6 +46,7 @@ class Ui(QMainWindow):
         Dictionary of current vector indices and corresponding vector UUIDs.
     """
 
+    rowPosition_log_entry: int
     rowPosition_node: int
     active_vector: ActiveVector
     vector_dictionary: IDDict
@@ -235,6 +236,24 @@ class Ui(QMainWindow):
                 if hasattr(self, 'relationship_window'):
                     self.relationship_window.construct_relationship_table(self.active_vector.vector)
 
+    def __construct_log_entry_table(self):
+        """Constructs the log entry table."""
+
+        self.logEntryTable.setRowCount(0)
+        self.rowPosition_log_entry = 0
+
+        temp_entries = {'id': '1', 'description': "Red team attack", 'timestamp': "timestamp"}
+
+        self.logEntryTable.insertRow(self.rowPosition_log_entry)
+        self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem(temp_entries['id']))
+        self.logEntryTable.setItem(self.rowPosition_log_entry, 1, QTableWidgetItem(temp_entries['timestamp']))
+        self.logEntryTable.setItem(self.rowPosition_log_entry, 2, QTableWidgetItem(temp_entries['description']))
+
+        self.rowPosition_log_entry += 1
+
+        for row in range(self.logEntryTable.rowCount()):
+            self.__insert_combobox(row, 3, self.logEntryTable)
+
     def __construct_node_table(self):
         """Constructs the node table for the active vector."""
 
@@ -306,6 +325,26 @@ class Ui(QMainWindow):
         checkbox.setCheckState(Qt.Checked)
         layout = QHBoxLayout(cell_widget)
         layout.addWidget(checkbox)
+        layout.setAlignment(Qt.AlignCenter)
+        layout.setContentsMargins(0, 0, 0, 0)
+        table.setCellWidget(row, col, cell_widget)
+
+    @staticmethod
+    def __insert_combobox(row: int, col: int, table: QTableWidget):
+        """Inserts a centered combobox into a given table cell.
+
+                :param row : int
+                    Row index.
+                :param col : int
+                    Column index.
+                :param table : QTableWidget
+                    Table to insert to.
+        """
+
+        cell_widget = QWidget()
+        combobox = QComboBox()
+        layout = QHBoxLayout(cell_widget)
+        layout.addWidget(combobox)
         layout.setAlignment(Qt.AlignCenter)
         layout.setContentsMargins(0, 0, 0, 0)
         table.setCellWidget(row, col, cell_widget)
