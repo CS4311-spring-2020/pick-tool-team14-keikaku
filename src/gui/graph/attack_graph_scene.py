@@ -31,7 +31,7 @@ class AttackGraphScence(QGraphicsScene):
     _pen_light: QPen
     _pen_dark: QPen
 
-    def __init__(self, parent=None):
+    def __init__(self, scene : QGraphicsScene, parent=None):
         """
         Initializer method for the AttackGraphScene
 
@@ -41,6 +41,8 @@ class AttackGraphScence(QGraphicsScene):
             parent widget
         """
         super().__init__(parent)
+
+        self.scene = scene
 
         # settings
         self._gridSize = 20
@@ -54,20 +56,16 @@ class AttackGraphScence(QGraphicsScene):
         self._pen_light.setWidth(1)
         self._pen_dark = QPen(self._color_dark)
         self._pen_dark.setWidth(2)
+        self.setBackgroundBrush(self._color_background)
 
-        # TODO make the scene size dynamic
-        self.scene_width, self.scene_height = 64000, 64000
-
+    def set_gr_scene(self, scene_width: int, scene_height: int):
         # This is where the focus of the scene will be
         # TODO set this to the be where the las edited node is
-        self.setSceneRect(-self.scene_width // 2, -self.scene_height // 2, self.scene_width, self.scene_height)
-
-        self.setBackgroundBrush(self._color_background)
+        self.setSceneRect(-scene_width // 2, -scene_height // 2, scene_width, scene_height)
 
     def drawBackground(self, painter: QPainter, rect: QRectF):
         """
         Draws the grid of the graphics scene background.
-        TODO fix background cache
 
         Parameters
         ----------

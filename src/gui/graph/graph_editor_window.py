@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QGraphicsItem
 
 from src.gui.graph.attack_graph_scene import AttackGraphScence
 from src.gui.graph.attack_graph_view import AttackGraphView
+from src .gui.graph.node_scene import NodeScene
 
 class GraphEditorWindow(QWidget):
     """
@@ -35,7 +36,9 @@ class GraphEditorWindow(QWidget):
         self.setLayout(self.layout)
 
         # Create graphics scene
-        self.gr_scene = AttackGraphScence()
+        # TODO change so that it isn't reliant on gr_scene pointer
+        self.scene = NodeScene()
+        self.gr_scene = self.scene.gr_scene
 
         # Create graphics view
         self.view = AttackGraphView(self.gr_scene, self)
