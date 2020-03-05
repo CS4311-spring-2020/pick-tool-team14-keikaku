@@ -12,7 +12,8 @@ from PyQt5.QtWidgets import QGraphicsItem
 
 from src.gui.graph.attack_graph_scene import AttackGraphScence
 from src.gui.graph.attack_graph_view import AttackGraphView
-from src .gui.graph.node_scene import NodeScene
+from src.gui.graph.node_scene import NodeScene
+from src.gui.graph.node_module import NodeModule
 
 class GraphEditorWindow(QWidget):
     """
@@ -38,32 +39,17 @@ class GraphEditorWindow(QWidget):
         # Create graphics scene
         # TODO change so that it isn't reliant on gr_scene pointer
         self.scene = NodeScene()
-        self.gr_scene = self.scene.gr_scene
+        # self.gr_scene = self.scene.gr_scene
+
+        node = NodeModule(self.scene, "Test Text")
 
         # Create graphics view
-        self.view = AttackGraphView(self.gr_scene, self)
+        self.view = AttackGraphView(self.scene.gr_scene, self)
         self.layout.addWidget(self.view)
 
 
         self.setWindowTitle("Graph Editor")
         self.show()
-
-        self.add_debug_content()
-
-    def add_debug_content(self):
-        # Parameters used for drawing the rectangle
-        brush_pen = QBrush(Qt.green)
-        outline_pen = QPen(Qt.black)
-        outline_pen.setWidth(2)
-
-        # Drawing the rectangle
-        rect = self.gr_scene.addRect(-100, -100, 80, 100, outline_pen, brush_pen)
-        rect.setFlag(QGraphicsItem.ItemIsMovable)
-
-        # Inserting text
-        text = self.gr_scene.addText("The is text")
-        text.setFlag(QGraphicsItem.ItemIsMovable)
-        text.setDefaultTextColor(QColor.fromRgbF(1.0, 1.0, 1.0))
 
 
 if __name__ == '__main__':
