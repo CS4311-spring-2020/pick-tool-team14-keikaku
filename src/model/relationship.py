@@ -8,15 +8,15 @@ __version__ = "0.2"
 
 
 class Relationship:
-    """A class representing a link between a parent and child node.
+    """A collection of information representing a link between a parent and child node.
 
     Attributes
     ----------
-    parent : str
+    parent: str
         UUID of the parent node.
-    child : str
+    child: str
         UUID of the child node.
-    label : str
+    label: str
         Label of the relationship.
     """
 
@@ -26,11 +26,11 @@ class Relationship:
 
     def __init__(self, parent: str = '', child: str = '', label: str = ''):
         """
-        :param parent: str (default is '')
+        :param parent: str, optional  (default is '')
             UUID of the parent node.
-        :param child: str (default is '')
+        :param child: str, optional  (default is '')
             UUID of the child node.
-        :param label: str (default is '')
+        :param label: str, optional  (default is '')
             Label of the relationship.
         """
 

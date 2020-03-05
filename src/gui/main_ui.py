@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""main.py: Handles the main window and offers an entry-point to the
+"""main_ui.py: Handles the main window and offers an entry-point to the
 system.
 """
 
@@ -9,15 +9,13 @@ __author__ = "Team Keikaku"
 __version__ = "0.5"
 
 import os
-import uuid
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
+from PyQt5.QtCore import Qt, QObject
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QAction, QTableWidget, \
     QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QLabel, QTableWidgetItem
-from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
+
 from definitions import UI_PATH
-from src.model import settings
-from src.model.vector import VectorDictionary, ActiveVector
 from src.gui.change_config import UiChangeConfig
 from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
@@ -28,6 +26,9 @@ from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
 from src.gui.vector_db_analyst import UiVectorDBAnalyst
 from src.gui.vector_db_lead import UiVectorDBLead
+from src.model import settings
+from src.model.id_dictionary import IDDict
+from src.model.vector import ActiveVector
 
 
 class Ui(QMainWindow):
@@ -36,20 +37,20 @@ class Ui(QMainWindow):
 
     Attributes
     ----------
-    rowPosition_node : int
-        The index of the last row on the node table.
-    active_vector : ActiveVector
-        The actively displaying vector.
-    vector_dictionary : VectorDictionary
+    active_vector: ActiveVector
+        Actively displaying vector.
+    vector_dictionary: IDDictionary
         Vector dictionary to interface with.
-    vector_dropdown_dictionary : dict
+    vector_dropdown_dictionary: dict
         Dictionary of current vector indices and corresponding vector UUIDs.
+    row_position_node: int
+        Index of the last row on the node table.
     """
 
-    rowPosition_node: int
     active_vector: ActiveVector
-    vector_dictionary: VectorDictionary
+    vector_dictionary: IDDict
     vector_dropdown_dictionary: dict
+    row_position_node: int
 
     def __init__(self):
         """Initialize the main window and set all signals and slots
@@ -60,10 +61,10 @@ class Ui(QMainWindow):
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
         self.active_vector = ActiveVector()
-        self.vector_dictionary = VectorDictionary()
-        self.vector_dictionary.added_vector.connect(self.__update_all_vector_info)
-        self.vector_dictionary.removed_vector.connect(self.__update_all_vector_info)
-        self.vector_dictionary.edited_vector.connect(self.__refresh_vector_info)
+        self.vector_dictionary = IDDict()
+        self.vector_dictionary.added.connect(self.__update_all_vector_info)
+        self.vector_dictionary.removed.connect(self.__update_all_vector_info)
+        self.vector_dictionary.edited.connect(self.__refresh_vector_info)
 
         self.teamAction = self.findChild(QAction, 'teamAction')
         self.teamAction.triggered.connect(self.__execute_team_config)
@@ -90,7 +91,8 @@ class Ui(QMainWindow):
         self.logFileTable.setColumnWidth(1, 100)
         self.logFileTable.setColumnWidth(2, 160)
         self.logFileTable.setColumnWidth(3, 160)
-        self.logFileTable.setColumnWidth(4, 160)
+        self.logFileTable.setColumnWidth(4, 50)
+        self.logFileTable.setColumnWidth(5, 160)
 
         self.earTable = self.findChild(QTableWidget, 'earTable')
         self.earTable.setColumnWidth(0, 120)
@@ -111,7 +113,28 @@ class Ui(QMainWindow):
         self.nodeTable.setColumnWidth(7, 120)
         self.nodeTable.setColumnWidth(8, 120)
         self.nodeTable.setColumnWidth(9, 150)
-        self.rowPosition_node = self.nodeTable.rowCount()
+        self.row_position_node = self.nodeTable.rowCount()
+
+        self.nodeIDCheckBox = self.findChild(QCheckBox, 'nodeIDCheckBox')
+        self.nodeNameCheckBox = self.findChild(QCheckBox, 'nodeNameCheckBox')
+        self.nodeTimeCheckBox = self.findChild(QCheckBox, 'nodeTimeCheckBox')
+        self.nodeDescCheckBox = self.findChild(QCheckBox, 'nodeDescCheckBox')
+        self.logEntryCheckBox = self.findChild(QCheckBox, 'logEntryCheckBox')
+        self.logCreatorCheckBox = self.findChild(QCheckBox, 'logCreatorCheckBox')
+        self.eventTypeCheckBox = self.findChild(QCheckBox, 'eventTypeCheckBox')
+        self.iconTypeCheckBox = self.findChild(QCheckBox, 'iconTypeCheckBox')
+        self.sourceCheckBox = self.findChild(QCheckBox, 'sourceCheckBox')
+        self.nodeIDCheckBox.stateChanged.connect(self.__toggle_node_id_visibility)
+        self.nodeNameCheckBox.stateChanged.connect(self.__toggle_node_name_visibility)
+        self.nodeTimeCheckBox.stateChanged.connect(self.__toggle_node_time_visibility)
+        self.nodeDescCheckBox.stateChanged.connect(self.__toggle_node_desc_visibility)
+        self.logEntryCheckBox.stateChanged.connect(self.__toggle_log_entry_visibility)
+        self.logCreatorCheckBox.stateChanged.connect(self.__toggle_log_creator_visibility)
+        self.eventTypeCheckBox.stateChanged.connect(self.__toggle_event_type_visibility)
+        self.iconTypeCheckBox.stateChanged.connect(self.__toggle_icon_type_visibility)
+        self.sourceCheckBox.stateChanged.connect(self.__toggle_source_visibility)
+        self.toggleVisCheckBox = self.findChild(QCheckBox, 'toggleVisCheckBox')
+        self.toggleVisCheckBox.stateChanged.connect(self.__set_node_visibility)
 
         self.descriptionLabel = self.findChild(QLabel, 'descriptionLabel_2')
         self.descriptionLabel.setText('')
@@ -222,7 +245,7 @@ class Ui(QMainWindow):
             self.descriptionLabel.setText('')
             self.vectorComboBox.clear()
             self.nodeTable.setRowCount(0)
-            self.rowPosition_node = 0
+            self.row_position_node = 0
             if hasattr(self, 'relationship_window'):
                 self.relationship_window.clear()
         else:
@@ -231,6 +254,23 @@ class Ui(QMainWindow):
                 v_id = self.vector_dropdown_dictionary.get(self.vectorComboBox.currentIndex())
                 self.active_vector.set(self.vector_dictionary.get(v_id), v_id)  # update active vector
                 self.descriptionLabel.setText(self.active_vector.vector.description)
+                self.__block_signals(self.nodeIDCheckBox, self.nodeNameCheckBox, self.nodeTimeCheckBox,
+                                     self.nodeDescCheckBox, self.logEntryCheckBox, self.logCreatorCheckBox,
+                                     self.eventTypeCheckBox, self.iconTypeCheckBox, self.sourceCheckBox,
+                                     block=True)
+                self.nodeIDCheckBox.setChecked(self.active_vector.vector.get_node_id_visibility())
+                self.nodeNameCheckBox.setChecked(self.active_vector.vector.get_node_name_visibility())
+                self.nodeTimeCheckBox.setChecked(self.active_vector.vector.get_node_time_visibility())
+                self.nodeDescCheckBox.setChecked(self.active_vector.vector.get_node_desc_visibility())
+                self.logEntryCheckBox.setChecked(self.active_vector.vector.get_log_entry_visibility())
+                self.logCreatorCheckBox.setChecked(self.active_vector.vector.get_log_creator_visibility())
+                self.eventTypeCheckBox.setChecked(self.active_vector.vector.get_event_type_visibility())
+                self.iconTypeCheckBox.setChecked(self.active_vector.vector.get_icon_type_visibility())
+                self.sourceCheckBox.setChecked(self.active_vector.vector.get_source_visibility())
+                self.__block_signals(self.nodeIDCheckBox, self.nodeNameCheckBox, self.nodeTimeCheckBox,
+                                     self.nodeDescCheckBox, self.logEntryCheckBox, self.logCreatorCheckBox,
+                                     self.eventTypeCheckBox, self.iconTypeCheckBox, self.sourceCheckBox,
+                                     block=False)
                 self.__construct_node_table()
                 if hasattr(self, 'relationship_window'):
                     self.relationship_window.construct_relationship_table(self.active_vector.vector)
@@ -239,21 +279,21 @@ class Ui(QMainWindow):
         """Constructs the node table for the active vector."""
 
         self.nodeTable.setRowCount(0)
-        self.rowPosition_node = 0
+        self.row_position_node = 0
         # print('Constructing node table for: ' + str(v.name))
         # construct node table.
         for node_id, n in self.active_vector.vector.node_items():
-            self.nodeTable.insertRow(self.rowPosition_node)
-            self.nodeTable.setItem(self.rowPosition_node, 0, QTableWidgetItem(node_id))
-            self.nodeTable.setItem(self.rowPosition_node, 1, QTableWidgetItem(n.name))
-            self.nodeTable.setItem(self.rowPosition_node, 2, QTableWidgetItem(n.time_string()))
-            self.nodeTable.setItem(self.rowPosition_node, 3, QTableWidgetItem(n.description))
-            self.nodeTable.setItem(self.rowPosition_node, 4, QTableWidgetItem(n.log_entry_reference))
-            self.nodeTable.setItem(self.rowPosition_node, 5, QTableWidgetItem(n.log_creator))
-            self.nodeTable.setItem(self.rowPosition_node, 6, QTableWidgetItem(n.event_type))
-            self.nodeTable.setItem(self.rowPosition_node, 7, QTableWidgetItem(n.icon_type))
-            self.nodeTable.setItem(self.rowPosition_node, 8, QTableWidgetItem(n.source))
-            self.rowPosition_node += 1
+            self.nodeTable.insertRow(self.row_position_node)
+            self.nodeTable.setItem(self.row_position_node, 0, QTableWidgetItem(node_id))
+            self.nodeTable.setItem(self.row_position_node, 1, QTableWidgetItem(n.name))
+            self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(n.time_string()))
+            self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(n.description))
+            self.nodeTable.setItem(self.row_position_node, 4, QTableWidgetItem(n.log_entry_reference))
+            self.nodeTable.setItem(self.row_position_node, 5, QTableWidgetItem(n.log_creator))
+            self.nodeTable.setItem(self.row_position_node, 6, QTableWidgetItem(n.event_type))
+            self.nodeTable.setItem(self.row_position_node, 7, QTableWidgetItem(n.icon_type))
+            self.nodeTable.setItem(self.row_position_node, 8, QTableWidgetItem(n.source))
+            self.row_position_node += 1
         for row in range(self.nodeTable.rowCount()):
             self.__insert_checkbox(row, 9, self.nodeTable)
 
@@ -262,13 +302,12 @@ class Ui(QMainWindow):
 
         if self.active_vector.vector:
             self.nodeTable.blockSignals(True)
-            self.nodeTable.insertRow(self.rowPosition_node)
-            self.__insert_checkbox(self.rowPosition_node, 9, self.nodeTable)
-            new_uuid = uuid.uuid4().__str__()
+            self.nodeTable.insertRow(self.row_position_node)
+            self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
             # print('Adding node to: ' + str(v.name))
-            self.active_vector.vector.add_node(new_uuid)
-            self.nodeTable.setItem(self.rowPosition_node, 0, QTableWidgetItem(new_uuid))
-            self.rowPosition_node += 1
+            uid = self.active_vector.vector.add_node()
+            self.nodeTable.setItem(self.row_position_node, 0, QTableWidgetItem(uid))
+            self.row_position_node += 1
             self.nodeTable.blockSignals(False)
 
     def __delete_node(self):
@@ -286,34 +325,87 @@ class Ui(QMainWindow):
                     # print('Removing node from: ' + str(v.name))
                     self.active_vector.vector.delete_node(self.nodeTable.item(rowid, 0).text())
                     self.nodeTable.removeRow(rowid)
-                    self.rowPosition_node -= 1
+                    self.row_position_node -= 1
             self.nodeTable.blockSignals(False)
+
+    def __set_node_visibility(self, state: int):
+        if state == 2:
+            check = True
+        elif state == 0:
+            check = False
+        else:
+            return
+        for row in range(self.nodeTable.rowCount()):
+            widget = self.nodeTable.cellWidget(row, 9)
+            checkbox = widget.findChild(QCheckBox, 'checkbox')
+            checkbox.setChecked(check)
+
+    def __toggle_node_id_visibility(self):
+        if not self.active_vector.is_empty():
+            self.active_vector.vector.toggle_node_id_visibility()
+
+    def __toggle_node_name_visibility(self):
+        if not self.active_vector.is_empty():
+            self.active_vector.vector.toggle_node_name_visibility()
+
+    def __toggle_node_time_visibility(self):
+        if not self.active_vector.is_empty():
+            self.active_vector.vector.toggle_node_time_visibility()
+
+    def __toggle_node_desc_visibility(self):
+        if not self.active_vector.is_empty():
+            self.active_vector.vector.toggle_node_desc_visibility()
+
+    def __toggle_log_entry_visibility(self):
+        if not self.active_vector.is_empty():
+            self.active_vector.vector.toggle_log_entry_visibility()
+
+    def __toggle_log_creator_visibility(self):
+        if not self.active_vector.is_empty():
+            self.active_vector.vector.toggle_log_creator_visibility()
+
+    def __toggle_event_type_visibility(self):
+        if not self.active_vector.is_empty():
+            self.active_vector.vector.toggle_event_type_visibility()
+
+    def __toggle_icon_type_visibility(self):
+        if not self.active_vector.is_empty():
+            self.active_vector.vector.toggle_icon_type_visibility()
+
+    def __toggle_source_visibility(self):
+        if not self.active_vector.is_empty():
+            self.active_vector.vector.toggle_source_visibility()
+
+    @staticmethod
+    def __block_signals(*argv: QObject, block: bool):
+        """Sets block of pyQT signals for a list of QObjects.
+
+        :param argv:
+            List of QObjects.
+        :param block:
+            True if to block, false otherwise.
+        """
+        for arg in argv:
+            arg.blockSignals(block)
 
     @staticmethod
     def __insert_checkbox(row: int, col: int, table: QTableWidget):
         """Inserts a centered checkbox into a given table cell.
 
-        :param row : int
+        :param row: int
             Row index.
-        :param col : int
+        :param col  int
             Column index.
-        :param table : QTableWidget
+        :param table: QTableWidget
             Table to insert to.
         """
 
         cell_widget = QWidget()
         checkbox = QCheckBox()
+        checkbox.setObjectName('checkbox')
         checkbox.setCheckState(Qt.Checked)
         layout = QHBoxLayout(cell_widget)
         layout.addWidget(checkbox)
         layout.setAlignment(Qt.AlignCenter)
         layout.setContentsMargins(0, 0, 0, 0)
         table.setCellWidget(row, col, cell_widget)
-
-
-if __name__ == "__main__":
-    import sys
-
-    app = QApplication(sys.argv)
-    window = Ui()
-    app.exec_()

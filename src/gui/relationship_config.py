@@ -12,10 +12,10 @@ __author__ = "Team Keikaku"
 __version__ = "0.5"
 
 import os
-import uuid
 
 from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTableWidgetItem
 from PyQt5.uic import loadUi
+
 from definitions import UI_PATH
 from src.model.vector import Vector
 
@@ -26,9 +26,9 @@ class UiRelationshipConfig(QFrame):
 
     Attributes
     ----------
-    rowPosition : int
+    rowPosition: int
         The index of the last row on the relation table.
-    vector : Vector
+    vector: Vector
         The vector for whom to display its relationship table.
     """
 
@@ -39,7 +39,7 @@ class UiRelationshipConfig(QFrame):
         """Initialize the relationship window and set all signals and slots
         associated with it.
 
-        :param
+        :param vector: Vector
             The vector for whom to display its relationship table.
         """
 
@@ -66,7 +66,7 @@ class UiRelationshipConfig(QFrame):
     def construct_relationship_table(self, vector: Vector):
         """Constructs the relationship table for the active vector.
 
-        :param
+        :param vector: Vector
             The vector for whom to display its relationship table.
         """
 
@@ -95,9 +95,8 @@ class UiRelationshipConfig(QFrame):
 
         self.relationshipTable.blockSignals(True)
         self.relationshipTable.insertRow(self.rowPosition)
-        new_uuid = uuid.uuid4().__str__()
-        self.vector.add_relationship(new_uuid)
-        self.relationshipTable.setItem(self.rowPosition, 0, QTableWidgetItem(new_uuid))
+        uid = self.vector.add_relationship()
+        self.relationshipTable.setItem(self.rowPosition, 0, QTableWidgetItem(uid))
         self.rowPosition += 1
         self.relationshipTable.blockSignals(False)
 

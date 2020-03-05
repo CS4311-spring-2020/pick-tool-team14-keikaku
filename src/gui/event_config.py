@@ -16,6 +16,7 @@ import os
 from PyQt5.QtCore import QDateTime
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QLineEdit, QDateTimeEdit
 from PyQt5.uic import loadUi
+
 from definitions import UI_PATH
 from src.model import event
 
@@ -26,13 +27,13 @@ class UiEventConfig(QDialog):
 
     Attributes
     ----------
-    name : str
+    name: str
         Name of the adversarial assessment.
-    description : str
+    description: str
         Description of the adversarial assessment.
-    start_time : str
+    start_time: str
         Start time of the adversarial assessment
-    end_time : str
+    end_time: str
         End time of the adversarial assessment.
     """
 
@@ -65,12 +66,13 @@ class UiEventConfig(QDialog):
         self.show()
 
     def __save(self):
-        """Saves the event information to settings and then closes the window."""
+        """Saves the event information and then closes the window."""
 
         event.name = self.name.text()
         event.description = self.description.text()
         event.start_time = self.start_time.dateTime()
         event.start_time = self.end_time.dateTime()
+        event.save()
         self.close()
 
 
