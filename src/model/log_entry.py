@@ -20,11 +20,11 @@ class LogEntry:
     def get_line_num(self) -> int:
         return self.line_number
 
-    def get_time_stamp(self) -> str:
+    def get_timestamp(self) -> str:
         return self.time_stamp
 
-    def get_time_stamp(self) -> str:
-        return self.time_stamp
+    def get_description(self) -> str:
+        return self.description
 
     def get_source(self) -> str:
         return self.source

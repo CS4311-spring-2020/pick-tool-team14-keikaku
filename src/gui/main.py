@@ -18,6 +18,8 @@ from definitions import UI_PATH
 from src.model import settings
 from src.model.id_dictionary import IDDict
 from src.model.vector import ActiveVector
+from src.model.log_file import LogFile
+from src.model.splunk import SplunkManager
 from src.gui.change_config import UiChangeConfig
 from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
@@ -28,6 +30,7 @@ from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
 from src.gui.vector_db_analyst import UiVectorDBAnalyst
 from src.gui.vector_db_lead import UiVectorDBLead
+import ntpath
 
 
 class Ui(QMainWindow):
@@ -50,6 +53,7 @@ class Ui(QMainWindow):
     rowPosition_node: int
     active_vector: ActiveVector
     vector_dictionary: IDDict
+    log_file_dictionary: IDDict
     vector_dropdown_dictionary: dict
 
     def __init__(self):
@@ -58,6 +62,10 @@ class Ui(QMainWindow):
         """
 
         super(Ui, self).__init__()
+
+        self.log_file_dictionary = IDDict()
+        self.__test_splunk('/Users/Daman2177/Desktop/test.log') #splunk test
+
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
         self.active_vector = ActiveVector()
@@ -133,7 +141,27 @@ class Ui(QMainWindow):
 
         self.__update_all_vector_info()
 
+        self.__construct_log_entry_table()
+
         self.show()
+
+    def __test_splunk(self, file_path: str): # splunk test
+        splunk_manage = SplunkManager()  # connect to splunk
+        splunk_manage.create_index("testindex")
+
+        file_name = ntpath.basename(file_path)
+        new_log_file = LogFile(file_path, file_name)  # create new log file
+        self.log_file_dictionary.add(new_log_file)
+
+        splunk_manage.add_file(file_path, 'testindex') # add file to index
+
+        log_entries = splunk_manage.search("search index=testindex | table _time _raw source host | reverse") # search index
+
+        line_num = len(log_entries)
+        for index in range(len(log_entries)):
+            print(log_entries[index]['_raw'])
+            new_log_file.add_log_entry(line_num, log_entries[index]['source'], log_entries[index]['_time'], log_entries[index]['_raw'])
+            line_num -= 1
 
     def __execute_change_config(self):
         """Open the change configuration window."""
@@ -242,12 +270,12 @@ class Ui(QMainWindow):
         self.logEntryTable.setRowCount(0)
         self.rowPosition_log_entry = 0
 
-        temp_entries = {'id': '1', 'description': "Red team attack", 'timestamp': "timestamp"}
-
-        self.logEntryTable.insertRow(self.rowPosition_log_entry)
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem(temp_entries['id']))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 1, QTableWidgetItem(temp_entries['timestamp']))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 2, QTableWidgetItem(temp_entries['description']))
+        for log_id, log in self.log_file_dictionary.items():
+            for log_entry_id, log_entry in log.log_entries.items():
+                self.logEntryTable.insertRow(self.rowPosition_log_entry)
+                self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem(str(log_entry.get_line_num())))
+                self.logEntryTable.setItem(self.rowPosition_log_entry, 1, QTableWidgetItem(log_entry.get_timestamp()))
+                self.logEntryTable.setItem(self.rowPosition_log_entry, 2, QTableWidgetItem(log_entry.get_description()))
 
         self.rowPosition_log_entry += 1
 
