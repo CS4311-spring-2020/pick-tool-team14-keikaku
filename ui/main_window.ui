@@ -189,6 +189,17 @@
             </column>
             <column>
              <property name="text">
+              <string>Force</string>
+             </property>
+             <property name="font">
+              <font>
+               <family>Verdana</family>
+               <pointsize>9</pointsize>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
               <string>Ingestion Status</string>
              </property>
              <property name="font">
@@ -535,7 +546,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="nodeVisibilityHL" stretch="0,1,1,1,1,1,1,1,1,1">
+         <layout class="QHBoxLayout" name="nodeVisibilityHL" stretch="0,1,1,1,1,1,1,1,1,1,0,0">
           <item>
            <widget class="QLabel" name="nodePropVisibilityLabel">
             <property name="sizePolicy">
@@ -867,9 +878,49 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="sourceCheckHL">
+             <layout class="QHBoxLayout" name="sourceHL">
               <item>
                <widget class="QCheckBox" name="sourceCheckBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="toggleVisVL">
+            <item>
+             <widget class="QLabel" name="toggleVisLabel">
+              <property name="font">
+               <font>
+                <pointsize>6</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Toggle Visibility</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="toggleVisHL">
+              <item>
+               <widget class="QCheckBox" name="toggleVisCheckBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>

@@ -12,8 +12,10 @@ __author__ = "Team Keikaku"
 __version__ = "0.1"
 
 import os
+
 from PyQt5.QtWidgets import QApplication, QDialog
 from PyQt5.uic import loadUi
+
 from definitions import UI_PATH
 
 

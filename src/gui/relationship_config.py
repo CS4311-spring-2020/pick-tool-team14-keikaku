@@ -15,6 +15,7 @@ import os
 
 from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTableWidgetItem
 from PyQt5.uic import loadUi
+
 from definitions import UI_PATH
 from src.model.vector import Vector
 
@@ -25,9 +26,9 @@ class UiRelationshipConfig(QFrame):
 
     Attributes
     ----------
-    rowPosition : int
+    rowPosition: int
         The index of the last row on the relation table.
-    vector : Vector
+    vector: Vector
         The vector for whom to display its relationship table.
     """
 
@@ -38,7 +39,7 @@ class UiRelationshipConfig(QFrame):
         """Initialize the relationship window and set all signals and slots
         associated with it.
 
-        :param
+        :param vector: Vector
             The vector for whom to display its relationship table.
         """
 
@@ -65,7 +66,7 @@ class UiRelationshipConfig(QFrame):
     def construct_relationship_table(self, vector: Vector):
         """Constructs the relationship table for the active vector.
 
-        :param
+        :param vector: Vector
             The vector for whom to display its relationship table.
         """
 

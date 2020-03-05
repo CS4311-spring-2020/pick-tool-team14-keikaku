@@ -1,4 +1,9 @@
 """id_dictionary.py: A UID keyed dictionary that emits pyQT signals."""
+
+__author__ = "Team Keikaku"
+
+__version__ = "1.0"
+
 import uuid
 from typing import Any
 
@@ -10,23 +15,20 @@ class IDDict(QObject):
 
 	Attributes
 	----------
-	dictionary : dict
-		A dictionary of objects and their associated UIDs.
-	added : pyqtSignal
+	added: pyqtSignal
 		A pyQT signal emitted when an object is added.
-	removed : pyqtSignal
+	removed: pyqtSignal
 		A pyQT signal emitted when an object is removed.
-	edited : pyqtSignal
+	edited: pyqtSignal
 		A pyQT signal emitted when an object is edited.
 	"""
 
 	added: pyqtSignal = pyqtSignal()
 	removed: pyqtSignal = pyqtSignal()
 	edited: pyqtSignal = pyqtSignal()
-	dictionary: dict
 
 	def __init__(self):
-		"""Initializes the dictionary and pyQT signals."""
+		""""""
 
 		QObject.__init__(self)
 		self.dictionary = {}
@@ -35,7 +37,7 @@ class IDDict(QObject):
 		"""Retrieves all items in the dictionary.
 
 		:return dict_items
-			A list of items consisting of key, value tuples.
+			A list of key, value tuples.
 		"""
 
 		return self.dictionary.items()
@@ -43,7 +45,7 @@ class IDDict(QObject):
 	def get(self, uid: str) -> Any:
 		"""Retrieves an object given it's UID.
 
-		:param uid : str
+		:param uid: str
 			UID of the object.
 		:return Any
 			Object associated with the given UID.
@@ -54,7 +56,7 @@ class IDDict(QObject):
 	def empty(self) -> bool:
 		"""Determines of the dictionary is empty.
 
-		:return
+		:return bool
 			True if dictionary is empty; false otherwise.
 		"""
 
@@ -65,7 +67,7 @@ class IDDict(QObject):
 
 		:param thing: Any
 			Object to insert.
-		:return
+		:return str
 			A UID associated with the object added.
 		"""
 
@@ -77,7 +79,7 @@ class IDDict(QObject):
 	def delete(self, uid: str):
 		"""Removes an object from the dictionary. Emits removed.
 
-		:param uid : str
+		:param uid: str
 			UID of the object.
 		"""
 

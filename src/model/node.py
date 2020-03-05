@@ -10,25 +10,25 @@ from PyQt5.QtCore import QDateTime
 
 
 class Node:
-    """A class representing a significant event of an attack vector.
+    """A collection of information representing a significant event of an attack vector.
 
     Attributes
     ----------
-    name : str
+    name: str
         Name of the node.
-    timestamp : QDateTime
+    timestamp: QDateTime
         Timestamp node event occurred.
-    description : str
+    description: str
         Description of the node.
-    log_entry_reference : str
+    log_entry_reference: str
         Reference to the creating log entry UUID.
-    log_creator : str
+    log_creator: str
         Creator of the log entry node was created from.
-    event_type : str
+    event_type: str
         Type of event the node represents.
-    icon_type : str
+    icon_type: str
         Icon the node shall use to display itself.
-    source : str
+    source: str
         Source of the corresponding log entry.
     """
 
@@ -45,21 +45,21 @@ class Node:
                  log_entry_reference: str = '', log_creator: str = '', event_type: str = '',
                  icon_type: str = '', source: str = ''):
         """
-        :param name: str (default is '')
+        :param name: str, optional (default is '')
             Name of the node.
-        :param timestamp: QDateTime (default is QDateTime())
+        :param timestamp: QDateTime, optional  (default is QDateTime())
             Timestamp node event occurred.
-        :param description: str (default is '')
+        :param description: str, optional  (default is '')
             Description of the node.
-        :param log_entry_reference: str (default is '')
+        :param log_entry_reference: str, optional  (default is '')
             Reference to the creating log entry UUID.
-        :param log_creator: str (default is '')
+        :param log_creator: str, optional  (default is '')
             Creator of the log entry node was created from.
-        :param event_type: str (default is '')
+        :param event_type: str, optional  (default is '')
             Type of event the node represents.
-        :param icon_type: str (default is '')
+        :param icon_type: str, optional  (default is '')
             Icon the node shall use to display itself.
-        :param source: str (default is '')
+        :param source: str, optional  (default is '')
             Source of the corresponding log entry.
         """
 
@@ -72,10 +72,10 @@ class Node:
         self.icon_type = icon_type
         self.source = source
 
-    def time_string(self):
+    def time_string(self) -> str:
         """Returns the timestamp in a formatted string.
 
-        :return
+        :return str
             The formatted timestamp string.
         """
 
