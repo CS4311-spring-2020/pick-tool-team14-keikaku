@@ -9,12 +9,15 @@ from PyQt5.Qt import QColor
 from PyQt5.Qt import QBrush
 from PyQt5.Qt import QRectF
 from PyQt5.QtWidgets import QGraphicsTextItem
+from PyQt5.QtWidgets import QGraphicsProxyWidget
 
 
 class NodeGraphics(QGraphicsItem):
-    def __init__(self, node, name="Node Graphics", parent=None):
-        super().__init__(parent)
 
+    def __init__(self, node_module, parent=None):
+        super().__init__(parent)
+        self.node_module = node_module
+        self.content = self.node_module.content
         self._title_color = Qt.white
         self._name_font = QFont("Verdana", 10)
 
@@ -27,14 +30,27 @@ class NodeGraphics(QGraphicsItem):
         self._pen_selected = QPen(QColor("#FFFFA637"))
 
         # Background for the name of the node
-        self._brush_name = QBrush(QColor("#FF313131"))
-        self._brush_background = QBrush(QColor("#E3121212"))
+        self._brush_name = QBrush(QColor("#FF4D0000"))
+        self._brush_background = QBrush(QColor("#D0AA0000"))
 
         self.init_name()
         # Protected setter for name
-        self.name = name
+        self.name = self.node_module.name
+
+        # init relationships
+
+        # init contents
+        self.init_content()
 
         self.init_ui()
+
+    @property
+    def name(self): return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+        self.name_item.setPlainText(self._name)
 
     def init_ui(self):
         self.setFlag(QGraphicsItem.ItemIsSelectable)
@@ -48,13 +64,11 @@ class NodeGraphics(QGraphicsItem):
         self.name_item.setFont(self._name_font)
         self.name_item.setTextWidth(self.width - 2 * self._padding)
 
-    @property
-    def name(self): return self._name
-
-    @name.setter
-    def name(self, value):
-        self._name = value
-        self.name_item.setPlainText(self._name)
+    def init_content(self):
+        self.gr_content = QGraphicsProxyWidget(self)
+        self.content.setGeometry(self.edge_size, self.name_height + self.edge_size,
+                                 self.width - 2 * self.edge_size, self.height - 2 * self.edge_size - self.name_height)
+        self.gr_content.setWidget(self.content)
 
     def paint(self, painter: QPainter, style_options: QStyleOptionGraphicsItem, widget=None):
         # name

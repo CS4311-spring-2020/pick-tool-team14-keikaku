@@ -3,12 +3,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QApplication
-# Added for drawing on the window
-from PyQt5.QtGui import QBrush
-from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QPen
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QGraphicsItem
+from PyQt5.QtCore import QFile
 
 from src.gui.graph.attack_graph_scene import AttackGraphScence
 from src.gui.graph.attack_graph_view import AttackGraphView
@@ -24,6 +19,9 @@ class GraphEditorWindow(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.style_sheet_filename = "qss/nodestyle.qss"
+        self.load_style_sheet()
         self.init_ui()
 
     def init_ui(self):
@@ -41,7 +39,7 @@ class GraphEditorWindow(QWidget):
         self.scene = NodeScene()
         # self.gr_scene = self.scene.gr_scene
 
-        node = NodeModule(self.scene, "Test Text")
+        node = NodeModule(self.scene, "Node Name")
 
         # Create graphics view
         self.view = AttackGraphView(self.scene.gr_scene, self)
@@ -50,6 +48,13 @@ class GraphEditorWindow(QWidget):
 
         self.setWindowTitle("Graph Editor")
         self.show()
+
+    def load_style_sheet(self):
+        file = QFile(self.style_sheet_filename)
+        file.open(QFile.ReadOnly | QFile.Text)
+        stylesheet = file.readAll()
+        QApplication.instance().setStyleSheet(str(stylesheet, encoding="utf-8"))
+
 
 
 if __name__ == '__main__':
