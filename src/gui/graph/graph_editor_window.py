@@ -2,13 +2,16 @@ import sys
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtWidgets import QGraphicsView
+from PyQt5.QtWidgets import QGraphicsItem
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QFile
+from PyQt5.Qt import Qt
+from PyQt5.QtGui import QBrush
+from PyQt5.QtGui import QPen
 
-from src.gui.graph.attack_graph_scene import AttackGraphScence
-from src.gui.graph.attack_graph_view import AttackGraphView
-from src.gui.graph.node_scene import NodeScene
-from src.gui.graph.node_module import NodeModule
+from src.gui.graph.graph_editor_view import GraphEditorView
+from src.gui.graph.graph_editor_scene import GraphEditorScene
 
 class GraphEditorWindow(QWidget):
     """
@@ -20,40 +23,43 @@ class GraphEditorWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.style_sheet_filename = "qss/nodestyle.qss"
-        self.load_style_sheet()
+        # self.style_sheet_filename = "qss/nodestyle.qss"
+        # self.load_style_sheet()
         self.init_ui()
 
     def init_ui(self):
         self.setGeometry(200, 200, 800, 600)
 
-        # Stretches graphics view
+        # Creates Box layout and removes layout border (content margins)
         self.layout = QVBoxLayout()
-
-        # Removes content margins
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
 
-        # Create graphics scene
-        # TODO change so that it isn't reliant on gr_scene pointer
-        self.scene = NodeScene()
-        # self.gr_scene = self.scene.gr_scene
+        # Graph editor scene that holds all graph elements
+        self.graph_editor_scene = GraphEditorScene()
+        self.background_scene = self.graph_editor_scene.background_scene
 
-        node = NodeModule(self.scene, "Node Name")
-
-        # Create graphics view
-        self.view = AttackGraphView(self.scene.gr_scene, self)
+        # Create the view where the graph will be displayed
+        self.view = GraphEditorView(self.background_scene, self)
         self.layout.addWidget(self.view)
-
 
         self.setWindowTitle("Graph Editor")
         self.show()
 
-    def load_style_sheet(self):
-        file = QFile(self.style_sheet_filename)
-        file.open(QFile.ReadOnly | QFile.Text)
-        stylesheet = file.readAll()
-        QApplication.instance().setStyleSheet(str(stylesheet, encoding="utf-8"))
+        self.addDebugContent()
+
+    def addDebugContent(self):
+        brush = QBrush(Qt.red)
+        outline = QPen(Qt.black)
+        outline.setWidth(2)
+        node = self.background_scene.addEllipse(-100, -100, 100, 100, outline, brush)
+        node.setFlag(QGraphicsItem.ItemIsMovable)
+
+    # def load_style_sheet(self):
+    #     file = QFile(self.style_sheet_filename)
+    #     file.open(QFile.ReadOnly | QFile.Text)
+    #     stylesheet = file.readAll()
+    #     QApplication.instance().setStyleSheet(str(stylesheet, encoding="utf-8"))
 
 
 

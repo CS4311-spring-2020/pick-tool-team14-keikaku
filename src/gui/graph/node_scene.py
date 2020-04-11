@@ -1,30 +1,57 @@
-from src.gui.graph.attack_graph_scene import AttackGraphScence
-
-class NodeScene:
-    def __init__(self):
-        self.nodes = []
-        self.relationships = []
-
-        # TODO make the scene size dynamic
-        self.scene_width = 64000
-        self.scene_height = 64000
-
-        self.init_ui()
-
-    def init_ui(self):
-        self.gr_scene = AttackGraphScence(self)
-        self.gr_scene.set_gr_scene(self.scene_width, self.scene_height)
+import math
+from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtCore import QLine
+from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QPen
+from PyQt5.QtGui import QPainter
+from PyQt5.QtCore import QRectF
 
 
+class NodeScene(QGraphicsScene):
+    """
+    The graphics scene the layout background for the editor window
 
-    def add_node(self, node):
-        self.nodes.append(node)
+    Attributes
+    ----------
+    _color_background : QColor
+        The color of the background of the graphics Scene
+    _gridSize: int
+        Size of the large grid which will be drawn on top of the background color.
+    _gridSquares: int
+        Size of the smaller grids that will be inside of the grids of _gridSize
+    _pen_light : QPen
+        Used to draw the smaller grid squares on the graphics scene
+    _pen_dark : QPen
+        Used to draw the larger grid square on the scene
+    """
+    _color_background: QColor
+    _gridSize: int
+    _gridSquares: int
+    _pen_light: QPen
+    _pen_dark: QPen
 
-    def add_relationship(self, relationship):
-        self.relationships.append(relationship)
+    def __init__(self, parent=None):
+        """
+        Initializer method for the AttackGraphScene
 
-    def remove_node(self, node):
-        self.nodes.remove(node)
+        Parameters
+        ----------
+        parent: QWidget
+            parent widget
+        """
+        super().__init__(parent)
 
-    def remove_relationship(self, relationship):
-        self.relationships.remove(relationship)
+
+    def drawBackground(self, painter: QPainter, rect: QRectF):
+        """
+        Draws the grid of the graphics scene background.
+
+        Parameters
+        ----------
+        painter : QPainter
+            Performs low-level painting on widgets such as QPen for drawing the grid.
+        rect : QRectF
+            Defines a rectangle in the plane using floating point precision.
+        """
+        super().drawBackground(painter, rect)
+

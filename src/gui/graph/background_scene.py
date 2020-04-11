@@ -7,10 +7,9 @@ from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import QRectF
 
 
-class AttackGraphScence(QGraphicsScene):
+class BackgroundScene(QGraphicsScene):
     """
-    The graphics scene that holds attack graph elements that are
-    displayed to the user.
+    The graphics scene the layout background for the editor window
 
     Attributes
     ----------
@@ -31,7 +30,7 @@ class AttackGraphScence(QGraphicsScene):
     _pen_light: QPen
     _pen_dark: QPen
 
-    def __init__(self, scene : QGraphicsScene, parent=None):
+    def __init__(self, scene_width, scene_height, parent=None):
         """
         Initializer method for the AttackGraphScene
 
@@ -42,7 +41,7 @@ class AttackGraphScence(QGraphicsScene):
         """
         super().__init__(parent)
 
-        self.scene = scene
+        # self.scene = scene
 
         # settings
         self._gridSize = 20
@@ -58,10 +57,14 @@ class AttackGraphScence(QGraphicsScene):
         self._pen_dark.setWidth(2)
         self.setBackgroundBrush(self._color_background)
 
-    def set_gr_scene(self, scene_width: int, scene_height: int):
-        # This is where the focus of the scene will be
-        # TODO set this to the be where the las edited node is
-        self.setSceneRect(-scene_width // 2, -scene_height // 2, scene_width, scene_height)
+        # Size of the scene and paramters for backgrounf
+        self.scene_width, self.scene_height = scene_width, scene_height
+        self.setSceneRect(-self.scene_width // 2, -self.scene_height // 2, self.scene_width, self.scene_height)
+
+    # def set_gr_scene(self, scene_width: int, scene_height: int):
+    #     # This is where the focus of the scene will be
+    #     # TODO set this to the be where the las edited node is
+    #     self.setSceneRect(-scene_width // 2, -scene_height // 2, scene_width, scene_height)
 
     def drawBackground(self, painter: QPainter, rect: QRectF):
         """
