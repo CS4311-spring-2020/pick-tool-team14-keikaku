@@ -2,7 +2,6 @@ import splunklib.client as client
 import splunklib.results as results
 from splunklib.binding import AuthenticationError
 import json
-import time
 
 splunk_config = {'host': "localhost",  # Configuration details
                  'port': 8089,

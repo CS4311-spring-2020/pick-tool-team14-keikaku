@@ -11,15 +11,20 @@ __version__ = "0.5"
 import os
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
-    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QLabel, QTableWidgetItem
-from PyQt5.QtCore import Qt
+    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QTableWidgetItem, QMessageBox, QProgressBar
+from PyQt5.QtCore import Qt, QUrl
+from PyQt5.Qt import QLabel, QPixmap
 from PyQt5.uic import loadUi
 from definitions import UI_PATH
+from definitions import ICON_PATH
+from definitions import PICK_DATA
+from definitions import COPIED_FILES
 from src.model import settings
+from src.model import event
 from src.model.id_dictionary import IDDict
 from src.model.vector import ActiveVector
 from src.model.log_file import LogFile
-from src.model.splunk import SplunkManager
+from src.model.log_file import LogEntry
 from src.gui.change_config import UiChangeConfig
 from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
@@ -30,7 +35,7 @@ from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
 from src.gui.vector_db_analyst import UiVectorDBAnalyst
 from src.gui.vector_db_lead import UiVectorDBLead
-import ntpath
+from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
 
 
 class Ui(QMainWindow):
@@ -51,6 +56,8 @@ class Ui(QMainWindow):
 
     rowPosition_log_entry: int
     rowPosition_node: int
+    rowPosition_log_file: int
+    rowPosition_ear: int
     active_vector: ActiveVector
     vector_dictionary: IDDict
     log_file_dictionary: IDDict
@@ -60,11 +67,11 @@ class Ui(QMainWindow):
         """Initialize the main window and set all signals and slots
         associated with it.
         """
-
         super(Ui, self).__init__()
 
+        self.thread = None
+        self.selected_log_file_uid = None
         self.log_file_dictionary = IDDict()
-        self.__test_splunk('/Users/Daman2177/Desktop/test.log') #splunk test
 
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
@@ -89,25 +96,41 @@ class Ui(QMainWindow):
         self.commitButton.clicked.connect(self.__execute_change_config)
         self.syncButton = self.findChild(QPushButton, 'syncButton')
         self.syncButton.clicked.connect(self.__execute_vector_db)
-        self.directoryButton = self.findChild(QPushButton, 'directoryButton')
-        self.directoryButton.clicked.connect(self.__execute_directory_config)
         self.relationshipButton = self.findChild(QPushButton, 'relationshipsButton')
         self.relationshipButton.clicked.connect(self.__execute_relationship_config)
 
         self.logFileTable = self.findChild(QTableWidget, 'logFileTable')
-        self.logFileTable.setColumnWidth(0, 100)
+        self.logFileTable.itemSelectionChanged.connect(self.__update_ear_table)
+        self.logFileTable.setColumnHidden(0, True)
+        self.rowPosition_log_file = self.logFileTable.rowCount()
         self.logFileTable.setColumnWidth(1, 100)
-        self.logFileTable.setColumnWidth(2, 160)
+        self.logFileTable.setColumnWidth(2, 300)
         self.logFileTable.setColumnWidth(3, 160)
         self.logFileTable.setColumnWidth(4, 160)
+        self.logFileTable.setColumnWidth(5, 160)
+
+        self.acknowledgeButton = self.findChild(QPushButton, 'acknowledgeButton')
+        self.acknowledgeButton.clicked.connect(self.__force_ingest)
+        self.ingestButton = self.findChild(QPushButton, 'ingestButton')
+        self.ingestButton.clicked.connect(self.__start_ingestion)
+        self.validateButton = self.findChild(QPushButton, 'validateButton')
+        self.directoryButton = self.findChild(QPushButton, 'directoryButton')
+        self.directoryButton.clicked.connect(self.__execute_directory_config)
+        self.chosenSourceLabel = self.findChild(QLabel, 'chosenSourceLabel')
+        self.chosenSourceLabel.setOpenExternalLinks(True)
 
         self.earTable = self.findChild(QTableWidget, 'earTable')
+        self.rowPosition_ear = self.earTable.rowCount()
+        self.earTable.setColumnHidden(0, True)
         self.earTable.setColumnWidth(0, 120)
 
         self.logEntryTable = self.findChild(QTableWidget, 'logEntryTable')
-        self.logEntryTable.setColumnWidth(0, 120)
-        self.logEntryTable.setColumnWidth(1, 180)
-        self.logEntryTable.setColumnWidth(2, 160)
+        self.logEntryTable.setColumnHidden(0, True)
+        self.rowPosition_log_entry = self.logEntryTable.rowCount()
+        self.logEntryTable.setColumnWidth(1, 80)
+        self.logEntryTable.setColumnWidth(2, 200)
+        self.logEntryTable.setColumnWidth(3, 200)
+        self.logEntryTable.setColumnWidth(4, 400)
 
         self.nodeTable = self.findChild(QTableWidget, 'nodeTable')
         self.nodeTable.setColumnWidth(0, 80)
@@ -120,8 +143,8 @@ class Ui(QMainWindow):
         self.nodeTable.setColumnWidth(7, 120)
         self.nodeTable.setColumnWidth(8, 120)
         self.nodeTable.setColumnWidth(9, 150)
-        self.rowPosition_node = self.nodeTable.rowCount()
 
+        self.rowPosition_node = self.nodeTable.rowCount()
         self.descriptionLabel = self.findChild(QLabel, 'descriptionLabel_2')
         self.descriptionLabel.setText('')
 
@@ -136,32 +159,115 @@ class Ui(QMainWindow):
         self.deleteNodeButton.setShortcut("Ctrl+Backspace")
         self.deleteNodeButton.clicked.connect(self.__delete_node)
 
+        self.validateButton = self.findChild(QPushButton, 'validateButton')
+        self.validateButton.clicked.connect(self.__validate_file)
+
         self.tabWidget = self.findChild(QTabWidget, 'tabWidget')
         self.tabWidget.setCurrentIndex(settings.tab_index)
 
         self.__update_all_vector_info()
+        self.msg = QMessageBox()
 
-        self.__construct_log_entry_table()
+        self.progress = self.findChild(QProgressBar, 'fileProcessProgressBar')
+        self.progress.setValue(0)
 
         self.show()
 
-    def __test_splunk(self, file_path: str): # splunk test
-        splunk_manage = SplunkManager()  # connect to splunk
-        splunk_manage.create_index("testindex")
+    def __start_ingestion(self):
+        if not event.saved:
+            self.msg.setText("<font color='red'>Event is not Saved</font>")
+            self.msg.exec()
+        elif not settings.valid_structure:
+            self.msg.setText("<font color='red'>Directory structure is invalid!</font>")
+            self.msg.exec()
+        else:
+            self.acknowledgeButton.setEnabled(False)
+            self.ingestButton.setEnabled(False)
+            self.validateButton.setEnabled(False)
+            self.directoryButton.setEnabled(False)
+            self.thread = IngestWorker(PICK_DATA, COPIED_FILES)
+            self.thread.finished.connect(self.__on_finished)
+            self.thread.file_status.connect(self.__on_file_status)
+            self.thread.entry_status.connect(self.__on_entry_status)
+            self.thread.start()
 
-        file_name = ntpath.basename(file_path)
-        new_log_file = LogFile(file_path, file_name)  # create new log file
-        self.log_file_dictionary.add(new_log_file)
+    def __on_finished(self):
+        self.thread.quit()
+        self.thread.wait()
+        self.acknowledgeButton.setEnabled(True)
+        self.ingestButton.setEnabled(True)
+        self.validateButton.setEnabled(True)
+        self.directoryButton.setEnabled(True)
+        self.progress.setValue(0)
 
-        splunk_manage.add_file(file_path, 'testindex') # add file to index
+    def __on_file_status(self, log_file: LogFile, value: float):
+        self.logFileTable.blockSignals(True)
+        self.logFileTable.insertRow(self.rowPosition_log_file)
+        uid = self.log_file_dictionary.add(log_file)
 
-        log_entries = splunk_manage.search("search index=testindex | table _time _raw source host | reverse") # search index
+        self.logFileTable.setItem(self.rowPosition_log_file, 0, QTableWidgetItem(uid))
+        self.logFileTable.setItem(self.rowPosition_log_file, 1, QTableWidgetItem(log_file.file_name))
+        self.logFileTable.setItem(self.rowPosition_log_file, 2, QTableWidgetItem(log_file.file_path))
+        self.__insert_status_icon(self.rowPosition_log_file, 3, log_file.get_cleansing_status(), self.logFileTable)
+        self.__insert_status_icon(self.rowPosition_log_file, 4, log_file.get_validation_status(), self.logFileTable)
+        self.__insert_status_icon(self.rowPosition_log_file, 5, log_file.get_ingestion_status(), self.logFileTable)
+        self.__insert_status_icon(self.rowPosition_log_file, 6, log_file.get_acknowledged_status(), self.logFileTable)
 
-        line_num = len(log_entries)
-        for index in range(len(log_entries)):
-            print(log_entries[index]['_raw'])
-            new_log_file.add_log_entry(line_num, log_entries[index]['source'], log_entries[index]['_time'], log_entries[index]['_raw'])
-            line_num -= 1
+        self.rowPosition_log_file += 1
+        self.progress.setValue(value)
+        self.logFileTable.blockSignals(False)
+
+    def __on_entry_status(self, log_entry: LogEntry, uid: str):
+        self.logEntryTable.blockSignals(True)
+        self.logEntryTable.insertRow(self.rowPosition_log_entry)
+        print(str(log_entry.get_line_num()))
+        print(log_entry.get_timestamp())
+
+        self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem(uid))
+        self.logEntryTable.setItem(self.rowPosition_log_entry, 1, QTableWidgetItem(str(log_entry.get_line_num())))
+        self.logEntryTable.setItem(self.rowPosition_log_entry, 2, QTableWidgetItem(log_entry.get_source()))
+        self.logEntryTable.setItem(self.rowPosition_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
+        self.logEntryTable.setItem(self.rowPosition_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
+
+        self.rowPosition_log_entry += 1
+        self.logEntryTable.blockSignals(False)
+
+    def __validate_file(self):
+        if self.selected_log_file_uid is not None:
+            log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
+            print(log_file.get_file_name())
+            self.thread = ValidateWorker(log_file)
+            self.thread.file_updated.connect(self.__on_file_update)
+            self.thread.entry_status.connect(self.__on_entry_status)
+            self.thread.start()
+
+    def __on_file_update(self, log_file: LogFile, value: float):
+        self.logFileTable.blockSignals(True)
+        self.log_file_dictionary.set(self.selected_log_file_uid, log_file)
+        rows = self.logFileTable.selectionModel().selectedRows()
+        indexes = []
+        for row in rows:
+            indexes.append(row.row())
+            indexes = sorted(indexes, reverse=True)
+        for rowid in indexes:
+            self.__insert_status_icon(rowid, 3, log_file.get_cleansing_status(), self.logFileTable)
+            self.__insert_status_icon(rowid, 4, log_file.get_validation_status(), self.logFileTable)
+            self.__insert_status_icon(rowid, 5, log_file.get_ingestion_status(), self.logFileTable)
+            self.__insert_status_icon(rowid, 6, log_file.get_acknowledged_status(), self.logFileTable)
+
+        self.progress.setValue(value)
+        self.__on_finished()
+        self.__update_ear_table()
+        self.logFileTable.blockSignals(False)
+
+    def __force_ingest(self):
+        if self.selected_log_file_uid is not None:
+            log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
+            print(log_file.get_file_name())
+            self.thread = ForceIngestWorker(log_file)
+            self.thread.file_updated.connect(self.__on_file_update)
+            self.thread.entry_status.connect(self.__on_entry_status)
+            self.thread.start()
 
     def __execute_change_config(self):
         """Open the change configuration window."""
@@ -172,6 +278,7 @@ class Ui(QMainWindow):
         """Open the directory configuration window."""
 
         self.directory_window = UiDirectoryConfig()
+        self.directory_window.start_ingestion.connect(self.__start_ingestion)
 
     def __execute_event_config(self):
         """Open the event configuration window."""
@@ -273,14 +380,18 @@ class Ui(QMainWindow):
         for log_id, log in self.log_file_dictionary.items():
             for log_entry_id, log_entry in log.log_entries.items():
                 self.logEntryTable.insertRow(self.rowPosition_log_entry)
-                self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem(str(log_entry.get_line_num())))
-                self.logEntryTable.setItem(self.rowPosition_log_entry, 1, QTableWidgetItem(log_entry.get_timestamp()))
-                self.logEntryTable.setItem(self.rowPosition_log_entry, 2, QTableWidgetItem(log_entry.get_description()))
+                self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem(log_entry_id))
+                self.logEntryTable.setItem(self.rowPosition_log_entry, 1, QTableWidgetItem(str(log_entry.get_line_num())))
+                self.logEntryTable.setItem(self.rowPosition_log_entry, 2, QTableWidgetItem(log_entry.get_timestamp()))
+                self.logEntryTable.setItem(self.rowPosition_log_entry, 3, QTableWidgetItem(log_entry.get_description()))
 
         self.rowPosition_log_entry += 1
 
         for row in range(self.logEntryTable.rowCount()):
             self.__insert_combobox(row, 3, self.logEntryTable)
+
+    def __construct_log_table(self):
+        pass
 
     def __construct_node_table(self):
         """Constructs the node table for the active vector."""
@@ -318,6 +429,35 @@ class Ui(QMainWindow):
             self.rowPosition_node += 1
             self.nodeTable.blockSignals(False)
 
+    def __update_log_file(self):
+        pass
+
+    def __update_ear_table(self):
+        self.earTable.blockSignals(True)
+        rows = self.logFileTable.selectionModel().selectedRows()
+        self.earTable.setRowCount(0)
+        self.rowPosition_ear = 0
+        indexes = []
+        for row in rows:
+            indexes.append(row.row())
+            indexes = sorted(indexes, reverse=True)
+
+        for rowid in indexes:
+            url = bytearray(QUrl.fromLocalFile(self.logFileTable.item(rowid, 2).text()).toEncoded()).decode()
+            self.chosenSourceLabel.setText(f"<a href={url}>"
+                                           f"{self.logFileTable.item(rowid, 1).text()}</a>")
+
+            self.selected_log_file_uid = self.logFileTable.item(rowid, 0).text()
+            log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
+
+            if log_file.get_ear():
+                for line_num, error in log_file.get_ear():
+                    self.earTable.insertRow(self.rowPosition_ear)
+                    self.earTable.setItem(line_num - 1, 1, QTableWidgetItem(str(line_num)))
+                    self.earTable.setItem(line_num - 1, 2, QTableWidgetItem(error))
+                    self.rowPosition_ear += 1
+        self.earTable.blockSignals(False)
+
     def __delete_node(self):
         """Removes the selected node from the node table and from the node dictionary."""
 
@@ -335,6 +475,7 @@ class Ui(QMainWindow):
                     self.nodeTable.removeRow(rowid)
                     self.rowPosition_node -= 1
             self.nodeTable.blockSignals(False)
+
 
     @staticmethod
     def __insert_checkbox(row: int, col: int, table: QTableWidget):
@@ -373,6 +514,22 @@ class Ui(QMainWindow):
         combobox = QComboBox()
         layout = QHBoxLayout(cell_widget)
         layout.addWidget(combobox)
+        layout.setAlignment(Qt.AlignCenter)
+        layout.setContentsMargins(0, 0, 0, 0)
+        table.setCellWidget(row, col, cell_widget)
+
+    @staticmethod
+    def __insert_status_icon(row: int, col: int, status: bool, table: QTableWidget):
+        if status is True:
+            icon_path = os.path.join(ICON_PATH, 'check.png')
+        else:
+            icon_path = os.path.join(ICON_PATH, 'exit.png')
+
+        icon = QPixmap(icon_path).scaledToHeight(25).scaledToWidth(25)
+        cell_widget = QLabel()
+        cell_widget.setAlignment(Qt.AlignCenter)
+        cell_widget.setPixmap(icon)
+        layout = QHBoxLayout(cell_widget)
         layout.setAlignment(Qt.AlignCenter)
         layout.setContentsMargins(0, 0, 0, 0)
         table.setCellWidget(row, col, cell_widget)

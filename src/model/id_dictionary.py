@@ -88,3 +88,7 @@ class IDDict(QObject):
 		"""Emits edited that an object in the dictionary was edited."""
 
 		self.edited.emit()
+
+	def set(self, uid: str, thing: Any):
+		self.dictionary[uid] = thing
+

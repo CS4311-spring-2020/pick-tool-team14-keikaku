@@ -19,6 +19,7 @@ __version__ = "0.1"
 
 from PyQt5.QtCore import QDateTime
 
+saved: bool = False
 name: str = ''
 description: str = ''
 start_time: QDateTime = QDateTime()

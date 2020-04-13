@@ -14,7 +14,7 @@ __version__ = "0.5"
 import os
 
 from PyQt5.QtCore import QDateTime
-from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QLineEdit, QDateTimeEdit
+from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QLineEdit, QDateTimeEdit, QMessageBox
 from PyQt5.uic import loadUi
 from definitions import UI_PATH
 from src.model import event
@@ -61,17 +61,26 @@ class UiEventConfig(QDialog):
         self.description.setText(event.description)
         self.start_time.setDateTime(event.start_time)
         self.end_time.setDateTime(event.end_time)
+        self.msg = QMessageBox()
 
         self.show()
 
     def __save(self):
         """Saves the event information to settings and then closes the window."""
 
-        event.name = self.name.text()
-        event.description = self.description.text()
-        event.start_time = self.start_time.dateTime()
-        event.start_time = self.end_time.dateTime()
-        self.close()
+        if not self.name.text() or not self.description.text():
+            self.msg.setText("<font color='red'>Name or Description is empty!</font>")
+        elif self.start_time.dateTime().toPyDateTime() >= self.end_time.dateTime().toPyDateTime():
+                self.msg.setText("<font color='red'>Invalid end time!</font>")
+        else:
+            self.msg.setText("<font color='green'>Event Saved!</font>")
+            event.saved = True
+            event.name = self.name.text()
+            event.description = self.description.text()
+            event.start_time = self.start_time.dateTime().toPyDateTime()
+            event.end_time = self.end_time.dateTime().toPyDateTime()
+
+        self.msg.exec()
 
 
 if __name__ == "__main__":
