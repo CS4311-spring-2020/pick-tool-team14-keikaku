@@ -185,7 +185,7 @@ class Ui(QMainWindow):
             self.ingestButton.setEnabled(False)
             self.validateButton.setEnabled(False)
             self.directoryButton.setEnabled(False)
-            self.thread = IngestWorker(PICK_DATA, COPIED_FILES)
+            self.thread = IngestWorker(settings.root_folder, COPIED_FILES)
             self.thread.finished.connect(self.__on_finished)
             self.thread.file_status.connect(self.__on_file_status)
             self.thread.entry_status.connect(self.__on_entry_status)
