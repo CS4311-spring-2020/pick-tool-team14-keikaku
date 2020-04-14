@@ -1,10 +1,11 @@
 from PyQt5.Qt import QGraphicsItemGroup
-from PyQt5.Qt import QGraphicsLineItem
+from PyQt5.Qt import QRectF
 from PyQt5.Qt import QPen
 from PyQt5.Qt import Qt
 from src.gui.graph.graph_editor_scene import GraphEditorScene
 from src.gui.graph.node_item import NodeItem
 from src.gui.graph.relationship_item import RelationshipItem
+from src.gui.graph.vector_item_group import VectorItemGroup
 
 class GraphEditor:
     vectos: dict
@@ -22,23 +23,32 @@ class GraphEditor:
         self.init_ui()
 
     def init_ui(self):
-        self.graph_editor_scence = GraphEditorScene(self.scene_width, self.scene_height)
-        node_1 = NodeItem(-100, -100, "Hello", "Red")
-        node_2 = NodeItem(-200, -200, "Hello", "Red")
-        self.graph_editor_scence.addItem(node_1)
-        self.graph_editor_scence.addItem(node_2)
-        relationship = RelationshipItem(node_1.name, node_2.name, node_1.center_pos(), node_2.center_pos())
-        self.graph_editor_scence.addItem(relationship)
-        # line_2 = QLine()
+        self.graph_editor_scene = GraphEditorScene(self.scene_width, self.scene_height)
+        self.add_vector()
+        node1 = self.add_node(-100, -100)
+        node2 = self.add_node(100, 100)
+        self.add_relationship(node1, node2)
+        self.add_node_to_vector(node1)
+        self.add_node_to_vector(node2)
+        self.graph_editor_scene.addItem(node1)
+        self.graph_editor_scene.addItem(node2)
+        self.graph_editor_scene.addItem(self.vector.get_bound_box_item())
 
-    def add_vector(self, key, vector):
-        self.vectos[key] = vector
+    def add_vector(self):
+        self.vector = VectorItemGroup()
 
-    def add_node(self, key,  node):
-        self.nodes[key] = node
+    def add_node_to_vector(self, node):
+        self.vector.addToGroup(node)
 
-    def add_relationship(self, key, relationship):
-        self.relationships[key] = relationship
+    def add_node(self, x, y):
+        node_item = NodeItem(x, x, "Hello", "Red")
+        self.graph_editor_scene.addItem(node_item)
+        return node_item
+
+    def add_relationship(self, parent_node, child_node):
+        relationship = RelationshipItem(parent_node.name, child_node.name,
+                                        parent_node.center_pos(), child_node.center_pos(), parent_node)
+        self.graph_editor_scene.addItem(relationship)
 
     def remove_vector(self, key):
         self.vectos.pop(key)

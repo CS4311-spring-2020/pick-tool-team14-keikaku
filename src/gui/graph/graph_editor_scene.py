@@ -108,3 +108,4 @@ class GraphEditorScene(QGraphicsScene):
 
         painter.setPen(self._pen_dark)
         painter.drawLines(*lines_dark)
+

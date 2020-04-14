@@ -38,7 +38,7 @@ class GraphEditorWindow(QWidget):
 
         # Graph editor scene that holds all graph elements
         self.graph_editor_scene = GraphEditor()
-        self.graph_editor_scene = self.graph_editor_scene.graph_editor_scence
+        self.graph_editor_scene = self.graph_editor_scene.graph_editor_scene
 
 
         # Create the view where the graph will be displayed
