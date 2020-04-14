@@ -8,9 +8,9 @@ from PyQt5.Qt import QWheelEvent
 class GraphEditorView(QGraphicsView):
     def __init__(self, background_scene, parent=None):
         super().__init__(parent)
-        self.backgound_scene = background_scene
+        self.background_scene = background_scene
         self.init_ui()
-        self.setScene(self.backgound_scene)
+        self.setScene(self.background_scene)
 
         # variables for zooming
         self.zoom_in_factor = 1.25

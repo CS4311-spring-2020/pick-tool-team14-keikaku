@@ -6,12 +6,13 @@ from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsItem
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QFile
-from PyQt5.Qt import Qt
+from PyQt5.Qt import QGraphicsEllipseItem
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QPen
 
 from src.gui.graph.graph_editor_view import GraphEditorView
-from src.gui.graph.graph_editor_scene import GraphEditorScene
+from src.gui.graph.graph_editor import GraphEditor
+from src.gui.graph.node_item import NodeItem
 
 class GraphEditorWindow(QWidget):
     """
@@ -36,24 +37,16 @@ class GraphEditorWindow(QWidget):
         self.setLayout(self.layout)
 
         # Graph editor scene that holds all graph elements
-        self.graph_editor_scene = GraphEditorScene()
-        self.background_scene = self.graph_editor_scene.background_scene
+        self.graph_editor_scene = GraphEditor()
+        self.graph_editor_scene = self.graph_editor_scene.graph_editor_scence
+
 
         # Create the view where the graph will be displayed
-        self.view = GraphEditorView(self.background_scene, self)
+        self.view = GraphEditorView(self.graph_editor_scene, self)
         self.layout.addWidget(self.view)
 
         self.setWindowTitle("Graph Editor")
         self.show()
-
-        self.addDebugContent()
-
-    def addDebugContent(self):
-        brush = QBrush(Qt.red)
-        outline = QPen(Qt.black)
-        outline.setWidth(2)
-        node = self.background_scene.addEllipse(-100, -100, 100, 100, outline, brush)
-        node.setFlag(QGraphicsItem.ItemIsMovable)
 
     # def load_style_sheet(self):
     #     file = QFile(self.style_sheet_filename)
