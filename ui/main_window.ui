@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>949</width>
-    <height>669</height>
+    <width>1076</width>
+    <height>730</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,28 +98,68 @@
         <item>
          <layout class="QVBoxLayout" name="topVL">
           <item>
-           <widget class="QLabel" name="logFileTableLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-             </font>
-            </property>
-            <property name="text">
-             <string>Log Files</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="logFileTableLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Verdana</family>
+               </font>
+              </property>
+              <property name="text">
+               <string>Log Files</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Process:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QProgressBar" name="fileProcessProgressBar">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>24</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QTableWidget" name="logFileTable">
@@ -131,9 +171,21 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>801</width>
+              <width>0</width>
               <height>0</height>
              </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QAbstractScrollArea::AdjustIgnored</enum>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SingleSelection</enum>
             </property>
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
@@ -147,6 +199,22 @@
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>true</bool>
             </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderStretchLastSection">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>File Id</string>
+             </property>
+             <property name="font">
+              <font>
+               <family>Verdana</family>
+              </font>
+             </property>
+            </column>
             <column>
              <property name="text">
               <string>File name</string>
@@ -210,7 +278,7 @@
             </column>
             <column>
              <property name="text">
-              <string>View EAR</string>
+              <string>Acknowledge Status</string>
              </property>
              <property name="font">
               <font>
@@ -238,7 +306,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Enforcement Action Reports</string>
+             <string>Enforcement Action Report</string>
             </property>
            </widget>
           </item>
@@ -256,6 +324,12 @@
               <height>0</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <family>Verdana</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
             </property>
@@ -265,6 +339,23 @@
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>true</bool>
             </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+             <bool>true</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Ear Id</string>
+             </property>
+             <property name="font">
+              <font>
+               <family>Verdana</family>
+               <pointsize>13</pointsize>
+              </font>
+             </property>
+            </column>
             <column>
              <property name="text">
               <string>Line Number</string>
@@ -292,7 +383,7 @@
         <item>
          <layout class="QHBoxLayout" name="middleHL">
           <item>
-           <widget class="QLabel" name="chosenFileLabel">
+           <widget class="QLabel" name="SourceLabel">
             <property name="minimumSize">
              <size>
               <width>100</width>
@@ -311,12 +402,12 @@
              </font>
             </property>
             <property name="text">
-             <string>File Name:</string>
+             <string>Source:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="chosenFilePathLabel">
+           <widget class="QLabel" name="chosenSourceLabel">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -351,17 +442,39 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer">
+           <spacer name="spacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>0</width>
+              <height>0</height>
              </size>
             </property>
            </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="acknowledgeButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Verdana</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Acknowledge</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="validateButton">
@@ -383,7 +496,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="cancelButton">
+           <widget class="QPushButton" name="ingestButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -414,7 +527,7 @@
          <widget class="QTableWidget" name="logEntryTable">
           <property name="minimumSize">
            <size>
-            <width>680</width>
+            <width>0</width>
             <height>0</height>
            </size>
           </property>
@@ -426,15 +539,35 @@
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
            <bool>true</bool>
           </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
           </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
           <column>
            <property name="text">
-            <string>List Number</string>
+            <string>Entry Id</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>Verdana</family>
+             <pointsize>13</pointsize>
+            </font>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Line number</string>
            </property>
            <property name="font">
             <font>
@@ -447,7 +580,21 @@
           </column>
           <column>
            <property name="text">
-            <string>Log Entry Timestamp</string>
+            <string>Source</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>Verdana</family>
+             <pointsize>13</pointsize>
+            </font>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Timestamp</string>
            </property>
            <property name="font">
             <font>
@@ -460,7 +607,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Log Entry Event</string>
+            <string>Event</string>
            </property>
            <property name="font">
             <font>
@@ -952,6 +1099,9 @@
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
             <bool>true</bool>
            </attribute>
@@ -1242,8 +1392,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>949</width>
-     <height>26</height>
+     <width>1076</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

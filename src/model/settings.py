@@ -45,10 +45,16 @@ try:
     host_ip_address: str = socket.gethostbyname(hostname)
 except:
     host_ip_address: str = '127.0.0.1'
+
 target_ip_address: str = '127.0.0.1'
+
+root_folder = 'Root'
 red_team_folder: str = 'RedTeam'
 blue_team_folder: str = 'BlueTeam'
 white_team_folder: str = 'WhiteTeam'
+valid_structure: bool = False
+
+cleansed_files = []
 
 
 def toggle_lead():
