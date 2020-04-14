@@ -37,7 +37,6 @@ from src.model.vector import ActiveVector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
 
 
-
 class Ui(QMainWindow):
     """The main window which serves as an entry point to the application
     and provides the bulk of the system's interface.

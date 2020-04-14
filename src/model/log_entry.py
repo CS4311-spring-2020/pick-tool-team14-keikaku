@@ -3,7 +3,6 @@ from src.model.node import Node
 
 
 class LogEntry:
-
     # TODO add comments
     line_number: int
     timestamp: str

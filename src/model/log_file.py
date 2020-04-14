@@ -4,7 +4,6 @@ from src.model.log_entry import LogEntry
 
 
 class LogFile:
-
     # TODO add comments
     file_name: str
     file_path: str
@@ -37,7 +36,6 @@ class LogFile:
         return self.cleansing_status
 
     def get_validation_status(self) -> bool:
-
         # TODO add validation logic Validator class
         return self.validation_status
 

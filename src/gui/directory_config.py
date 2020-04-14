@@ -87,15 +87,16 @@ class UiDirectoryConfig(QDialog):
                 dir_match.append(os.path.join(root, dir))
 
         if len(dir_match) == 3:
+            valid_structure = True
             if self.redTeamText.text() not in dir_match:
                 self.msg.setText("<font color='red'>Red team directory not in Root directory!</font>")
+                valid_structure = False
             if self.blueTeamText.text() not in dir_match:
                 self.msg.setText("<font color='red'>Blue team directory not in Root directory!</font>")
+                valid_structure = False
             if self.whiteTeamText.text() not in dir_match:
                 self.msg.setText("<font color='red'>White team directory not in Root directory!</font>")
-            else:
-                valid_structure = True
-
+                valid_structure = False
         else:
             self.msg.setText(f"<font color='red'>Three directories expected {len(dir_match)} found!</font>")
 
