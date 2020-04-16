@@ -16,9 +16,6 @@ formats = [r'\d{1,2}[-/](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-/]\d{
            r'(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{1,2} \d{1,2}[:]\d{1,2}[:]\d{1,2} \d{4}',
            r'\d{4}[-/]\d{1,2}[-/]\d{1,2} \d{1,2}[:]\d{1,2}[:]\d{1,2}']
 
-start_time = event.start_time
-end_time = event.end_time
-
 
 def remove_non_printable(line):
     cleansed_line = "".join(list(filter(lambda str: str in string.printable, line)))
@@ -39,13 +36,13 @@ def create_file_copy(log_file_path, directory_path):
     return copy_log_file_path
 
 
-def cleanse_log_file(self, log_file_path):
+def cleanse_log_file(log_file_path):
     if os.path.isfile(log_file_path) and os.path.getsize(log_file_path) > 0:
         try:
             with open(log_file_path) as in_file, open(log_file_path, 'r+') as out_file:
                 for line in in_file:
                     if line.strip():
-                        clean_line = self.remove_non_printable(line)
+                        clean_line = remove_non_printable(line)
                         out_file.writelines(clean_line)
                 out_file.truncate()
         except IOError as e:
@@ -152,7 +149,9 @@ def __convert_to_standard(date_time_str):
 
 
 def __timestamp_bounds(date_time):
-    print(date_time)
+    start_time = event.start_time
+    end_time = event.end_time
+
     if date_time < start_time:
         return "Bounds Error: Timestamp is before start of event!"
     elif date_time > end_time:
