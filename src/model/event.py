@@ -29,6 +29,7 @@ from src.util import file_util
 
 __filename: str = "event.pk"
 
+saved: bool = False
 name: str = ''
 description: str = ''
 start_time: QDateTime = QDateTime()
