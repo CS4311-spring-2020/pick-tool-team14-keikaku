@@ -37,6 +37,14 @@ from src.model.vector import ActiveVector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
 
 
+class QComboBoxVector(QComboBox):
+
+    row: int
+
+    def __init__(self):
+        super().__init__()
+        self.row = -1
+
 class Ui(QMainWindow):
     """The main window which serves as an entry point to the application
     and provides the bulk of the system's interface.
@@ -105,6 +113,7 @@ class Ui(QMainWindow):
         self.logFileTable.setColumnWidth(3, 160)
         self.logFileTable.setColumnWidth(4, 160)
         self.logFileTable.setColumnWidth(5, 160)
+        self.logFileTable.setColumnWidth(6, 160)
 
         self.acknowledgeButton = self.findChild(QPushButton, 'acknowledgeButton')
         self.acknowledgeButton.clicked.connect(self.__force_ingest)
@@ -190,28 +199,6 @@ class Ui(QMainWindow):
         self.progress = self.findChild(QProgressBar, 'fileProcessProgressBar')
         self.progress.setValue(0)
 
-        # test
-        self.logEntryTable.blockSignals(True)
-        self.logEntryTable.insertRow(self.rowPosition_log_entry)
-
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem('uid'))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 1, QTableWidgetItem('1'))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 2, QTableWidgetItem('source'))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 3, QTableWidgetItem('12:00'))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 4, QTableWidgetItem('blah'))
-
-        self.__insert_vector_combobox(self.rowPosition_log_entry, 5, self.logEntryTable,
-                                      self.vector_dictionary.items())
-        widget = self.logEntryTable.cellWidget(self.rowPosition_log_entry, 5)
-        combobox = widget.findChild(QComboBox, 'combobox')
-        combobox.row = self.rowPosition_log_entry
-        combobox.addItem('Test', 'Test #')
-        combobox.currentIndexChanged.connect(lambda: self.__add_node(combobox.row, combobox.currentData()))
-
-        self.rowPosition_log_entry += 1
-        self.logEntryTable.blockSignals(False)
-        # test
-
         self.show()
 
     def __start_ingestion(self):
@@ -268,6 +255,9 @@ class Ui(QMainWindow):
         self.logEntryTable.setItem(self.rowPosition_log_entry, 2, QTableWidgetItem(log_entry.get_source()))
         self.logEntryTable.setItem(self.rowPosition_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
         self.logEntryTable.setItem(self.rowPosition_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
+
+        self.__insert_vector_combobox(self.rowPosition_log_entry, 5, self.logEntryTable,
+                                      self.vector_dictionary.items())
 
         self.rowPosition_log_entry += 1
         self.logEntryTable.blockSignals(False)
@@ -525,17 +515,20 @@ class Ui(QMainWindow):
             if log_entry is not None:
                 self.nodeTable.blockSignals(True)
                 # update vector
-                v_id = log_entry.get_vector_id
+                v_id = log_entry.get_vector_id()
                 if v_id is not None:
+                    print(v_id)
                     self.vector_dictionary.delete(v_id)
                 log_entry.set_vector_id(vector_id)
-                # TODO: Construct Node
-                # self.nodeTable.insertRow(self.row_position_node)
-                # self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
-                # print('Adding node to: ' + str(v.name))
-                # uid = self.active_vector.vector.add_node()
-                # self.nodeTable.setItem(self.row_position_node, 0, QTableWidgetItem(uid))
-                # self.row_position_node += 1
+                self.nodeTable.insertRow(self.row_position_node)
+                uid = self.active_vector.vector.add_node()
+                self.nodeTable.setItem(self.row_position_node, 0, QTableWidgetItem(uid))
+                self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(log_entry.get_timestamp()))
+                self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(log_entry.get_description()))
+                self.nodeTable.setItem(self.row_position_node, 8, QTableWidgetItem(log_entry.get_source()))
+                self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
+
+                self.row_position_node += 1
                 self.nodeTable.blockSignals(False)
                 break
 
@@ -668,8 +661,7 @@ class Ui(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         table.setCellWidget(row, col, cell_widget)
 
-    @staticmethod
-    def __insert_vector_combobox(row: int, col: int, table: QTableWidget, vector_dictionary: IDDict):
+    def __insert_vector_combobox(self, row: int, col: int, table: QTableWidget, vector_dictionary: IDDict):
         """Inserts a centered combobox into a given table cell.
 
         :param row: int
@@ -688,6 +680,9 @@ class Ui(QMainWindow):
         combobox.addItem('None', 0)
         for vector_id, v in vector_dictionary:
             combobox.addItem(v.name, vector_id)
+
+        combobox.row = row
+        combobox.currentIndexChanged.connect(lambda: self.__add_node(combobox.row, combobox.currentData()))
         layout = QHBoxLayout(cell_widget)
         layout.addWidget(combobox)
         layout.setAlignment(Qt.AlignCenter)
@@ -717,12 +712,3 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = Ui()
     app.exec_()
-
-
-class QComboBoxVector(QComboBox):
-
-    row: int
-
-    def __init__(self):
-        super().__init__()
-        self.row = -1
