@@ -88,7 +88,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="logFileTab">
        <attribute name="title">
@@ -558,7 +558,6 @@
            <property name="font">
             <font>
              <family>Verdana</family>
-             <pointsize>13</pointsize>
             </font>
            </property>
            <property name="textAlignment">
@@ -567,7 +566,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Line number</string>
+            <string>Line</string>
            </property>
            <property name="font">
             <font>
@@ -585,7 +584,7 @@
            <property name="font">
             <font>
              <family>Verdana</family>
-             <pointsize>13</pointsize>
+             <pointsize>9</pointsize>
             </font>
            </property>
            <property name="textAlignment">
@@ -1393,7 +1392,7 @@
      <x>0</x>
      <y>0</y>
      <width>1076</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

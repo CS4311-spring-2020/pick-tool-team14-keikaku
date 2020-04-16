@@ -9,12 +9,14 @@ class LogEntry:
     description: str
     source: str
     host: str
+    vector_id: str
 
     def __init__(self, line_number, source, time_stamp, description):
         self.line_number = line_number
         self.source = source
         self.time_stamp = time_stamp
         self.description = description
+        self.vector_id = None
 
     def get_line_num(self) -> int:
         return self.line_number
@@ -30,3 +32,9 @@ class LogEntry:
 
     def get_host(self) -> str:
         return self.host
+
+    def get_vector_id(self) -> str:
+        return self.vector_id
+
+    def set_vector_id(self, vector_id: str):
+        self.vector_id = vector_id

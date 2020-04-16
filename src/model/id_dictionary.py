@@ -42,6 +42,15 @@ class IDDict(QObject):
 
 		return self.dictionary.items()
 
+	def values(self):
+		"""Retrieves all values in the dictionary.
+
+		:return list
+			A list of values.
+		"""
+
+		return self.dictionary.values()
+
 	def get(self, uid: str) -> Any:
 		"""Retrieves an object given it's UID.
 
@@ -93,4 +102,3 @@ class IDDict(QObject):
 
 	def set(self, uid: str, thing: Any):
 		self.dictionary[uid] = thing
-

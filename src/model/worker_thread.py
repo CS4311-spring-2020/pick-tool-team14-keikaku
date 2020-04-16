@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 from src.model.log_file import LogFile
-from src.model.validator import Validator
+from src.model import validator
 from src.model.log_entry import LogEntry
 from src.model.queue import Queue
 from src.model.splunk import SplunkManager
@@ -18,7 +18,6 @@ class IngestWorker(QThread):
     def __init__(self, directory_path, copies_directory_path):
         self.directory_path = directory_path
         self.copies_directory_path = copies_directory_path
-        self.validator = Validator()
         self.files_to_process = Queue()
         self.splunk_manage = SplunkManager()
         self.progress_value = 0
@@ -37,16 +36,16 @@ class IngestWorker(QThread):
         while not self.files_to_process.is_empty():
             line_num = 1
             file_path = self.files_to_process.dequeue()
-            file_copy_path = self.validator.create_file_copy(file_path, self.copies_directory_path)
+            file_copy_path = validator.create_file_copy(file_path, self.copies_directory_path)
             file = os.path.basename(file_copy_path)
             file_name = file.split('.')
             log_file = LogFile(file, file_copy_path)
             print(file_name[1])
             if file_name[1] == 'csv':
-                self.validator.cleanse_csv_file(file_copy_path)
+                validator.cleanse_csv_file(file_copy_path)
                 log_file.set_cleansing_status(True)
                 if log_file.get_cleansing_status() is True:
-                    validation_errors = self.validator.validate_csv_file(file_copy_path)
+                    validation_errors = validator.validate_csv_file(file_copy_path)
                     if validation_errors:
                         for key, value in validation_errors.items():
                             print(key, value)
@@ -56,10 +55,10 @@ class IngestWorker(QThread):
                         log_file.set_validation_status(True)
 
             if file_name[1] == 'log':
-                self.validator.cleanse_log_file(file_copy_path)
+                validator.cleanse_log_file(file_copy_path)
                 log_file.set_cleansing_status(True)
                 if log_file.get_cleansing_status() is True:
-                    validation_errors = self.validator.validate_log_file(file_copy_path)
+                    validation_errors = validator.validate_log_file(file_copy_path)
                     if validation_errors:
                         for key, value in validation_errors.items():
                             print(key, value)
@@ -78,7 +77,7 @@ class IngestWorker(QThread):
 
                 for index in range(len(log_entries)):
                     uid = log_file.add_log_entry(line_num, log_entries[index]['source'], log_entries[index]['_time'],
-                                               log_entries[index]['_raw'])
+                                                 log_entries[index]['_raw'])
 
                     self.entry_status.emit(log_file.get_log_entry(uid), uid)
                     line_num += 1
@@ -96,7 +95,6 @@ class ValidateWorker(QThread):
     log_file: LogFile
 
     def __init__(self, log_file):
-        self.validator = Validator()
         self.files_to_process = Queue()
         self.splunk_manage = SplunkManager()
         self.log_file = log_file
@@ -109,10 +107,10 @@ class ValidateWorker(QThread):
         file_name = file.split('.')
 
         if file_name[1] == 'csv':
-            self.validator.cleanse_csv_file(file_path)
+            validator.cleanse_csv_file(file_path)
             self.log_file.set_cleansing_status(True)
             if self.log_file.get_cleansing_status() is True:
-                validation_errors = self.validator.validate_csv_file(file_path)
+                validation_errors = validator.validate_csv_file(file_path)
                 if validation_errors:
                     for key, value in validation_errors.items():
                         print(key, value)
@@ -123,10 +121,10 @@ class ValidateWorker(QThread):
                     self.log_file.ear.set_ear(validation_errors)
 
         if file_name[1] == 'log':
-            self.validator.cleanse_log_file(file_path)
+            validator.cleanse_log_file(file_path)
             self.log_file.set_cleansing_status(True)
             if self.log_file.get_cleansing_status() is True:
-                validation_errors = self.validator.validate_log_file(file_path)
+                validation_errors = validator.validate_log_file(file_path)
                 if validation_errors:
                     for key, value in validation_errors.items():
                         print(key, value)
@@ -161,7 +159,6 @@ class ForceIngestWorker(QThread):
     log_file: LogFile
 
     def __init__(self, log_file):
-        self.validator = Validator()
         self.files_to_process = Queue()
         self.splunk_manage = SplunkManager()
         self.log_file = log_file
@@ -178,8 +175,8 @@ class ForceIngestWorker(QThread):
 
         for index in range(len(log_entries)):
             uid = self.log_file.add_log_entry(line_num, log_entries[index]['source'],
-                                                      log_entries[index]['_time'],
-                                                      log_entries[index]['_raw'])
+                                              log_entries[index]['_time'],
+                                              log_entries[index]['_raw'])
 
             self.entry_status.emit(self.log_file.get_log_entry(uid), uid)
             line_num += 1

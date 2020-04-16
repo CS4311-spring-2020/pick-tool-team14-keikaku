@@ -37,10 +37,12 @@ class LogFile:
 
     def get_validation_status(self) -> bool:
         # TODO add validation logic Validator class
+
         return self.validation_status
 
     def get_acknowledged_status(self) -> bool:
         # TODO add validation logic Validator class
+
         return self.acknowledged_status
 
     def get_ingestion_status(self) -> bool:
@@ -64,10 +66,10 @@ class LogFile:
     def add_log_entry(self, line_number: str, source: str, time_stamp: str, description: str):
         return self.log_entries.add(LogEntry(line_number, source, time_stamp, description))
 
-    def remove_log_entry(self, log_entry_id: int):
+    def remove_log_entry(self, log_entry_id: str):
         self.log_entries.delete(log_entry_id)
 
-    def get_log_entry(self, log_entry_id: int):
+    def get_log_entry(self, log_entry_id: str) -> LogEntry:
         return self.log_entries.get(log_entry_id)
 
     def log_entries(self) -> IDDict:
