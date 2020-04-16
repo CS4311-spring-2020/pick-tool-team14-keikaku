@@ -13,7 +13,8 @@ import os
 from PyQt5.Qt import QLabel, QPixmap
 from PyQt5.QtCore import Qt, QObject, QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
-    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QTableWidgetItem, QMessageBox, QProgressBar
+    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QTableWidgetItem, QMessageBox, QProgressBar, QGraphicsView, \
+    QSplitter
 from PyQt5.uic import loadUi
 
 from definitions import UI_PATH, ICON_PATH, COPIED_FILES
@@ -35,7 +36,16 @@ from src.model.log_entry import LogEntry
 from src.model.id_dictionary import IDDict
 from src.model.vector import ActiveVector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
+from src.gui.graph.graph_editor_view import GraphEditorView
+from src.gui.graph.graph_editor import  GraphEditor
 
+class QComboBoxVector(QComboBox):
+
+    row: int
+
+    def __init__(self):
+        super().__init__()
+        self.row = -1
 
 class Ui(QMainWindow):
     """The main window which serves as an entry point to the application
@@ -54,6 +64,7 @@ class Ui(QMainWindow):
     active_vector: ActiveVector
     vector_dictionary: IDDict
     log_file_dictionary: IDDict
+    graph_editor_view : QGraphicsView
 
     row_position_node: int
     rowPosition_log_file: int
@@ -211,6 +222,14 @@ class Ui(QMainWindow):
         self.rowPosition_log_entry += 1
         self.logEntryTable.blockSignals(False)
         # test
+
+        self.splitter = self.findChild(QSplitter, "splitter")
+        self.graph_editor = GraphEditor()
+        self.graph_editor_scene = self.graph_editor.graph_editor_scene
+        self.graph_editor_view = GraphEditorView(self.graph_editor_scene, parent=self.splitter)
+
+
+
 
         self.show()
 
@@ -719,10 +738,4 @@ if __name__ == "__main__":
     app.exec_()
 
 
-class QComboBoxVector(QComboBox):
 
-    row: int
-
-    def __init__(self):
-        super().__init__()
-        self.row = -1

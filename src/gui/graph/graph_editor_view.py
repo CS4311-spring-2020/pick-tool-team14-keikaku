@@ -1,16 +1,29 @@
-from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtGui import QPainter
-from PyQt5.Qt import QMouseEvent
+from PyQt5.Qt import QGraphicsScene
 from PyQt5.Qt import QWheelEvent
+from src.gui.graph.graph_editor_scene import GraphEditorScene
 
 
 class GraphEditorView(QGraphicsView):
-    def __init__(self, background_scene, parent=None):
+    """
+    GraphEditorView provides a widget for displaying the contents of a GraphScene.
+
+    Attributes
+    ----------
+    graph_editor_scene : GraphEditorScene
+       Class that provides a surface for managing a large number of 2D graphical items.
+    """
+
+    graph_editor_scene: GraphEditorScene
+
+    def __init__(self, graph_editor_scene: GraphEditorScene, parent=None):
         super().__init__(parent)
-        self.background_scene = background_scene
+
+        # get scene and initialize the graph view
+        self.graph_editor_scene = graph_editor_scene
+        self.setScene(self.graph_editor_scene)
         self.init_ui()
-        self.setScene(self.background_scene)
 
         # variables for zooming
         self.zoom_in_factor = 1.25
@@ -18,6 +31,10 @@ class GraphEditorView(QGraphicsView):
         self.zoom = 5
         self.zoom_step = 1
         self.zoom_range = [0, 10]
+
+    '''
+    Sets graphics and general behavior of to graphics view.
+    '''
 
     def init_ui(self):
         # # remove anti aliasing
@@ -29,7 +46,15 @@ class GraphEditorView(QGraphicsView):
         # tracks mouse position for zoom
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
 
-    def wheelEvent(self, wheel_event : QWheelEvent):
+    '''
+    Listen to QWheelEvent and handles zooming in and out of the given GraphEditorScene
+
+    wheel_event: QWheelEvent
+         Class that contains parameters that describe a wheel event.
+    '''
+
+    def wheelEvent(self, wheel_event: QWheelEvent):
+
         # calculate zoom factor
         zoom_out_factor = 1 / self.zoom_in_factor
 
@@ -50,21 +75,6 @@ class GraphEditorView(QGraphicsView):
             self.zoom = self.zoom_range[0]
             clapped = True
 
-
-        #set scene scale
-        if not clapped :
+        # set scene scale
+        if not clapped:
             self.scale(zoom_factor, zoom_factor)
-
-
-
-    # def mousePressEvent(self, mouse_event : QMouseEvent):
-    #     if mouse_event.button() == Qt.MiddleButton:
-    #         self.setDragMode(QGraphicsView.ScrollHandDrag)
-    #     else:
-    #         super().mousePressEvent(mouse_event)
-    #
-    # def mouseReleaseEvent(self, mouse_event : QMouseEvent):
-    #     if mouse_event.button() == Qt.MiddleButton:
-    #         self.setDragMode(QGraphicsView.ScrollHandDrag)
-    #     else:
-    #         super().mousePressEvent(mouse_event)

@@ -31,52 +31,46 @@ class GraphEditorScene(QGraphicsScene):
     _pen_dark: QPen
 
     def __init__(self, scene_width, scene_height, parent=None):
-        """
-        Initializer method for the AttackGraphScene
-
-        Parameters
-        ----------
-        parent: QWidget
-            parent widget
-        """
         super().__init__(parent)
 
-        # self.scene = scene
+        # settings for the background
+        self.scene_width, self.scene_height = scene_width, scene_height
+        self.init_background_params()
 
-        # settings
+    '''
+        Sets parameters that will draw the grid background
+    '''
+
+    def init_background_params(self):
+        # Size and color of the grid squares
         self._gridSize = 20
         self._gridSquares = 5
         self._color_background = QColor("#393939")
         self._color_light = QColor("2F2F2F")
         self._color_dark = QColor("292929")
 
-        # For creating the grid
+        # Pens and widths to create the lines
         self._pen_light = QPen(self._color_light)
         self._pen_light.setWidth(1)
         self._pen_dark = QPen(self._color_dark)
         self._pen_dark.setWidth(2)
         self.setBackgroundBrush(self._color_background)
 
-        # Size of the scene and paramters for backgrounf
-        self.scene_width, self.scene_height = scene_width, scene_height
+        # sets scene rectangle
         self.setSceneRect(-self.scene_width // 2, -self.scene_height // 2, self.scene_width, self.scene_height)
 
-    # def set_gr_scene(self, scene_width: int, scene_height: int):
-    #     # This is where the focus of the scene will be
-    #     # TODO set this to the be where the las edited node is
-    #     self.setSceneRect(-scene_width // 2, -scene_height // 2, scene_width, scene_height)
+    """
+           Draws the grid of the graphics scene background.
+
+           Parameters
+           ----------
+           painter : QPainter
+               Performs low-level painting on widgets such as QPen for drawing the grid.
+           rect : QRectF
+               Defines a rectangle in the plane using floating point precision.
+    """
 
     def drawBackground(self, painter: QPainter, rect: QRectF):
-        """
-        Draws the grid of the graphics scene background.
-
-        Parameters
-        ----------
-        painter : QPainter
-            Performs low-level painting on widgets such as QPen for drawing the grid.
-        rect : QRectF
-            Defines a rectangle in the plane using floating point precision.
-        """
         super().drawBackground(painter, rect)
 
         # here we create our grid
@@ -108,4 +102,3 @@ class GraphEditorScene(QGraphicsScene):
 
         painter.setPen(self._pen_dark)
         painter.drawLines(*lines_dark)
-

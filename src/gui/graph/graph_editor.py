@@ -1,19 +1,31 @@
-from PyQt5.Qt import QGraphicsItemGroup
-from PyQt5.Qt import QRectF
-from PyQt5.Qt import QPen
-from PyQt5.Qt import Qt
 from src.gui.graph.graph_editor_scene import GraphEditorScene
 from src.gui.graph.node_item import NodeItem
 from src.gui.graph.relationship_item import RelationshipItem
 from src.gui.graph.vector_item_group import VectorItemGroup
 
 class GraphEditor:
-    vectos: dict
+    '''
+        This class handle the functions that will be performed on the graph editor which mostly includes adding and
+        deleting items from the the GraphEditorScene
+
+        Attributes
+        ----------
+        vectors : dict
+            dictionary containing all the VectorItemGroups
+        node : dict
+            dictionary containing all the NodeItems
+        relationships: dict
+            dictionary containing all the RelationshipItems
+        graph_editor_scene : GraphEditorScene
+            The GraphEditorScene that we give the items created by this class
+    '''
+    vectors: dict
     nodes: dict
     relationships: dict
+    graph_editor_scene : GraphEditorScene
 
     def __init__(self):
-        self.vectos = {}
+        self.vectors = {}
         self.nodes = {}
         self.relationships = {}
 
@@ -22,8 +34,13 @@ class GraphEditor:
 
         self.init_ui()
 
+    '''
+        Initializes parameters for this class
+    '''
+
     def init_ui(self):
         self.graph_editor_scene = GraphEditorScene(self.scene_width, self.scene_height)
+        # @TODO The following is hard coded and will be automated later
         self.add_vector()
         node1 = self.add_node(-100, -100)
         node2 = self.add_node(100, 100)
@@ -51,7 +68,7 @@ class GraphEditor:
         self.graph_editor_scene.addItem(relationship)
 
     def remove_vector(self, key):
-        self.vectos.pop(key)
+        self.vectors.pop(key)
 
     def remove_node(self, key):
         self.nodes.pop(key)
