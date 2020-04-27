@@ -13,7 +13,7 @@ import os
 from PyQt5.Qt import QLabel, QPixmap
 from PyQt5.QtCore import Qt, QObject, QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
-    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QTableWidgetItem, QMessageBox, QProgressBar
+    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QTableWidgetItem, QMessageBox, QProgressBar, QFileDialog
 from PyQt5.uic import loadUi
 
 from definitions import UI_PATH, ICON_PATH, COPIED_FILES
@@ -76,6 +76,7 @@ class Ui(QMainWindow):
 
         self.thread = None
         self.selected_log_file_uid = None
+        self.dialog = QFileDialog
         self.log_file_dictionary = IDDict()
 
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
@@ -149,6 +150,11 @@ class Ui(QMainWindow):
         self.nodeTable.setColumnWidth(7, 120)
         self.nodeTable.setColumnWidth(8, 120)
         self.nodeTable.setColumnWidth(9, 150)
+
+        self.nodeTable.itemChanged.connect(self.__update_node_cell)
+
+        self.iconButton = self.findChild(QPushButton, 'selectIconButton')
+        self.iconButton.clicked.connect(self.__select_icon)
 
         self.row_position_node = self.nodeTable.rowCount()
 
@@ -330,6 +336,11 @@ class Ui(QMainWindow):
 
         self.relationship_window = UiRelationshipConfig(self.active_vector.vector)
 
+    def __execute_icon_config(self):
+        """Open the icon configuration window."""
+
+        self.icon_window = UiIconConfig()
+
     def __execute_team_config(self):
         """Open the team configuration window."""
 
@@ -492,7 +503,9 @@ class Ui(QMainWindow):
             self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
             # print('Adding node to: ' + str(v.name))
             uid = self.active_vector.vector.add_node()
-            self.nodeTable.setItem(self.row_position_node, 0, QTableWidgetItem(uid))
+            item = QTableWidgetItem(uid)
+            self.nodeTable.setItem(self.row_position_node, 0, item)
+            item.setFlags((Qt.ItemIsSelectable | Qt.ItemIsEnabled))
             self.row_position_node += 1
             self.nodeTable.blockSignals(False)
 
@@ -532,8 +545,33 @@ class Ui(QMainWindow):
                 self.nodeTable.blockSignals(False)
                 break
 
-    def __update_log_file(self):
-        pass
+    def __update_node_cell(self, item: QTableWidgetItem):
+        """Updates the node information from the cell that was just edited.
+
+        :param item: QTableWidgetItem
+            The item in the table cell which contains the information to update.
+        """
+
+        node = self.active_vector.vector.node_get(self.nodeTable.item(item.row(), 0).text())
+        if item.column() == 1:
+            node.set_name(item.text())
+        elif item.column() == 2:
+            node.set_timestamp(item.text())
+        elif item.column() == 3:
+            node.set_description(item.text())
+        elif item.column() == 4:
+            node.set_log_entry_reference(item.text())
+        elif item.column() == 5:
+            node.set_log_creator(item.text())
+        elif item.column() == 6:
+            node.set_event_type(item.text())
+        elif item.column() == 7:
+            node.set_icon_type(item.text())
+        elif item.column() == 8:
+            node.set_source(item.text())
+        else:
+            print('Invalid column')
+            return
 
     def __update_ear_table(self):
         self.earTable.blockSignals(True)
@@ -639,8 +677,8 @@ class Ui(QMainWindow):
         for arg in argv:
             arg.blockSignals(block)
 
-    @staticmethod
-    def __insert_checkbox(row: int, col: int, table: QTableWidget):
+
+    def __insert_checkbox(self, row: int, col: int, table: QTableWidget):
         """Inserts a centered checkbox into a given table cell.
 
         :param row: int
@@ -660,6 +698,17 @@ class Ui(QMainWindow):
         layout.setAlignment(Qt.AlignCenter)
         layout.setContentsMargins(0, 0, 0, 0)
         table.setCellWidget(row, col, cell_widget)
+        checkbox.row = row
+        checkbox.toggled.connect(lambda: self.__update_node_visibility(checkbox.row, checkbox))
+
+    def __update_node_visibility(self, row: int, checkbox: QCheckBox):
+        node = self.active_vector.vector.node_get(self.nodeTable.item(row, 0).text())
+        if checkbox.isChecked():
+            print("here")
+            node.set_visibility(True)
+        else:
+            print("here")
+            node.set_visibility(False)
 
     def __insert_vector_combobox(self, row: int, col: int, table: QTableWidget, vector_dictionary: IDDict):
         """Inserts a centered combobox into a given table cell.
@@ -689,6 +738,26 @@ class Ui(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         table.setCellWidget(row, col, cell_widget)
 
+    def __select_icon(self):
+        self.nodeTable.blockSignals(True)
+        if self.nodeTable.selectionModel().hasSelection():
+            indexes = []
+            rows = self.nodeTable.selectionModel().selectedRows()
+            for row in rows:
+                indexes.append(row.row())
+            indexes = sorted(indexes, reverse=True)
+            for rowid in indexes:
+                icon_file_path = self.dialog.getOpenFileName()[0]
+                if icon_file_path:
+                    file = os.path.basename(icon_file_path)
+                    file_name = file.split('.')
+                    if file_name[1] == 'jpg' or file_name[1] == 'png':
+                        self.__insert_icon(rowid, 7, icon_file_path, self.nodeTable)
+                        node = self.active_vector.vector.node_get(self.nodeTable.item(rowid, 0).text())
+                        node.set_icon_type(icon_file_path)
+
+        self.nodeTable.blockSignals(False)
+
     @staticmethod
     def __insert_status_icon(row: int, col: int, status: bool, table: QTableWidget):
         if status is True:
@@ -700,10 +769,17 @@ class Ui(QMainWindow):
         cell_widget = QLabel()
         cell_widget.setAlignment(Qt.AlignCenter)
         cell_widget.setPixmap(icon)
-        layout = QHBoxLayout(cell_widget)
-        layout.setAlignment(Qt.AlignCenter)
-        layout.setContentsMargins(0, 0, 0, 0)
         table.setCellWidget(row, col, cell_widget)
+
+    @staticmethod
+    def __insert_icon(row: int, col: int, icon_path: str, table: QTableWidget):
+
+        icon = QPixmap(icon_path).scaledToHeight(25).scaledToWidth(25)
+        cell_widget = QLabel()
+        cell_widget.setAlignment(Qt.AlignCenter)
+        cell_widget.setPixmap(icon)
+        table.setCellWidget(row, col, cell_widget)
+
 
 
 if __name__ == "__main__":

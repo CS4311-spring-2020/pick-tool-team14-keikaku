@@ -47,8 +47,6 @@ class IngestWorker(QThread):
                 if log_file.get_cleansing_status() is True:
                     validation_errors = validator.validate_csv_file(file_copy_path)
                     if validation_errors:
-                        for key, value in validation_errors.items():
-                            print(key, value)
                         log_file.set_validation_status(False)
                         log_file.ear.set_ear(validation_errors)
                     else:
@@ -60,8 +58,6 @@ class IngestWorker(QThread):
                 if log_file.get_cleansing_status() is True:
                     validation_errors = validator.validate_log_file(file_copy_path)
                     if validation_errors:
-                        for key, value in validation_errors.items():
-                            print(key, value)
                         log_file.set_validation_status(False)
                         log_file.ear.set_ear(validation_errors)
                     else:
@@ -112,8 +108,6 @@ class ValidateWorker(QThread):
             if self.log_file.get_cleansing_status() is True:
                 validation_errors = validator.validate_csv_file(file_path)
                 if validation_errors:
-                    for key, value in validation_errors.items():
-                        print(key, value)
                     self.log_file.set_validation_status(False)
                     self.log_file.ear.set_ear(validation_errors)
                 else:

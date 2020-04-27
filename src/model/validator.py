@@ -43,6 +43,7 @@ def cleanse_log_file(log_file_path):
                 for line in in_file:
                     if line.strip():
                         clean_line = remove_non_printable(line)
+                        print(clean_line)
                         out_file.writelines(clean_line)
                 out_file.truncate()
         except IOError as e:
