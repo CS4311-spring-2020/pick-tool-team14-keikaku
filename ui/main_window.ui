@@ -88,7 +88,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="logFileTab">
        <attribute name="title">
@@ -1215,7 +1215,6 @@
             </property>
            </column>
           </widget>
-          <widget class="QGraphicsView" name="graphicsView"/>
          </widget>
         </item>
         <item>

@@ -20,6 +20,7 @@ class NodeItem(QGraphicsItem):
     width: float = 100.0
     height: float = 100.0
     relationships = {}
+    name = None
 
     def __init__(self, pos_x: float, post_y: float, name: str, type: str, parent=None):
         super().__init__(parent)
@@ -28,11 +29,13 @@ class NodeItem(QGraphicsItem):
         self.name = name
         self.type = type
 
+        print(self.pos().x(), self.pos().y(), self.boundingRect().center().x(), self.boundingRect().center().y())
         self.init_ui()
 
     def init_ui(self):
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)
         self.setAcceptHoverEvents(True)
 
     '''
@@ -40,7 +43,10 @@ class NodeItem(QGraphicsItem):
     '''
 
     def center_pos(self):
-        return self.boundingRect().center()
+        center = self.boundingRect().center()
+        current = self.pos()
+
+        return QPoint(current.x() + center.x(), current.y() + center.y())
 
     '''
         Add a relationship to the node
@@ -64,11 +70,12 @@ class NodeItem(QGraphicsItem):
         QRectF
             bounding rectangle for this node
     '''
+
     def boundingRect(self) -> QRectF:
         return QRectF(self.pos_x, self.pos_y, self.width, self.height).normalized()
 
     '''
-        This funtion which is usually called by QGraphicsView, paints the contents of an item in local coordinates.
+        This function which is usually called by QGraphicsView, paints the contents of an item in local coordinates.
         
         Parameters
         ----------    
@@ -86,3 +93,13 @@ class NodeItem(QGraphicsItem):
         painter.setPen(QPen(Qt.black))
         painter.setBrush(QBrush(Qt.red))
         painter.drawPath(node_outline.simplified())
+
+    def mouseMoveEvent(self, QGraphicsSceneMouseEvent):
+        super().mouseMoveEvent(QGraphicsSceneMouseEvent)
+        self.boundingRect()
+        # print(self.pos().x(), self.pos().y(), self.boundingRect().center().x(), self.boundingRect().center().y())
+        self.dragRelationshipItems()
+
+    def dragRelationshipItems(self):
+        for rl in self.relationships.values():
+            rl.dragLine(self.name, self.center_pos())

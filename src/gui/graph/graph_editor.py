@@ -42,9 +42,9 @@ class GraphEditor:
         self.graph_editor_scene = GraphEditorScene(self.scene_width, self.scene_height)
         # @TODO The following is hard coded and will be automated later
         self.add_vector()
-        node1 = self.add_node(-100, -100)
-        node2 = self.add_node(100, 100)
-        self.add_relationship(node1, node2)
+        node1 = self.add_node(-100, -100, "Test1")
+        node2 = self.add_node(100, 100, "Test2")
+        self.add_relationship(node1, node2, "T1->T2")
         self.add_node_to_vector(node1)
         self.add_node_to_vector(node2)
         self.graph_editor_scene.addItem(node1)
@@ -57,14 +57,16 @@ class GraphEditor:
     def add_node_to_vector(self, node):
         self.vector.addToGroup(node)
 
-    def add_node(self, x, y):
-        node_item = NodeItem(x, x, "Hello", "Red")
+    def add_node(self, x, y, name :str):
+        node_item = NodeItem(x, x, name, "Red")
         self.graph_editor_scene.addItem(node_item)
         return node_item
 
-    def add_relationship(self, parent_node, child_node):
-        relationship = RelationshipItem(parent_node.name, child_node.name,
-                                        parent_node.center_pos(), child_node.center_pos(), parent_node)
+    def add_relationship(self, parent_node, child_node, name):
+        relationship = RelationshipItem(parent_node.name, child_node.name, parent_node.center_pos(),
+                                        child_node.center_pos(), name)
+        parent_node.add_relationship(name, relationship)
+        child_node.add_relationship(name, relationship)
         self.graph_editor_scene.addItem(relationship)
 
     def remove_vector(self, key):
