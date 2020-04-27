@@ -18,7 +18,7 @@ from PyQt5.uic import loadUi
 
 from definitions import UI_PATH, ICON_PATH, COPIED_FILES
 
-from src.gui.change_config import UiChangeConfig
+from src.gui.commit_config import UiCommitConfig
 from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
@@ -36,14 +36,6 @@ from src.model.id_dictionary import IDDict
 from src.model.vector import ActiveVector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
 
-
-class QComboBoxVector(QComboBox):
-
-    row: int
-
-    def __init__(self):
-        super().__init__()
-        self.row = -1
 
 class Ui(QMainWindow):
     """The main window which serves as an entry point to the application
@@ -77,12 +69,13 @@ class Ui(QMainWindow):
         self.thread = None
         self.selected_log_file_uid = None
         self.dialog = QFileDialog
-        self.log_file_dictionary = IDDict()
+        self.log_file_dictionary = IDDict("log_file_dict")
 
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
         self.active_vector = ActiveVector()
-        self.vector_dictionary = IDDict()
+        self.vector_dictionary = IDDict("vector_dict")
+        self.vector_dictionary.load()
         self.vector_dictionary.added.connect(self.__update_all_vector_info)
         self.vector_dictionary.removed.connect(self.__update_all_vector_info)
         self.vector_dictionary.edited.connect(self.__refresh_vector_info)
@@ -308,7 +301,7 @@ class Ui(QMainWindow):
     def __execute_change_config(self):
         """Open the change configuration window."""
 
-        self.change_window = UiChangeConfig()
+        self.change_window = UiCommitConfig(self.vector_dictionary)
 
     def __execute_directory_config(self):
         """Open the directory configuration window."""
@@ -335,11 +328,6 @@ class Ui(QMainWindow):
         """Open the relationship configuration window."""
 
         self.relationship_window = UiRelationshipConfig(self.active_vector.vector)
-
-    def __execute_icon_config(self):
-        """Open the icon configuration window."""
-
-        self.icon_window = UiIconConfig()
 
     def __execute_team_config(self):
         """Open the team configuration window."""
@@ -463,7 +451,7 @@ class Ui(QMainWindow):
                 self.__insert_vector_combobox(self.rowPosition_log_entry, 5, self.logEntryTable,
                                               self.vector_dictionary.items())
                 widget = self.logEntryTable.cellWidget(self.rowPosition_log_entry, 5)
-                combobox = widget.findChild(QComboBoxVector, 'combobox')
+                combobox = widget.findChild(QComboBox, 'combobox')
                 combobox.row = self.rowPosition_log_entry
                 combobox.setCurrentIndex(combobox.findData(log_entry.get_vector_id))
                 combobox.currentIndexChanged.connect(lambda: self.__add_node(combobox.row, combobox.currentData()))
@@ -677,7 +665,6 @@ class Ui(QMainWindow):
         for arg in argv:
             arg.blockSignals(block)
 
-
     def __insert_checkbox(self, row: int, col: int, table: QTableWidget):
         """Inserts a centered checkbox into a given table cell.
 
@@ -719,19 +706,18 @@ class Ui(QMainWindow):
             Column index.
         :param table: QTableWidget
             Table to insert to.
-        :param vectors: list
-            List of vectors.
+        :param vector_dictionary: IDDict
+            List of vectors and associated UIDs.
         """
 
         cell_widget = QWidget()
-        combobox = QComboBoxVector()
+        combobox = QComboBox()
         combobox.setObjectName('combobox')
         combobox.addItem('None', 0)
-        for vector_id, v in vector_dictionary:
+        for vector_id, v in vector_dictionary.values():
             combobox.addItem(v.name, vector_id)
 
-        combobox.row = row
-        combobox.currentIndexChanged.connect(lambda: self.__add_node(combobox.row, combobox.currentData()))
+        combobox.currentIndexChanged.connect(lambda r=row: self.__add_node(r, combobox.currentData()))
         layout = QHBoxLayout(cell_widget)
         layout.addWidget(combobox)
         layout.setAlignment(Qt.AlignCenter)
@@ -779,7 +765,6 @@ class Ui(QMainWindow):
         cell_widget.setAlignment(Qt.AlignCenter)
         cell_widget.setPixmap(icon)
         table.setCellWidget(row, col, cell_widget)
-
 
 
 if __name__ == "__main__":
