@@ -88,7 +88,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="logFileTab">
        <attribute name="title">
@@ -1084,6 +1084,9 @@
            <property name="sizeAdjustPolicy">
             <enum>QAbstractScrollArea::AdjustIgnored</enum>
            </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
@@ -1325,6 +1328,18 @@
            <widget class="QPushButton" name="relationshipsButton">
             <property name="text">
              <string>Relationships</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="selectIconButton">
+            <property name="font">
+             <font>
+              <family>Verdana</family>
+             </font>
+            </property>
+            <property name="text">
+             <string>Select Icon</string>
             </property>
            </widget>
           </item>
