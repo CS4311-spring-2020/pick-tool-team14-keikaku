@@ -43,9 +43,8 @@ class NodeItem(QGraphicsItem):
     '''
 
     def center_pos(self):
-        center = self.boundingRect().center()
-        current = self.pos()
-
+        # grab the bounding rectangle for this class on it's coordinate position
+        center, current = self.boundingRect().center(), self.pos()
         return QPoint(current.x() + center.x(), current.y() + center.y())
 
     '''
@@ -97,7 +96,6 @@ class NodeItem(QGraphicsItem):
     def mouseMoveEvent(self, QGraphicsSceneMouseEvent):
         super().mouseMoveEvent(QGraphicsSceneMouseEvent)
         self.boundingRect()
-        # print(self.pos().x(), self.pos().y(), self.boundingRect().center().x(), self.boundingRect().center().y())
         self.dragRelationshipItems()
 
     def dragRelationshipItems(self):

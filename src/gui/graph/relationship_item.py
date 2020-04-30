@@ -1,9 +1,8 @@
 from PyQt5.Qt import QGraphicsLineItem
-from PyQt5.Qt import QLine
+from PyQt5.Qt import QGraphicsItem
 from PyQt5.Qt import QPoint
 from PyQt5.Qt import QPen
 from PyQt5.Qt import Qt
-from PyQt5.Qt import *
 
 
 class RelationshipItem(QGraphicsLineItem):

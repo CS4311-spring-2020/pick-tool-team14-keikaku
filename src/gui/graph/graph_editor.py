@@ -2,6 +2,7 @@ from src.gui.graph.graph_editor_scene import GraphEditorScene
 from src.gui.graph.node_item import NodeItem
 from src.gui.graph.relationship_item import RelationshipItem
 from src.gui.graph.vector_item_group import VectorItemGroup
+import time
 
 class GraphEditor:
     '''
@@ -42,7 +43,8 @@ class GraphEditor:
         self.graph_editor_scene = GraphEditorScene(self.scene_width, self.scene_height)
         # @TODO The following is hard coded and will be automated later
         self.add_vector()
-        node1 = self.add_node(-100, -100, "Test1")
+        node1 = self.add_node(-200, -200, "Test 1")
+        node3 = self.add_node(-100, -100, "Test3")
         node2 = self.add_node(100, 100, "Test2")
         self.add_relationship(node1, node2, "T1->T2")
         self.add_node_to_vector(node1)
@@ -50,6 +52,9 @@ class GraphEditor:
         self.graph_editor_scene.addItem(node1)
         self.graph_editor_scene.addItem(node2)
         self.graph_editor_scene.addItem(self.vector.get_bound_box_item())
+        time.sleep(10)
+
+
 
     def add_vector(self):
         self.vector = VectorItemGroup()
