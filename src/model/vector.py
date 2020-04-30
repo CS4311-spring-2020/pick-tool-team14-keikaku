@@ -44,19 +44,26 @@ class Vector:
     nodes: IDDict
     relationships: IDDict
 
-    def __init__(self, vector_name: str = 'New Vector', vector_desc: str = ''):
+    def __init__(self, vector_name: str = 'New Vector', vector_desc: str = '', property_visibility: int = 0,
+                 nodes: dict = {}, relationships: dict = {}):
         """
         :param vector_name: str, optional (default is 'New Vector')
             Name of the vector.
         :param vector_desc: str, optional (default is '')
             Description of the vector.
+        :param property_visibility: int, optional (default is 0)
+            Vector property visibility flags.
+        :param nodes: dict, optional (default is {})
+            A dictionary of nodes.
+        :param relationships: dict, optional (default is {})
+            A dictionary of relationships.
         """
 
         self.name = vector_name
         self.description = vector_desc
-        self.property_visibility = 0
-        self.nodes = IDDict()
-        self.relationships = IDDict()
+        self.property_visibility = property_visibility
+        self.nodes = IDDict(dictionary=nodes)
+        self.relationships = IDDict(dictionary=relationships)
 
     def edit_name(self, vector_name: str):
         """Updates the name of a vector.
@@ -295,9 +302,9 @@ class ActiveVector:
 
     def __init__(self, vector: Vector = None, vector_id: str = ''):
         """
-        :param vector, optional (default is None)
+        :param vector: Vector, optional (default is None)
             The vector to set active.
-        :param vector_id, optional (default is '')
+        :param vector_id: str, optional (default is '')
             The UID of the vector to set active.
         """
 
@@ -306,9 +313,9 @@ class ActiveVector:
     def set(self, vector: Vector = None, vector_id: str = ''):
         """Sets the active vector and its UID.
 
-        :param vector (default is None)
+        :param vector: Vector (default is None)
             The vector to set active.
-        :param vector_id (default is '')
+        :param vector_id: str (default is '')
             The UID of the vector to set active.
         """
 

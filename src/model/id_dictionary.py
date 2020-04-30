@@ -9,8 +9,6 @@ from typing import Any
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from src.util import file_util
-
 
 class IDDict(QObject):
 	"""A dictionary of objects and associated UIDs.
@@ -29,16 +27,14 @@ class IDDict(QObject):
 	removed: pyqtSignal = pyqtSignal()
 	edited: pyqtSignal = pyqtSignal()
 
-	def __init__(self, name: str):
+	def __init__(self, dictionary: Any = {}):
 		"""
-
-		:param name: str
-			Name of the dictionary.
+		:param dictionary: dict, optional (default is {})
+			A dictionary of objects.
 		"""
 
 		QObject.__init__(self)
-		self.dictionary = {}
-		self.__filename = name+".pk"
+		self.dictionary = dictionary
 
 	def items(self):
 		"""Retrieves all items in the dictionary.
@@ -117,16 +113,3 @@ class IDDict(QObject):
 		"""
 
 		self.dictionary[uid] = thing
-
-	def save(self):
-		"""Saves this IDDict dictionary to a file "vector_dict"."""
-
-		print('Saving vector_dict...')
-		file_util.save_object(self.dictionary, self.__filename)
-
-	def load(self):
-		"""Reads an IDDict dictionary from a file "vector_dict"."""
-
-		if file_util.check_file(self.__filename):
-			print('Loading vector_dict...')
-			self.dictionary = file_util.read_file(self.__filename)

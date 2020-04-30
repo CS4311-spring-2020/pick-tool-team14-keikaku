@@ -13,6 +13,7 @@ __version__ = "2.0"
 
 import os
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTableWidgetItem
 from PyQt5.uic import loadUi
 
@@ -47,29 +48,41 @@ class UiVectorConfig(QFrame):
         super(UiVectorConfig, self).__init__()
         loadUi(os.path.join(UI_PATH, 'vector_config.ui'), self)
 
-        self.vector_dictionary = vector_dictionary
-
         self.vectorTable = self.findChild(QTableWidget, 'vectorTable')
         # self.iconTable.setColumnHidden(0, True)
         self.vectorTable.setColumnWidth(1, 120)
-        self.row_position = self.vectorTable.rowCount()
+        self.vectorTable.itemChanged.connect(self.__update_cell)
 
         self.addButton = self.findChild(QPushButton, 'addVectorButton')
         self.addButton.clicked.connect(self.__add_vector)
         self.deleteButton = self.findChild(QPushButton, 'deleteVectorButton')
         self.deleteButton.clicked.connect(self.__delete_vector)
 
-        # construct vector table.
-        for vector_id, v in self.vector_dictionary.items():
+        if vector_dictionary:
+            self.construct_vector_table(vector_dictionary)
+
+        self.show()
+
+    def construct_vector_table(self, vector_dictionary: IDDict):
+        """Constructs the vector table.
+
+        :param vector_dictionary: Vector
+            The vector_dictionary to display.
+        """
+        self.vectorTable.blockSignals(True)
+        self.vector_dictionary = vector_dictionary
+        self.vectorTable.setRowCount(0)
+        self.row_position = 0
+        # print('Constructing vector table')
+        for vector_id, v in vector_dictionary.items():
             self.vectorTable.insertRow(self.row_position)
-            self.vectorTable.setItem(self.row_position, 0, QTableWidgetItem(vector_id))
+            item = QTableWidgetItem(vector_id)
+            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+            self.vectorTable.setItem(self.row_position, 0, item)
             self.vectorTable.setItem(self.row_position, 1, QTableWidgetItem(v.name))
             self.vectorTable.setItem(self.row_position, 2, QTableWidgetItem(v.description))
             self.row_position += 1
-
-        self.vectorTable.itemChanged.connect(self.__update_cell)
-
-        self.show()
+        self.vectorTable.blockSignals(False)
 
     def __add_vector(self):
         """Adds a vector to the vector table and to the vector dictionary."""
@@ -77,7 +90,9 @@ class UiVectorConfig(QFrame):
         self.vectorTable.blockSignals(True)
         self.vectorTable.insertRow(self.row_position)
         uid = self.vector_dictionary.add(Vector('New Vector'))
-        self.vectorTable.setItem(self.row_position, 0, QTableWidgetItem(uid))
+        item = QTableWidgetItem(uid)
+        item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+        self.vectorTable.setItem(self.row_position, 0, item)
         self.vectorTable.setItem(self.row_position, 1, QTableWidgetItem('New Vector'))
         self.row_position += 1
         self.vectorTable.blockSignals(False)

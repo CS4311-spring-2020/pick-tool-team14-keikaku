@@ -33,8 +33,11 @@ from src.model import event, settings
 from src.model.log_file import LogFile
 from src.model.log_entry import LogEntry
 from src.model.id_dictionary import IDDict
-from src.model.vector import ActiveVector
+from src.model.node import Node
+from src.model.relationship import Relationship
+from src.model.vector import ActiveVector, Vector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
+from src.util import file_util
 
 
 class Ui(QMainWindow):
@@ -69,16 +72,9 @@ class Ui(QMainWindow):
         self.thread = None
         self.selected_log_file_uid = None
         self.dialog = QFileDialog
-        self.log_file_dictionary = IDDict("log_file_dict")
+        self.log_file_dictionary = IDDict()
 
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
-
-        self.active_vector = ActiveVector()
-        self.vector_dictionary = IDDict("vector_dict")
-        self.vector_dictionary.load()
-        self.vector_dictionary.added.connect(self.__update_all_vector_info)
-        self.vector_dictionary.removed.connect(self.__update_all_vector_info)
-        self.vector_dictionary.edited.connect(self.__refresh_vector_info)
 
         self.teamAction = self.findChild(QAction, 'teamAction')
         self.teamAction.triggered.connect(self.__execute_team_config)
@@ -92,7 +88,7 @@ class Ui(QMainWindow):
         self.filterButton = self.findChild(QPushButton, 'filterButton')
         self.filterButton.clicked.connect(self.__execute_filter_config)
         self.commitButton = self.findChild(QPushButton, 'commitButton')
-        self.commitButton.clicked.connect(self.__execute_change_config)
+        self.commitButton.clicked.connect(self.__execute_commit_config)
         self.syncButton = self.findChild(QPushButton, 'syncButton')
         self.syncButton.clicked.connect(self.__execute_vector_db)
         self.relationshipButton = self.findChild(QPushButton, 'relationshipsButton')
@@ -192,11 +188,16 @@ class Ui(QMainWindow):
         self.tabWidget = self.findChild(QTabWidget, 'tabWidget')
         self.tabWidget.setCurrentIndex(settings.tab_index)
 
-        self.__update_all_vector_info()
         self.msg = QMessageBox()
 
         self.progress = self.findChild(QProgressBar, 'fileProcessProgressBar')
         self.progress.setValue(0)
+
+        self.active_vector = ActiveVector()
+        self.load_vector_dictionary()
+        self.vector_dictionary.added.connect(self.__update_all_vector_info)
+        self.vector_dictionary.removed.connect(self.__update_all_vector_info)
+        self.vector_dictionary.edited.connect(self.__refresh_vector_info)
 
         self.show()
 
@@ -298,10 +299,12 @@ class Ui(QMainWindow):
             self.thread.entry_status.connect(self.__on_entry_status)
             self.thread.start()
 
-    def __execute_change_config(self):
+    def __execute_commit_config(self):
         """Open the change configuration window."""
 
         self.change_window = UiCommitConfig(self.vector_dictionary)
+        self.change_window.save.connect(self.save_vector_dictionary)
+        self.change_window.load.connect(self.load_vector_dictionary)
 
     def __execute_directory_config(self):
         """Open the directory configuration window."""
@@ -357,11 +360,15 @@ class Ui(QMainWindow):
         self.__update_vector_dropdown()
         self.descriptionLabel.setText(self.active_vector.vector.description)
 
-    def __update_all_vector_info(self):
-        """Updates all vector related displays."""
+    def __update_all_vector_info(self, hard: bool = False):
+        """Updates all vector related displays.
+
+        :param: hard: bool, optional (default is False)
+            Whether to perform a hard (force) update to the tables.
+        """
 
         self.__update_vector_dropdown()
-        self.__update_vector_display()
+        self.__update_vector_display(hard)
 
     def __update_vector_dropdown(self):
         """Updates the vector dropdown menu."""
@@ -376,26 +383,31 @@ class Ui(QMainWindow):
                     self.vectorComboBox.setCurrentIndex(i)
                 i += 1
             self.vectorComboBox.blockSignals(False)
-            for row in range(self.nodeTable.rowCount()):
-                widget = self.logEntryTable.cellWidget(self.rowPosition_log_entry, 5)
-                combobox = widget.findChild(QComboBox, 'combobox')
-                log_entry_id_table = self.logEntryTable.item(row, 0).text()
-                for log_id, log in self.log_file_dictionary.items():
-                    log_entry = log.log_entries.get(log_entry_id_table)
-                    if log_entry is not None:
-                        combobox.blockSignals(True)
-                        combobox.clear()
-                        log_entry_vector_id = log_entry.get_vector_id()
-                        for vector_id, v in self.vector_dictionary.items():
-                            combobox.addItem(v.name, vector_id)
-                            if vector_id == log_entry_vector_id:
-                                combobox.setCurrentIndex(i)
-                            i += 1
-                        combobox.blockSignals(False)
-                        break
+            if self.logEntryTable.rowCount() > 0:
+                for row in range(self.logEntryTable.rowCount()):
+                    widget = self.logEntryTable.cellWidget(self.rowPosition_log_entry, 5)
+                    combobox = widget.findChild(QComboBox, 'combobox')
+                    log_entry_id_table = self.logEntryTable.item(row, 0).text()
+                    for log_id, log in self.log_file_dictionary.items():
+                        log_entry = log.log_entries.get(log_entry_id_table)
+                        if log_entry is not None:
+                            combobox.blockSignals(True)
+                            combobox.clear()
+                            log_entry_vector_id = log_entry.get_vector_id()
+                            for vector_id, v in self.vector_dictionary.items():
+                                combobox.addItem(v.name, vector_id)
+                                if vector_id == log_entry_vector_id:
+                                    combobox.setCurrentIndex(i)
+                                i += 1
+                            combobox.blockSignals(False)
+                            break
 
-    def __update_vector_display(self):
-        """Updates the displayed vector information."""
+    def __update_vector_display(self, hard: bool = False):
+        """Updates the displayed vector information.
+
+        :param: hard: bool, optional (default is False)
+            Whether to perform a hard (force) update to the tables.
+        """
 
         if self.vector_dictionary.empty():  # If vector dictionary is empty
             self.active_vector.set()
@@ -405,31 +417,34 @@ class Ui(QMainWindow):
             self.row_position_node = 0
             if hasattr(self, 'relationship_window'):
                 self.relationship_window.clear()
-        else:
-            if not self.active_vector.vector_id == self.vectorComboBox.currentData():
-                v_id = self.vectorComboBox.currentData()
-                self.active_vector.set(self.vector_dictionary.get(v_id), v_id)  # update active vector
-                self.descriptionLabel.setText(self.active_vector.vector.description)
-                self.__block_signals(self.nodeIDCheckBox, self.nodeNameCheckBox, self.nodeTimeCheckBox,
-                                     self.nodeDescCheckBox, self.logEntryCheckBox, self.logCreatorCheckBox,
-                                     self.eventTypeCheckBox, self.iconTypeCheckBox, self.sourceCheckBox,
-                                     block=True)
-                self.nodeIDCheckBox.setChecked(self.active_vector.vector.get_node_id_visibility())
-                self.nodeNameCheckBox.setChecked(self.active_vector.vector.get_node_name_visibility())
-                self.nodeTimeCheckBox.setChecked(self.active_vector.vector.get_node_time_visibility())
-                self.nodeDescCheckBox.setChecked(self.active_vector.vector.get_node_desc_visibility())
-                self.logEntryCheckBox.setChecked(self.active_vector.vector.get_log_entry_visibility())
-                self.logCreatorCheckBox.setChecked(self.active_vector.vector.get_log_creator_visibility())
-                self.eventTypeCheckBox.setChecked(self.active_vector.vector.get_event_type_visibility())
-                self.iconTypeCheckBox.setChecked(self.active_vector.vector.get_icon_type_visibility())
-                self.sourceCheckBox.setChecked(self.active_vector.vector.get_source_visibility())
-                self.__block_signals(self.nodeIDCheckBox, self.nodeNameCheckBox, self.nodeTimeCheckBox,
-                                     self.nodeDescCheckBox, self.logEntryCheckBox, self.logCreatorCheckBox,
-                                     self.eventTypeCheckBox, self.iconTypeCheckBox, self.sourceCheckBox,
-                                     block=False)
-                self.__construct_node_table()
-                if hasattr(self, 'relationship_window'):
-                    self.relationship_window.construct_relationship_table(self.active_vector.vector)
+        elif not self.active_vector.vector_id == self.vectorComboBox.currentData():
+            v_id = self.vectorComboBox.currentData()
+            self.active_vector.set(self.vector_dictionary.get(v_id), v_id)  # update active vector
+            self.descriptionLabel.setText(self.active_vector.vector.description)
+            self.__block_signals(self.nodeIDCheckBox, self.nodeNameCheckBox, self.nodeTimeCheckBox,
+                                 self.nodeDescCheckBox, self.logEntryCheckBox, self.logCreatorCheckBox,
+                                 self.eventTypeCheckBox, self.iconTypeCheckBox, self.sourceCheckBox,
+                                 block=True)
+            self.nodeIDCheckBox.setChecked(self.active_vector.vector.get_node_id_visibility())
+            self.nodeNameCheckBox.setChecked(self.active_vector.vector.get_node_name_visibility())
+            self.nodeTimeCheckBox.setChecked(self.active_vector.vector.get_node_time_visibility())
+            self.nodeDescCheckBox.setChecked(self.active_vector.vector.get_node_desc_visibility())
+            self.logEntryCheckBox.setChecked(self.active_vector.vector.get_log_entry_visibility())
+            self.logCreatorCheckBox.setChecked(self.active_vector.vector.get_log_creator_visibility())
+            self.eventTypeCheckBox.setChecked(self.active_vector.vector.get_event_type_visibility())
+            self.iconTypeCheckBox.setChecked(self.active_vector.vector.get_icon_type_visibility())
+            self.sourceCheckBox.setChecked(self.active_vector.vector.get_source_visibility())
+            self.__block_signals(self.nodeIDCheckBox, self.nodeNameCheckBox, self.nodeTimeCheckBox,
+                                 self.nodeDescCheckBox, self.logEntryCheckBox, self.logCreatorCheckBox,
+                                 self.eventTypeCheckBox, self.iconTypeCheckBox, self.sourceCheckBox,
+                                 block=False)
+            self.__construct_node_table()
+            if hasattr(self, 'relationship_window'):
+                self.relationship_window.construct_relationship_table(self.active_vector.vector)
+        elif hard:
+            self.__construct_node_table()
+            if hasattr(self, 'relationship_window'):
+                self.relationship_window.construct_relationship_table(self.active_vector.vector)
 
     def __construct_log_entry_table(self):
         """Constructs the log entry table."""
@@ -440,7 +455,9 @@ class Ui(QMainWindow):
         for log_id, log in self.log_file_dictionary.items():
             for log_entry_id, log_entry in log.log_entries.items():
                 self.logEntryTable.insertRow(self.rowPosition_log_entry)
-                self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem(log_entry_id))
+                item = QTableWidgetItem(log_entry_id)
+                item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+                self.logEntryTable.setItem(self.rowPosition_log_entry, 0, item)
                 self.logEntryTable.setItem(self.rowPosition_log_entry, 1,
                                            QTableWidgetItem(str(log_entry.get_line_num())))
                 self.logEntryTable.setItem(self.rowPosition_log_entry, 2,
@@ -462,6 +479,7 @@ class Ui(QMainWindow):
 
     def __construct_node_table(self):
         """Constructs the node table for the active vector."""
+        self.nodeTable.blockSignals(True)
 
         self.nodeTable.setRowCount(0)
         self.row_position_node = 0
@@ -469,9 +487,11 @@ class Ui(QMainWindow):
         # construct node table.
         for node_id, n in self.active_vector.vector.node_items():
             self.nodeTable.insertRow(self.row_position_node)
-            self.nodeTable.setItem(self.row_position_node, 0, QTableWidgetItem(node_id))
+            item = QTableWidgetItem(node_id)
+            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+            self.nodeTable.setItem(self.row_position_node, 0, item)
             self.nodeTable.setItem(self.row_position_node, 1, QTableWidgetItem(n.name))
-            self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(n.time_string()))
+            self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(n.timestamp))
             self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(n.description))
             self.nodeTable.setItem(self.row_position_node, 4, QTableWidgetItem(n.log_entry_reference))
             self.nodeTable.setItem(self.row_position_node, 5, QTableWidgetItem(n.log_creator))
@@ -482,6 +502,8 @@ class Ui(QMainWindow):
         for row in range(self.nodeTable.rowCount()):
             self.__insert_checkbox(row, 9, self.nodeTable)
 
+        self.nodeTable.blockSignals(False)
+
     def __add_blank_node(self):
         """Adds a blank node to the node table and to the node dictionary."""
 
@@ -491,9 +513,11 @@ class Ui(QMainWindow):
             self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
             # print('Adding node to: ' + str(v.name))
             uid = self.active_vector.vector.add_node()
+            self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(
+                self.active_vector.vector.node_get(uid).timestamp))
             item = QTableWidgetItem(uid)
+            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
             self.nodeTable.setItem(self.row_position_node, 0, item)
-            item.setFlags((Qt.ItemIsSelectable | Qt.ItemIsEnabled))
             self.row_position_node += 1
             self.nodeTable.blockSignals(False)
 
@@ -523,7 +547,9 @@ class Ui(QMainWindow):
                 log_entry.set_vector_id(vector_id)
                 self.nodeTable.insertRow(self.row_position_node)
                 uid = self.active_vector.vector.add_node()
-                self.nodeTable.setItem(self.row_position_node, 0, QTableWidgetItem(uid))
+                item = QTableWidgetItem(uid)
+                item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+                self.nodeTable.setItem(self.row_position_node, 0, item)
                 self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(log_entry.get_timestamp()))
                 self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(log_entry.get_description()))
                 self.nodeTable.setItem(self.row_position_node, 8, QTableWidgetItem(log_entry.get_source()))
@@ -558,7 +584,7 @@ class Ui(QMainWindow):
         elif item.column() == 8:
             node.set_source(item.text())
         else:
-            print('Invalid column')
+            print('Invalid column %d' % item.column())
             return
 
     def __update_ear_table(self):
@@ -691,10 +717,8 @@ class Ui(QMainWindow):
     def __update_node_visibility(self, row: int, checkbox: QCheckBox):
         node = self.active_vector.vector.node_get(self.nodeTable.item(row, 0).text())
         if checkbox.isChecked():
-            print("here")
             node.set_visibility(True)
         else:
-            print("here")
             node.set_visibility(False)
 
     def __insert_vector_combobox(self, row: int, col: int, table: QTableWidget, vector_dictionary: IDDict):
@@ -765,6 +789,55 @@ class Ui(QMainWindow):
         cell_widget.setAlignment(Qt.AlignCenter)
         cell_widget.setPixmap(icon)
         table.setCellWidget(row, col, cell_widget)
+
+    def save_vector_dictionary(self):
+        """Saves the vector dictionary to a file."""
+
+        print('Saving dict...')
+        v_dict = {'active': self.active_vector.vector_id}
+        for v_id, v in self.vector_dictionary.items():
+            vector = {
+                'name': v.name,
+                'description': v.description,
+                'property_visibility': v.property_visibility
+            }
+            n_dict = {}
+            for n_id, n in v.node_items():
+                n_dict[n_id] = [n.name, n.timestamp, n.description, n.log_entry_reference, n.log_creator,
+                                n.event_type, n.icon_type, n.source, n.visibility]
+            r_dict = {}
+            for r_id, r in v.relationship_items():
+                r_dict[r_id] = [r.parent, r.child, r.label]
+            vector['nodes'] = n_dict
+            vector['relationships'] = r_dict
+            v_dict[v_id] = vector
+
+        file_util.save_object(v_dict, 'vector_dictionary.pk')
+
+    def load_vector_dictionary(self):
+        """Reads a vector dictionary from a file."""
+
+        if file_util.check_file('vector_dictionary.pk'):
+            print('Loading dict...')
+            v_dict = {}
+            data = file_util.read_file('vector_dictionary.pk')
+            active_vector_id = data.pop('active')
+            for v_id, v in data.items():
+                n_dict = {}
+                for n_id, n in v['nodes'].items():
+                    n_dict[n_id] = Node(name=n[0], timestamp=n[1], description=n[2], log_entry_reference=n[3],
+                                        log_creator=n[4], event_type=n[5], icon_type=n[6], source=n[7], visibility=n[8])
+                r_dict = {}
+                for r_id, r in v['relationships'].items():
+                    r_dict[r_id] = Relationship(parent=r[0], child=n[1], label=n[2])
+                vector = Vector(vector_name=v['name'], vector_desc=v['description'],
+                                property_visibility=v['property_visibility'], nodes=n_dict, relationships=r_dict)
+                v_dict[v_id] = vector
+            self.vector_dictionary = IDDict(v_dict)
+            self.active_vector.set(self.vector_dictionary.get(active_vector_id), active_vector_id)
+        else:
+            self.vector_dictionary = IDDict()
+        self.__update_all_vector_info(True)
 
 
 if __name__ == "__main__":

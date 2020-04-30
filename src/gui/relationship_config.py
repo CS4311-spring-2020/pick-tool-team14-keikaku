@@ -13,6 +13,7 @@ __version__ = "0.5"
 
 import os
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTableWidgetItem
 from PyQt5.uic import loadUi
 
@@ -47,8 +48,8 @@ class UiRelationshipConfig(QFrame):
         loadUi(os.path.join(UI_PATH, 'relationship_config.ui'), self)
 
         self.relationshipTable = self.findChild(QTableWidget, 'relationshipTable')
+        # self.relationshipTable.setColumnHidden(0, True)
         self.relationshipTable.resizeColumnsToContents()
-        self.rowPosition = self.relationshipTable.rowCount()
 
         self.addRelationButton = self.findChild(QPushButton, 'addRelationButton')
         self.addRelationButton.setShortcut("Ctrl+Return")
@@ -69,19 +70,21 @@ class UiRelationshipConfig(QFrame):
         :param vector: Vector
             The vector for whom to display its relationship table.
         """
-
+        self.relationshipTable.blockSignals(True)
         self.vector = vector
         self.relationshipTable.setRowCount(0)
         self.rowPosition = 0
         # print('Constructing relationship table for: ' + str(vector.name))
-        # construct vector table.
         for relationship_id, relationship in vector.relationship_items():
             self.relationshipTable.insertRow(self.rowPosition)
-            self.relationshipTable.setItem(self.rowPosition, 0, QTableWidgetItem(relationship_id))
+            item = QTableWidgetItem(relationship_id)
+            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+            self.relationshipTable.setItem(self.rowPosition, 0, item)
             self.relationshipTable.setItem(self.rowPosition, 1, QTableWidgetItem(relationship.parent))
             self.relationshipTable.setItem(self.rowPosition, 2, QTableWidgetItem(relationship.child))
             self.relationshipTable.setItem(self.rowPosition, 2, QTableWidgetItem(relationship.label))
             self.rowPosition += 1
+        self.relationshipTable.blockSignals(False)
 
     def clear(self):
         """Clears the relationship table."""
@@ -96,7 +99,9 @@ class UiRelationshipConfig(QFrame):
         self.relationshipTable.blockSignals(True)
         self.relationshipTable.insertRow(self.rowPosition)
         uid = self.vector.add_relationship()
-        self.relationshipTable.setItem(self.rowPosition, 0, QTableWidgetItem(uid))
+        item = QTableWidgetItem(uid)
+        item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+        self.relationshipTable.setItem(self.rowPosition, 0, item)
         self.rowPosition += 1
         self.relationshipTable.blockSignals(False)
 

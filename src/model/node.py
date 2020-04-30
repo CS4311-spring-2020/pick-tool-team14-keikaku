@@ -33,7 +33,7 @@ class Node:
     """
 
     name: str
-    timestamp: QDateTime
+    timestamp: str
     description: str
     log_entry_reference: str
     log_creator: str
@@ -42,9 +42,10 @@ class Node:
     source: str
     visibility: bool
 
-    def __init__(self, name: str = '', timestamp: QDateTime = QDateTime(), description: str = '',
-                 log_entry_reference: str = '', log_creator: str = '', event_type: str = '',
-                 icon_type: str = '', source: str = ''):
+    def __init__(self, name: str = '',
+                 timestamp: QDateTime = QDateTime.currentDateTimeUtc().toString('hh:mm MM/dd/yyyy A'),
+                 description: str = '', log_entry_reference: str = '', log_creator: str = '', event_type: str = '',
+                 icon_type: str = '', source: str = '', visibility: bool = True):
         """
         :param name: str, optional (default is '')
             Name of the node.
@@ -62,6 +63,8 @@ class Node:
             Icon the node shall use to display itself.
         :param source: str, optional  (default is '')
             Source of the corresponding log entry.
+        :param visibility: bool, optional  (default is True)
+            Visibility of the node.
         """
 
         self.name = name
@@ -72,19 +75,10 @@ class Node:
         self.event_type = event_type
         self.icon_type = icon_type
         self.source = source
-        self.visibility = True
-
-    def time_string(self) -> str:
-        """Returns the timestamp in a formatted string.
-
-        :return str
-            The formatted timestamp string.
-        """
-
-        return self.timestamp.toString('hh:mm MM/dd/yyyy A')
+        self.visibility = visibility
 
     def set_name(self, name: str):
-       self.name = name
+        self.name = name
 
     def set_timestamp(self, timestamp: QDateTime):
         self.timestamp = timestamp
@@ -109,5 +103,3 @@ class Node:
 
     def set_visibility(self, visibility: bool):
         self.visibility = visibility
-
-
