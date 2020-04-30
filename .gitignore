@@ -100,4 +100,9 @@ fabric.properties
 
 # End of https://www.gitignore.io/api/pycharm
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Program generated save data
 /cache/
