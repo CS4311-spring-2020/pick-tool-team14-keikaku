@@ -27,14 +27,17 @@ class IDDict(QObject):
 	removed: pyqtSignal = pyqtSignal()
 	edited: pyqtSignal = pyqtSignal()
 
-	def __init__(self, dictionary: Any = {}):
+	def __init__(self, dictionary: Any = None):
 		"""
 		:param dictionary: dict, optional (default is {})
 			A dictionary of objects.
 		"""
 
 		QObject.__init__(self)
-		self.dictionary = dictionary
+		if dictionary:
+			self.dictionary = dictionary
+		else:
+			self.dictionary = {}
 
 	def items(self):
 		"""Retrieves all items in the dictionary.
