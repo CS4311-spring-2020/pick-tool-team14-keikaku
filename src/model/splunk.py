@@ -5,8 +5,7 @@ import json
 
 splunk_config = {'host': "localhost",  # Configuration details
                  'port': 8089,
-                 'username': "darayner",
-                 'password': "D@man2177"}
+                 'username': "admin"}
 
 
 class SplunkManager:
@@ -20,8 +19,7 @@ class SplunkManager:
         try:
             self.service = client.connect(Host=splunk_config['host'],  # Create service instance to use
                                           port=splunk_config['port'],
-                                          username=splunk_config['username'],
-                                          password=splunk_config['password'])
+                                          username=splunk_config['username'])
         except AuthenticationError:
             print("Authentication Error!")
 
