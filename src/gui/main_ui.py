@@ -257,7 +257,7 @@ class Ui(QMainWindow):
         self.logEntryTable.setItem(self.rowPosition_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
         self.__insert_vector_combobox(self.rowPosition_log_entry, 5, self.logEntryTable,
-                                      self.vector_dictionary.items())
+                                      self.vector_dictionary)
 
         self.rowPosition_log_entry += 1
         self.logEntryTable.blockSignals(False)
@@ -738,7 +738,7 @@ class Ui(QMainWindow):
         combobox = QComboBox()
         combobox.setObjectName('combobox')
         combobox.addItem('None', 0)
-        for vector_id, v in vector_dictionary.values():
+        for vector_id, v in vector_dictionary.items():
             combobox.addItem(v.name, vector_id)
 
         combobox.currentIndexChanged.connect(lambda r=row: self.__add_node(r, combobox.currentData()))
