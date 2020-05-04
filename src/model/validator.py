@@ -1,8 +1,35 @@
+"""validator.py: A set of routines to determine the validity of a file.
+
+    Attributes
+    ----------
+    formats: List[str]
+        Set of valid timestamp format regular expressions.
+    Methods
+    -------
+    remove_non_printable(line: str) -> str:
+        Removes non-printable characters from a string.
+    create_file_copy(log_file_path: str, directory_path: str) -> str:
+        Creates a copy of a file into a different directory.
+    cleanse_log_file(log_file_path: str):
+        Cleanses a log file of invalid elements.
+    cleanse_csv_file(csv_file_path: str):
+        Cleanses a csv file of invalid elements.
+    validate_log_file(log_file: TextIO):
+        Validates a log file.
+    validate_csv_file(csv_file: TextIO):
+        Validates a csv file.
+"""
+
+__author__ = "Team Keikaku"
+__version__ = "1.0"
+
 import csv
 import os
 import re
 import string
+from datetime import datetime
 from shutil import copyfile
+from typing import TextIO
 
 from dateutil.parser import parse
 
@@ -17,14 +44,31 @@ formats = [r'\d{1,2}[-/](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-/]\d{
            r'\d{4}[-/]\d{1,2}[-/]\d{1,2} \d{1,2}[:]\d{1,2}[:]\d{1,2}']
 
 
-def remove_non_printable(line):
-    cleansed_line = "".join(list(filter(lambda str: str in string.printable, line)))
+def remove_non_printable(line: str) -> str:
+    """Removes non-printable characters from a string.
+
+    :param line: str
+        The line to remove non-printable characters from.
+    :return: str
+        The line with non-printable characters removed.
+    """
+
+    cleansed_line = "".join(list(filter(lambda s: s in string.printable, line)))
     return cleansed_line
 
 
-def create_file_copy(log_file_path, directory_path):
+def create_file_copy(log_file_path: str, directory_path: str) -> str:
+    """Creates a copy of a file into a different directory.
+
+    :param log_file_path: str
+        The log file path to the file to make a copy of.
+    :param directory_path: str
+        The directory to place the file copy in.
+    :return: str
+        The copied log file path.
+    """
+
     if not os.path.exists(directory_path):
-        print("here")
         os.makedirs(directory_path)
 
     file = os.path.basename(log_file_path)
@@ -36,7 +80,13 @@ def create_file_copy(log_file_path, directory_path):
     return copy_log_file_path
 
 
-def cleanse_log_file(log_file_path):
+def cleanse_log_file(log_file_path: str):
+    """Cleanses a log file of invalid elements.
+    
+    :param log_file_path: str
+        The log file path to the file to cleanse.
+    """
+
     if os.path.isfile(log_file_path) and os.path.getsize(log_file_path) > 0:
         try:
             with open(log_file_path) as in_file, open(log_file_path, 'r+') as out_file:
@@ -51,9 +101,15 @@ def cleanse_log_file(log_file_path):
         print("file is empty or does not exist", log_file_path)
 
 
-def cleanse_csv_file(log_file_path):
-    if os.path.isfile(log_file_path) and os.path.getsize(log_file_path) > 0:
-        with open(log_file_path) as in_file, open(log_file_path, 'r+') as out_file:
+def cleanse_csv_file(csv_file_path: str):
+    """Cleanses a csv file of invalid elements.
+
+    :param csv_file_path: str
+        The csv file path to the file to cleanse.
+    """
+
+    if os.path.isfile(csv_file_path) and os.path.getsize(csv_file_path) > 0:
+        with open(csv_file_path) as in_file, open(csv_file_path, 'r+') as out_file:
             writer = csv.writer(out_file)
             for row in csv.reader(in_file):
                 clean_row = " ".join(row)
@@ -61,18 +117,24 @@ def cleanse_csv_file(log_file_path):
                     writer.writerow(row)
             out_file.truncate()
     else:
-        print("file is empty or does not exist", log_file_path)
+        print("file is empty or does not exist", csv_file_path)
 
 
-def validate_log_file(log_file):
+def validate_log_file(log_file: TextIO):
+    """Validates a log file.
+
+    :param log_file: TextIO
+        The log file to validate.
+    """
+
     time_stamp_found = False
     errors = {}
     pattern = ""
 
     with open(log_file) as file:
         for line in file:
-            for format in formats:
-                pattern = re.compile(format)
+            for fmt in formats:
+                pattern = re.compile(fmt)
                 match = pattern.search(line)
                 if match:
                     time_stamp_found = True
@@ -99,7 +161,13 @@ def validate_log_file(log_file):
     return errors
 
 
-def validate_csv_file(csv_file):
+def validate_csv_file(csv_file: TextIO):
+    """Validates a csv file.
+
+    :param csv_file: TextIO
+        The csv file to validate.
+    """
+
     time_stamp_found = False
     errors = {}
     pattern = ""
@@ -108,8 +176,8 @@ def validate_csv_file(csv_file):
         reader = csv.reader(file, delimiter=',')
         next(reader, None)
         for row in reader:
-            for format in formats:
-                pattern = re.compile(format)
+            for fmt in formats:
+                pattern = re.compile(fmt)
                 match = pattern.search(" ".join(row))
                 if match:
                     time_stamp_found = True
@@ -138,7 +206,15 @@ def validate_csv_file(csv_file):
     return errors
 
 
-def __convert_to_standard(date_time_str):
+def __convert_to_standard(date_time_str: str) -> datetime:
+    """Converts a datetime string into a standard datetime object.
+
+    :param date_time_str: str
+        The datetime string to convert to a standard format.
+    :return: datetime
+        A standard format datetime object.
+    """
+
     date_time = None
     try:
         date_time = parse(date_time_str, fuzzy=True)
@@ -148,13 +224,21 @@ def __convert_to_standard(date_time_str):
     return date_time
 
 
-def __timestamp_bounds(date_time):
+def __timestamp_bounds(date_time: datetime) -> str:
+    """Prints a message detailing if the date_time is not within bounds.
+
+    :param date_time: datetime
+        The datetime to determine if within bounds set.
+    :return: str
+        A string message explaining if the date_time is not within bounds.
+    """
+
     start_time = event.start_time
     end_time = event.end_time
 
-    if date_time < start_time:
+    if date_time < start_time - datetime.timedelta(seconds=59, minutes=59, hours=23):
         return "Bounds Error: Timestamp is before start of event!"
-    elif date_time > end_time:
+    elif date_time > end_time + datetime.timedelta(seconds=59, minutes=59, hours=23):
         return "Bounds Error: Timestamp is after end of event!"
 
     return ""

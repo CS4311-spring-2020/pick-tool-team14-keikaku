@@ -2,5 +2,6 @@ PyQt5==5.14.2
 PyQt5-sip==12.7.2
 python-dateutil==2.8.1
 python-dotenv==0.13.0
-virtualenv==20.0.18
+splunk-sdk~=1.6.12
+virtualenv==20.0.20
 virtualenv-clone==0.5.4

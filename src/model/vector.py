@@ -10,8 +10,7 @@ a collection of events during an adversarial assessment.
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.7"
+__version__ = "1.0"
 
 from src.model.id_dictionary import IDDict
 from src.model.node import Node
@@ -86,7 +85,7 @@ class Vector:
     def add_node(self) -> str:
         """Adds a new node to the node dictionary.
 
-        :return str
+        :return: str
             A UID associated with the node added.
         """
 
@@ -104,7 +103,7 @@ class Vector:
     def node_items(self):
         """Retrieves all items in the node dictionary.
 
-        :return dict_items
+        :return: dict_items
             A list of node_id, Node tuples.
         """
 
@@ -115,7 +114,7 @@ class Vector:
 
         :param node_id: str
             UID of the node.
-        :return Node
+        :return: Node
             Node associated with the given UID.
         """
 
@@ -124,7 +123,7 @@ class Vector:
     def add_relationship(self) -> str:
         """Adds a new relationship to the relationship dictionary.
 
-        :return str
+        :return: str
             A UID associated with the relationship added.
         """
 
@@ -142,7 +141,7 @@ class Vector:
     def relationship_items(self):
         """Retrieves all items in the relationship dictionary.
 
-        :return dict_items
+        :return: dict_items
             A list of relationship_id, Relationship tuples.
         """
 
@@ -153,7 +152,7 @@ class Vector:
 
         :param relationship_id: str
             UID of the relationship.
-        :return Relationship
+        :return: Relationship
             Relationship associated with the given UID.
         """
 
@@ -167,7 +166,7 @@ class Vector:
     def get_node_id_visibility(self) -> bool:
         """Determines if node_id_visibility is set.
 
-        :return bool
+        :return: bool
             True if node_id_visibility is set, false otherwise.
         """
 
@@ -181,7 +180,7 @@ class Vector:
     def get_node_name_visibility(self) -> bool:
         """Determines if node_name_visibility is set.
 
-        :return bool
+        :return: bool
             True if node_name_visibility is set, false otherwise.
         """
 
@@ -195,7 +194,7 @@ class Vector:
     def get_node_time_visibility(self) -> bool:
         """Determines if node_time_visibility is set.
 
-        :return bool
+        :return: bool
             True if node_time_visibility is set, false otherwise.
         """
 
@@ -209,7 +208,7 @@ class Vector:
     def get_node_desc_visibility(self) -> bool:
         """Determines if node_desc_visibility is set.
 
-        :return bool
+        :return: bool
             True if node_desc_visibility is set, false otherwise.
         """
 
@@ -223,7 +222,7 @@ class Vector:
     def get_log_entry_visibility(self) -> bool:
         """Determines if log_entry_visibility is set.
 
-        :return bool
+        :return: bool
             True if log_entry_visibility is set, false otherwise.
         """
 
@@ -237,7 +236,7 @@ class Vector:
     def get_log_creator_visibility(self) -> bool:
         """Determines if log_creator_visibility is set.
 
-        :return bool
+        :return: bool
             True if log_creator_visibility is set, false otherwise.
         """
 
@@ -251,7 +250,7 @@ class Vector:
     def get_event_type_visibility(self) -> bool:
         """Determines if event_type_visibility is set.
 
-        :return bool
+        :return: bool
             True if event_type_visibility is set, false otherwise.
         """
 
@@ -265,7 +264,7 @@ class Vector:
     def get_icon_type_visibility(self) -> bool:
         """Determines if icon_type_visibility is set.
 
-        :return bool
+        :return: bool
             True if icon_type_visibility is set, false otherwise.
         """
 
@@ -279,7 +278,7 @@ class Vector:
     def get_source_visibility(self) -> bool:
         """Determines if source_visibility is set.
 
-        :return bool
+        :return: bool
             True if source_visibility is set, false otherwise.
         """
 
@@ -325,7 +324,7 @@ class ActiveVector:
     def is_empty(self) -> bool:
         """Determines if the active vector is empty.
 
-        :return bool
+        :return: bool
             True if the active vector is empty, false otherwise.
         """
         return not bool(self.vector)

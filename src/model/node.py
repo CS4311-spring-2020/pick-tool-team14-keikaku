@@ -3,8 +3,7 @@ significant event of an attack vector.
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.4"
+__version__ = "1.0"
 
 from PyQt5.QtCore import QDateTime
 
@@ -16,7 +15,7 @@ class Node:
     ----------
     name: str
         Name of the node.
-    timestamp: QDateTime
+    timestamp: str
         Timestamp node event occurred.
     description: str
         Description of the node.
@@ -30,6 +29,8 @@ class Node:
         Icon the node shall use to display itself.
     source: str
         Source of the corresponding log entry.
+    visibility: bool
+        Whether the node is visible or not.
     """
 
     name: str
@@ -49,7 +50,7 @@ class Node:
         """
         :param name: str, optional (default is '')
             Name of the node.
-        :param timestamp: QDateTime, optional  (default is QDateTime())
+        :param timestamp: QDateTime, optional  (default is QDateTime().toString('hh:mm MM/dd/yyyy A'))
             Timestamp node event occurred.
         :param description: str, optional  (default is '')
             Description of the node.

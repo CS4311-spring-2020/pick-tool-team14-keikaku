@@ -12,25 +12,30 @@
         IP address of the local host.
     target_ip_address: str
         IP address of the target system to connect to.
+    root_folder: str
+        Folder name for the root directory.
     red_team_folder: str
         Folder name for red team log files.
     blue_team_folder: str
         Folder name for blue team log files.
     white_team_folder: str
         Folder name for white team log files.
+    valid_structure: bool
+        Whether the directory structure is valid or not.
+    cleansed_files: List[str]
+        A list of cleansed files.
     Methods
     -------
-    toggle_lead()
+    toggle_lead():
         Toggle the lead_status.
     save():
         Saves this settings instance to a file __filename.
-    load() -> Settings
+    load():
         Reads a settings instance from a file __filename.
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.5"
+__version__ = "1.0"
 
 import socket
 

@@ -1,7 +1,6 @@
 """id_dictionary.py: A UID keyed dictionary that emits pyQT signals."""
 
 __author__ = "Team Keikaku"
-
 __version__ = "1.0"
 
 import uuid

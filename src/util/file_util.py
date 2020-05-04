@@ -11,8 +11,7 @@
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.5"
+__version__ = "1.0"
 
 import os
 import pickle
@@ -41,7 +40,7 @@ def read_file(filename: str) -> Any:
 
     :param filename: str
         Name of the file to read from.
-    :return Any
+    :return: Any
         Object read from file.
     """
 
@@ -52,7 +51,7 @@ def read_file(filename: str) -> Any:
 def check_file(filename: str) -> bool:
     """Checks if filename exists.
 
-    :return
+    :return:
         True is filename exists, false otherwise.
     """
 

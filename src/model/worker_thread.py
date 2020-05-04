@@ -1,14 +1,24 @@
+"""worker_thread.py: A set of thread classes used during ingestion.
+"""
+
+__author__ = "Team Keikaku"
+__version__ = "1.0"
+
+import os
+
 from PyQt5.QtCore import QThread, pyqtSignal
-from src.model.log_file import LogFile
+
 from src.model import validator
 from src.model.log_entry import LogEntry
-from src.model.queue import Queue
-from src.model.splunk import SplunkManager
+from src.model.log_file import LogFile
+from src.util.queue import Queue
 from src.model.settings import cleansed_files
-import os
+from src.model.splunk import SplunkManager
 
 
 class IngestWorker(QThread):
+    """ A thread routine for performing ingestion into Splunk."""
+
     finished = pyqtSignal()
     file_status = pyqtSignal(LogFile, float)
     entry_status = pyqtSignal(LogEntry)
@@ -87,6 +97,8 @@ class IngestWorker(QThread):
 
 
 class ValidateWorker(QThread):
+    """ A thread routine for validating log_files."""
+
     file_updated = pyqtSignal(LogFile, float)
     entry_status = pyqtSignal(LogEntry)
     log_file: LogFile
@@ -147,6 +159,8 @@ class ValidateWorker(QThread):
 
 
 class ForceIngestWorker(QThread):
+    """ A thread routine for performing forced ingestion into Splunk."""
+
     file_updated = pyqtSignal(LogFile, float)
     entry_status = pyqtSignal(LogEntry)
     log_file: LogFile
