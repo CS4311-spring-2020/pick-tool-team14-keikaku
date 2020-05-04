@@ -11,7 +11,7 @@ import os
 class IngestWorker(QThread):
     finished = pyqtSignal()
     file_status = pyqtSignal(LogFile, float)
-    entry_status = pyqtSignal(LogEntry, str)
+    entry_status = pyqtSignal(LogEntry)
     files_to_process: Queue
     directory_path: str
 
@@ -29,9 +29,9 @@ class IngestWorker(QThread):
                 if not file.startswith('.') and file not in cleansed_files:
                     self.files_to_process.enqueue(os.path.join(root, file))
                     cleansed_files.append(file)
-
-        self.progress_value = (100 / self.files_to_process.size())
-        print(self.progress_value)
+        if self.progress_value > 0:
+            self.progress_value = (100 / self.files_to_process.size())
+            print(self.progress_value)
 
         while not self.files_to_process.is_empty():
             line_num = 1
@@ -68,14 +68,15 @@ class IngestWorker(QThread):
                 log_file.set_ingestion_status(True)
 
                 log_entries = self.splunk_manage.search(
-                    f"search index=testindex source={file_copy_path} | table _time _raw "
-                    f"source host | sort _time")  # query to get log entries
+                    f'search index=testindex source={file_path} | eval time=strftime(_time, "%I:%M:%S %m/%d/%Y %p") '
+                    f'| table time _raw source host | sort time')  # query to get log entries
 
                 for index in range(len(log_entries)):
-                    uid = log_file.add_log_entry(line_num, log_entries[index]['source'], log_entries[index]['_time'],
-                                                 log_entries[index]['_raw'])
+                    log_entry = LogEntry(line_num, log_entries[index]['source'],
+                                         log_entries[index]['time'],
+                                         log_entries[index]['_raw'])
 
-                    self.entry_status.emit(log_file.get_log_entry(uid), uid)
+                    self.entry_status.emit(log_entry)
                     line_num += 1
 
             self.progress_value += self.progress_value
@@ -87,7 +88,7 @@ class IngestWorker(QThread):
 
 class ValidateWorker(QThread):
     file_updated = pyqtSignal(LogFile, float)
-    entry_status = pyqtSignal(LogEntry, str)
+    entry_status = pyqtSignal(LogEntry)
     log_file: LogFile
 
     def __init__(self, log_file):
@@ -131,15 +132,15 @@ class ValidateWorker(QThread):
             self.log_file.set_ingestion_status(True)
 
             log_entries = self.splunk_manage.search(
-                f"search index=testindex source={file_path} | table _time _raw "
-                f"source host | sort _time")  # query to get log entries
+                f'search index=testindex source={file_path} | eval time=strftime(_time, "%I:%M:%S %m/%d/%Y %p") '
+                f'| table time _raw source host | sort time')  # query to get log entries
 
             for index in range(len(log_entries)):
-                uid = self.log_file.add_log_entry(line_num, log_entries[index]['source'],
-                                                  log_entries[index]['_time'],
-                                                  log_entries[index]['_raw'])
+                log_entry = LogEntry(line_num, log_entries[index]['source'],
+                                     log_entries[index]['time'],
+                                     log_entries[index]['_raw'])
 
-                self.entry_status.emit(self.log_file.get_log_entry(uid), uid)
+                self.entry_status.emit(log_entry)
                 line_num += 1
 
         self.file_updated.emit(self.log_file, 200)
@@ -147,7 +148,7 @@ class ValidateWorker(QThread):
 
 class ForceIngestWorker(QThread):
     file_updated = pyqtSignal(LogFile, float)
-    entry_status = pyqtSignal(LogEntry, str)
+    entry_status = pyqtSignal(LogEntry)
     log_file: LogFile
 
     def __init__(self, log_file):
@@ -162,15 +163,15 @@ class ForceIngestWorker(QThread):
         self.splunk_manage.add_file(file_path, 'testindex')  # add file to index
 
         log_entries = self.splunk_manage.search(
-            f"search index=testindex source={file_path} | table _time _raw "
-            f"source host | sort _time")  # query to get log entries
+            f'search index=testindex source={file_path} | eval time=strftime(_time, "%I:%M:%S %m/%d/%Y %p") '
+            f'| table time _raw source host | sort time')  # query to get log entries
 
         for index in range(len(log_entries)):
-            uid = self.log_file.add_log_entry(line_num, log_entries[index]['source'],
-                                              log_entries[index]['_time'],
-                                              log_entries[index]['_raw'])
+            log_entry = LogEntry(line_num, log_entries[index]['source'],
+                                 log_entries[index]['time'],
+                                 log_entries[index]['_raw'])
 
-            self.entry_status.emit(self.log_file.get_log_entry(uid), uid)
+            self.entry_status.emit(log_entry)
             line_num += 1
 
         self.log_file.set_acknowledged_status(True)

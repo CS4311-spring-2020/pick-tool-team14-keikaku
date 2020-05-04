@@ -7,7 +7,6 @@ class LogFile:
     # TODO add comments
     file_name: str
     file_path: str
-    log_entries: IDDict
     cleansing_status: bool
     validation_status: bool
     ingested_status: bool
@@ -17,7 +16,6 @@ class LogFile:
     def __init__(self, file_name, file_path):
         self.file_name = file_name
         self.file_path = file_path
-        self.log_entries = IDDict()
         self.ear = EnforcementActionReport()
         self.cleansing_status = False
         self.validation_status = False

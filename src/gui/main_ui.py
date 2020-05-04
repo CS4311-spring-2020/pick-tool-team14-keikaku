@@ -57,6 +57,7 @@ class Ui(QMainWindow):
     active_vector: ActiveVector
     vector_dictionary: IDDict
     log_file_dictionary: IDDict
+    log_entry_dictionary: IDDict
 
     row_position_node: int
     rowPosition_log_file: int
@@ -72,7 +73,7 @@ class Ui(QMainWindow):
         self.thread = None
         self.selected_log_file_uid = None
         self.dialog = QFileDialog
-        self.log_file_dictionary = IDDict()
+        self.log_entry_dictionary = IDDict()
 
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
@@ -195,6 +196,7 @@ class Ui(QMainWindow):
 
         self.active_vector = ActiveVector()
         self.load_vector_dictionary()
+        self.load_log_file_dictionary()
         self.vector_dictionary.added.connect(self.__update_all_vector_info)
         self.vector_dictionary.removed.connect(self.__update_all_vector_info)
         self.vector_dictionary.edited.connect(self.__refresh_vector_info)
@@ -244,11 +246,13 @@ class Ui(QMainWindow):
         self.progress.setValue(value)
         self.logFileTable.blockSignals(False)
 
-    def __on_entry_status(self, log_entry: LogEntry, uid: str):
+    def __on_entry_status(self, log_entry: LogEntry):
         self.logEntryTable.blockSignals(True)
         self.logEntryTable.insertRow(self.rowPosition_log_entry)
         print(str(log_entry.get_line_num()))
         print(log_entry.get_timestamp())
+
+        uid = self.log_entry_dictionary.add(log_entry)
 
         self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem(uid))
         self.logEntryTable.setItem(self.rowPosition_log_entry, 1, QTableWidgetItem(str(log_entry.get_line_num())))
@@ -256,8 +260,7 @@ class Ui(QMainWindow):
         self.logEntryTable.setItem(self.rowPosition_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
         self.logEntryTable.setItem(self.rowPosition_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
-        self.__insert_vector_combobox(self.rowPosition_log_entry, 5, self.logEntryTable,
-                                      self.vector_dictionary)
+        self.__insert_vector_combobox(self.rowPosition_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
         self.rowPosition_log_entry += 1
         self.logEntryTable.blockSignals(False)
@@ -305,6 +308,7 @@ class Ui(QMainWindow):
         self.change_window = UiCommitConfig(self.vector_dictionary)
         self.change_window.save.connect(self.save_vector_dictionary)
         self.change_window.load.connect(self.load_vector_dictionary)
+        self.change_window.save.connect(self.save_log_file_dictionary)
 
     def __execute_directory_config(self):
         """Open the directory configuration window."""
@@ -385,22 +389,21 @@ class Ui(QMainWindow):
             self.vectorComboBox.blockSignals(False)
             if self.logEntryTable.rowCount() > 0:
                 for row in range(self.logEntryTable.rowCount()):
-                    widget = self.logEntryTable.cellWidget(self.rowPosition_log_entry, 5)
+                    widget = self.logEntryTable.cellWidget(row, 5)
                     combobox = widget.findChild(QComboBox, 'combobox')
                     log_entry_id_table = self.logEntryTable.item(row, 0).text()
-                    for log_id, log in self.log_file_dictionary.items():
-                        log_entry = log.log_entries.get(log_entry_id_table)
-                        if log_entry is not None:
-                            combobox.blockSignals(True)
-                            combobox.clear()
-                            log_entry_vector_id = log_entry.get_vector_id()
-                            for vector_id, v in self.vector_dictionary.items():
-                                combobox.addItem(v.name, vector_id)
-                                if vector_id == log_entry_vector_id:
-                                    combobox.setCurrentIndex(i)
-                                i += 1
-                            combobox.blockSignals(False)
-                            break
+                    log_entry = self.log_entry_dictionary.get(log_entry_id_table)
+                    if log_entry is not None:
+                        combobox.blockSignals(True)
+                        combobox.clear()
+                        log_entry_vector_id = log_entry.get_vector_id()
+                        for vector_id, v in self.vector_dictionary.items():
+                            combobox.addItem(v.name, vector_id)
+                            if vector_id == log_entry_vector_id:
+                                combobox.setCurrentIndex(i)
+                            i += 1
+                        combobox.blockSignals(False)
+                        break
 
     def __update_vector_display(self, hard: bool = False):
         """Updates the displayed vector information.
@@ -475,7 +478,27 @@ class Ui(QMainWindow):
         self.rowPosition_log_entry += 1
 
     def __construct_log_table(self):
-        pass
+        """Constructs the log table for the active vector."""
+        print("here")
+
+        self.logFileTable.blockSignals(True)
+
+        self.logFileTable.setRowCount(0)
+        self.rowPosition_log_file = 0
+
+        for log_file_id, l in self.log_file_dictionary.items():
+            print(l.file_name)
+            self.logFileTable.insertRow(self.rowPosition_log_file)
+            self.logFileTable.setItem(self.rowPosition_log_file, 0, QTableWidgetItem(log_file_id))
+            self.logFileTable.setItem(self.rowPosition_log_file, 1, QTableWidgetItem(l.file_name))
+            self.logFileTable.setItem(self.rowPosition_log_file, 2, QTableWidgetItem(l.file_path))
+            self.__insert_status_icon(self.rowPosition_log_file, 3, l.get_cleansing_status(), self.logFileTable)
+            self.__insert_status_icon(self.rowPosition_log_file, 4, l.get_validation_status(), self.logFileTable)
+            self.__insert_status_icon(self.rowPosition_log_file, 5, l.get_ingestion_status(), self.logFileTable)
+            self.__insert_status_icon(self.rowPosition_log_file, 6, l.get_acknowledged_status(), self.logFileTable)
+            self.rowPosition_log_file += 1
+
+        self.logFileTable.blockSignals(False)
 
     def __construct_node_table(self):
         """Constructs the node table for the active vector."""
@@ -535,15 +558,16 @@ class Ui(QMainWindow):
         print('Node Event: %s' % self.logEntryTable.item(row, 4).text())
 
         log_entry_id_table = self.logEntryTable.item(row, 0).text()
-        for log in self.log_file_dictionary.values():
-            log_entry = log.log_entries.get(log_entry_id_table)
-            if log_entry is not None:
-                self.nodeTable.blockSignals(True)
-                # update vector
-                v_id = log_entry.get_vector_id()
-                if v_id is not None:
-                    print(v_id)
-                    self.vector_dictionary.delete(v_id)
+        log_entry = self.log_entry_dictionary.get(log_entry_id_table)
+
+        if log_entry is not None:
+            self.nodeTable.blockSignals(True)
+            # update vector
+            v_id = log_entry.get_vector_id()
+            if v_id is not None:
+                print(v_id)
+                self.vector_dictionary.delete(v_id)
+            else:
                 log_entry.set_vector_id(vector_id)
                 self.nodeTable.insertRow(self.row_position_node)
                 uid = self.active_vector.vector.add_node()
@@ -556,8 +580,7 @@ class Ui(QMainWindow):
                 self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
 
                 self.row_position_node += 1
-                self.nodeTable.blockSignals(False)
-                break
+            self.nodeTable.blockSignals(False)
 
     def __update_node_cell(self, item: QTableWidgetItem):
         """Updates the node information from the cell that was just edited.
@@ -606,7 +629,7 @@ class Ui(QMainWindow):
             log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
 
             if log_file.get_ear():
-                for line_num, error in log_file.get_ear():
+                for line_num, error in log_file.get_ear().items():
                     self.earTable.insertRow(self.rowPosition_ear)
                     self.earTable.setItem(line_num - 1, 1, QTableWidgetItem(str(line_num)))
                     self.earTable.setItem(line_num - 1, 2, QTableWidgetItem(error))
@@ -814,6 +837,7 @@ class Ui(QMainWindow):
 
         file_util.save_object(v_dict, 'vector_dictionary.pk')
 
+
     def load_vector_dictionary(self):
         """Reads a vector dictionary from a file."""
 
@@ -838,6 +862,58 @@ class Ui(QMainWindow):
         else:
             self.vector_dictionary = IDDict()
         self.__update_all_vector_info(True)
+
+    def save_log_file_dictionary(self):
+        """Saves the log file dictionary to a file."""
+
+        print('Saving dict...')
+
+        l_dict = {}
+        for l_id, l in self.log_file_dictionary.items():
+            log_file = {
+                'file_name': l.file_name,
+                'file_path': l.file_path,
+                'cleansing_status': l.cleansing_status,
+                'validation_status': l.validation_status,
+                'acknowledged_status': l.acknowledged_status,
+                'ingested_status': l.ingested_status
+            }
+            log_file['ear'] = l.get_ear()
+            l_dict[l_id] = log_file
+
+        file_util.save_object(l_dict, 'log_file_dictionary.pk')
+
+    def load_log_file_dictionary(self):
+        """Reads a log file dictionary from a file."""
+
+        if file_util.check_file('log_file_dictionary.pk'):
+            print('Loading dict...')
+            l_dict = {}
+            data = file_util.read_file('log_file_dictionary.pk')
+            for l_id, l in data.items():
+                print(l_id)
+                print(l['file_name'])
+                print(l['file_path'])
+                print(l['cleansing_status'])
+                print(l['validation_status'])
+                print(l['cleansing_status'])
+                print(l['ear'])
+
+                log_file = LogFile(l['file_name'], l['file_path'])
+
+                log_file.set_cleansing_status(l['cleansing_status'])
+                log_file.set_validation_status(l['validation_status'])
+                log_file.set_acknowledged_status(l['acknowledged_status'])
+                log_file.set_ingestion_status(l['ingested_status'])
+                log_file.ear.set_ear(l['ear'])
+
+                l_dict[l_id] = log_file
+
+            self.log_file_dictionary = IDDict(l_dict)
+
+        else:
+            self.log_file_dictionary = IDDict()
+        self.__construct_log_table()
 
 
 if __name__ == "__main__":

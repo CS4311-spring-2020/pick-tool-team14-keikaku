@@ -11,4 +11,4 @@ class EnforcementActionReport:
         self.errors_dictionary = errors
 
     def get_ear(self):
-        return self.errors_dictionary.items()
+        return self.errors_dictionary

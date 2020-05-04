@@ -50,7 +50,7 @@ class SplunkManager:
         }
         job = jobs.create(query, **search_kwargs_params)
 
-        for result in results.ResultsReader(job.results()):
+        for result in results.ResultsReader(job.results(count=0)):
             js = json.loads(json.dumps(result))
             entries.append(js)
 
