@@ -13,7 +13,8 @@ import os
 from PyQt5.Qt import QLabel, QPixmap
 from PyQt5.QtCore import Qt, QObject, QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTableWidget, \
-    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QTableWidgetItem, QMessageBox, QProgressBar, QFileDialog
+    QTabWidget, QCheckBox, QWidget, QHBoxLayout, QComboBox, QTableWidgetItem, QMessageBox, QProgressBar, QFileDialog, \
+    QSplitter
 from PyQt5.uic import loadUi
 
 from definitions import UI_PATH, ICON_PATH, COPIED_FILES
@@ -38,6 +39,8 @@ from src.model.relationship import Relationship
 from src.model.vector import ActiveVector, Vector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
 from src.util import file_util
+from src.gui.graph.graph_editor_view import GraphEditorView
+from src.gui.graph.graph_editor import  GraphEditor
 
 
 class Ui(QMainWindow):
@@ -200,6 +203,12 @@ class Ui(QMainWindow):
         self.vector_dictionary.added.connect(self.__update_all_vector_info)
         self.vector_dictionary.removed.connect(self.__update_all_vector_info)
         self.vector_dictionary.edited.connect(self.__refresh_vector_info)
+
+        # Portion to display the graph
+        self.splitter = self.findChild(QSplitter, "splitter")
+        self.graph_editor = GraphEditor()
+        self.graph_editor_scene = self.graph_editor.graph_editor_scene
+        self.graph_editor_view = GraphEditorView(self.graph_editor_scene, parent=self.splitter)
 
         self.show()
 
