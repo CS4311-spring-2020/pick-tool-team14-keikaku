@@ -8,7 +8,6 @@
 """
 
 __author__ = "Team Keikaku"
-
 __version__ = "0.1"
 
 import os

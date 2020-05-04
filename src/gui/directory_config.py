@@ -8,10 +8,10 @@
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.1"
+__version__ = "1.0"
 
 import os
+
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QFileDialog, QMessageBox
 from PyQt5.uic import loadUi
@@ -23,6 +23,9 @@ from src.model import settings
 class UiDirectoryConfig(QDialog):
     """The directory window which handles the setting of
     file directory paths.
+
+    start_ingestion: pyqtSignal
+        A pyQT signal emitted when ingestion is started.
     """
 
     start_ingestion = pyqtSignal()
@@ -63,22 +66,32 @@ class UiDirectoryConfig(QDialog):
         self.show()
 
     def __file_select_root(self):
+        """Sets the root directory."""
+
         dir_path = str(self.dialog.getExistingDirectory())
         self.rootText.setText(dir_path)
 
     def __file_select_red(self):
+        """Sets the red team directory."""
+
         dir_path = str(self.dialog.getExistingDirectory())
         self.redTeamText.setText(dir_path)
 
     def __file_select_blue(self):
+        """Sets the blue team directory."""
+
         dir_path = str(self.dialog.getExistingDirectory())
         self.blueTeamText.setText(dir_path)
 
     def __file_select_white(self):
+        """Sets the white team directory."""
+
         dir_path = str(self.dialog.getExistingDirectory())
         self.whiteTeamText.setText(dir_path)
 
     def __start_ingestion(self):
+        """Begins file ingestion."""
+
         dir_match = []
         valid_structure = False
 

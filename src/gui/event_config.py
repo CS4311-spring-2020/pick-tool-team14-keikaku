@@ -8,8 +8,7 @@
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.5"
+__version__ = "1.0"
 
 import os
 
@@ -31,9 +30,9 @@ class UiEventConfig(QDialog):
         Name of the adversarial assessment.
     description: str
         Description of the adversarial assessment.
-    start_time: str
+    start_time: QDateTime
         Start time of the adversarial assessment
-    end_time: str
+    end_time: QDateTime
         End time of the adversarial assessment.
     """
 

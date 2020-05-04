@@ -5,8 +5,7 @@ system.
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.5"
+__version__ = "0.9"
 
 import os
 
@@ -18,29 +17,27 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QAction, QTa
 from PyQt5.uic import loadUi
 
 from definitions import UI_PATH, ICON_PATH, COPIED_FILES
-
 from src.gui.commit_config import UiCommitConfig
 from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
 from src.gui.filter_config import UiFilterConfig
+from src.gui.graph.graph_editor import GraphEditor
+from src.gui.graph.graph_editor_view import GraphEditorView
 from src.gui.relationship_config import UiRelationshipConfig
 from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
 from src.gui.vector_db_analyst import UiVectorDBAnalyst
 from src.gui.vector_db_lead import UiVectorDBLead
-
 from src.model import event, settings
-from src.model.log_file import LogFile
-from src.model.log_entry import LogEntry
 from src.model.id_dictionary import IDDict
+from src.model.log_entry import LogEntry
+from src.model.log_file import LogFile
 from src.model.node import Node
 from src.model.relationship import Relationship
 from src.model.vector import ActiveVector, Vector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
 from src.util import file_util
-from src.gui.graph.graph_editor_view import GraphEditorView
-from src.gui.graph.graph_editor import  GraphEditor
 
 
 class Ui(QMainWindow):
@@ -53,8 +50,18 @@ class Ui(QMainWindow):
         Actively displaying vector.
     vector_dictionary: IDDict
         Vector dictionary to interface with.
+    log_file_dictionary: IDDict
+        Vector dictionary to interface with.
+    log_entry_dictionary: IDDict
+        Vector dictionary to interface with.
     row_position_node: int
         Index of the last row on the node table.
+    row_position_log_file: int
+        Index of the last row on the log_file table.
+    row_position_ear: int
+        Index of the last row on the EAR table.
+    row_position_log_entry: int
+        Index of the last row on the log_entry table.
     """
 
     active_vector: ActiveVector
@@ -63,14 +70,15 @@ class Ui(QMainWindow):
     log_entry_dictionary: IDDict
 
     row_position_node: int
-    rowPosition_log_file: int
-    rowPosition_ear: int
-    rowPosition_log_entry: int
+    row_position_log_file: int
+    row_position_ear: int
+    row_position_log_entry: int
 
     def __init__(self):
         """Initialize the main window and set all signals and slots
         associated with it.
         """
+
         super(Ui, self).__init__()
 
         self.thread = None
@@ -101,7 +109,7 @@ class Ui(QMainWindow):
         self.logFileTable = self.findChild(QTableWidget, 'logFileTable')
         self.logFileTable.itemSelectionChanged.connect(self.__update_ear_table)
         self.logFileTable.setColumnHidden(0, True)
-        self.rowPosition_log_file = self.logFileTable.rowCount()
+        self.row_position_log_file = self.logFileTable.rowCount()
         self.logFileTable.setColumnWidth(1, 100)
         self.logFileTable.setColumnWidth(2, 300)
         self.logFileTable.setColumnWidth(3, 160)
@@ -120,13 +128,13 @@ class Ui(QMainWindow):
         self.chosenSourceLabel.setOpenExternalLinks(True)
 
         self.earTable = self.findChild(QTableWidget, 'earTable')
-        self.rowPosition_ear = self.earTable.rowCount()
+        self.row_position_ear = self.earTable.rowCount()
         self.earTable.setColumnHidden(0, True)
         self.earTable.setColumnWidth(0, 120)
 
         self.logEntryTable = self.findChild(QTableWidget, 'logEntryTable')
         self.logEntryTable.setColumnHidden(0, True)
-        self.rowPosition_log_entry = self.logEntryTable.rowCount()
+        self.row_position_log_entry = self.logEntryTable.rowCount()
         self.logEntryTable.setColumnWidth(1, 80)
         self.logEntryTable.setColumnWidth(2, 200)
         self.logEntryTable.setColumnWidth(3, 200)
@@ -172,7 +180,7 @@ class Ui(QMainWindow):
         self.toggleVisCheckBox = self.findChild(QCheckBox, 'toggleVisCheckBox')
         self.toggleVisCheckBox.stateChanged.connect(self.__set_node_visibility)
 
-        self.rowPosition_node = self.nodeTable.rowCount()
+        self.row_position_node = self.nodeTable.rowCount()
         self.descriptionLabel = self.findChild(QLabel, 'descriptionLabel_2')
         self.descriptionLabel.setText('')
 
@@ -213,6 +221,8 @@ class Ui(QMainWindow):
         self.show()
 
     def __start_ingestion(self):
+        """Begins file ingestion."""
+
         if not event.saved:
             self.msg.setText("<font color='red'>Event is not Saved</font>")
             self.msg.exec()
@@ -231,6 +241,8 @@ class Ui(QMainWindow):
             self.thread.start()
 
     def __on_finished(self):
+        """Cleans up ingestion thread completion."""
+
         self.thread.quit()
         self.acknowledgeButton.setEnabled(True)
         self.ingestButton.setEnabled(True)
@@ -239,42 +251,58 @@ class Ui(QMainWindow):
         self.progress.setValue(0)
 
     def __on_file_status(self, log_file: LogFile, value: float):
+        """Inserts a new log file to the log file table.
+
+        :param log_file: logFile
+            The log file to insert.
+        :param value: float
+            A progress percentile value.
+        """
+
         self.logFileTable.blockSignals(True)
-        self.logFileTable.insertRow(self.rowPosition_log_file)
+        self.logFileTable.insertRow(self.row_position_log_file)
         uid = self.log_file_dictionary.add(log_file)
 
-        self.logFileTable.setItem(self.rowPosition_log_file, 0, QTableWidgetItem(uid))
-        self.logFileTable.setItem(self.rowPosition_log_file, 1, QTableWidgetItem(log_file.file_name))
-        self.logFileTable.setItem(self.rowPosition_log_file, 2, QTableWidgetItem(log_file.file_path))
-        self.__insert_status_icon(self.rowPosition_log_file, 3, log_file.get_cleansing_status(), self.logFileTable)
-        self.__insert_status_icon(self.rowPosition_log_file, 4, log_file.get_validation_status(), self.logFileTable)
-        self.__insert_status_icon(self.rowPosition_log_file, 5, log_file.get_ingestion_status(), self.logFileTable)
-        self.__insert_status_icon(self.rowPosition_log_file, 6, log_file.get_acknowledged_status(), self.logFileTable)
+        self.logFileTable.setItem(self.row_position_log_file, 0, QTableWidgetItem(uid))
+        self.logFileTable.setItem(self.row_position_log_file, 1, QTableWidgetItem(log_file.file_name))
+        self.logFileTable.setItem(self.row_position_log_file, 2, QTableWidgetItem(log_file.file_path))
+        self.__insert_status_icon(self.row_position_log_file, 3, log_file.get_cleansing_status(), self.logFileTable)
+        self.__insert_status_icon(self.row_position_log_file, 4, log_file.get_validation_status(), self.logFileTable)
+        self.__insert_status_icon(self.row_position_log_file, 5, log_file.get_ingestion_status(), self.logFileTable)
+        self.__insert_status_icon(self.row_position_log_file, 6, log_file.get_acknowledged_status(), self.logFileTable)
 
-        self.rowPosition_log_file += 1
+        self.row_position_log_file += 1
         self.progress.setValue(value)
         self.logFileTable.blockSignals(False)
 
     def __on_entry_status(self, log_entry: LogEntry):
+        """Inserts a new log entry to the log entry table.
+
+        :param log_entry:
+            The log entry to insert.
+        """
+
         self.logEntryTable.blockSignals(True)
-        self.logEntryTable.insertRow(self.rowPosition_log_entry)
+        self.logEntryTable.insertRow(self.row_position_log_entry)
         print(str(log_entry.get_line_num()))
         print(log_entry.get_timestamp())
 
         uid = self.log_entry_dictionary.add(log_entry)
 
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 0, QTableWidgetItem(uid))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 1, QTableWidgetItem(str(log_entry.get_line_num())))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 2, QTableWidgetItem(log_entry.get_source()))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
-        self.logEntryTable.setItem(self.rowPosition_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
+        self.logEntryTable.setItem(self.row_position_log_entry, 0, QTableWidgetItem(uid))
+        self.logEntryTable.setItem(self.row_position_log_entry, 1, QTableWidgetItem(str(log_entry.get_line_num())))
+        self.logEntryTable.setItem(self.row_position_log_entry, 2, QTableWidgetItem(log_entry.get_source()))
+        self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
+        self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
-        self.__insert_vector_combobox(self.rowPosition_log_entry, 5, self.logEntryTable, self.vector_dictionary)
+        self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
-        self.rowPosition_log_entry += 1
+        self.row_position_log_entry += 1
         self.logEntryTable.blockSignals(False)
 
     def __validate_file(self):
+        """Begins file validation."""
+
         if self.selected_log_file_uid is not None:
             log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
             print(log_file.get_file_name())
@@ -284,6 +312,14 @@ class Ui(QMainWindow):
             self.thread.start()
 
     def __on_file_update(self, log_file: LogFile, value: float):
+        """Updates the statuses of a log file.
+
+        :param log_file:
+            The log file to update statuses for.
+        :param value:
+            A progress percentile value.
+        """
+
         self.logFileTable.blockSignals(True)
         self.log_file_dictionary.set(self.selected_log_file_uid, log_file)
         rows = self.logFileTable.selectionModel().selectedRows()
@@ -303,6 +339,8 @@ class Ui(QMainWindow):
         self.logFileTable.blockSignals(False)
 
     def __force_ingest(self):
+        """Begins forced file ingestion."""
+
         if self.selected_log_file_uid is not None:
             log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
             print(log_file.get_file_name())
@@ -462,55 +500,55 @@ class Ui(QMainWindow):
         """Constructs the log entry table."""
 
         self.logEntryTable.setRowCount(0)
-        self.rowPosition_log_entry = 0
+        self.row_position_log_entry = 0
 
         for log_id, log in self.log_file_dictionary.items():
             for log_entry_id, log_entry in log.log_entries.items():
-                self.logEntryTable.insertRow(self.rowPosition_log_entry)
+                self.logEntryTable.insertRow(self.row_position_log_entry)
                 item = QTableWidgetItem(log_entry_id)
                 item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
-                self.logEntryTable.setItem(self.rowPosition_log_entry, 0, item)
-                self.logEntryTable.setItem(self.rowPosition_log_entry, 1,
+                self.logEntryTable.setItem(self.row_position_log_entry, 0, item)
+                self.logEntryTable.setItem(self.row_position_log_entry, 1,
                                            QTableWidgetItem(str(log_entry.get_line_num())))
-                self.logEntryTable.setItem(self.rowPosition_log_entry, 2,
+                self.logEntryTable.setItem(self.row_position_log_entry, 2,
                                            QTableWidgetItem(log_entry.get_source()))
-                self.logEntryTable.setItem(self.rowPosition_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
-                self.logEntryTable.setItem(self.rowPosition_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
+                self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
+                self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
-                self.__insert_vector_combobox(self.rowPosition_log_entry, 5, self.logEntryTable,
+                self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable,
                                               self.vector_dictionary.items())
-                widget = self.logEntryTable.cellWidget(self.rowPosition_log_entry, 5)
+                widget = self.logEntryTable.cellWidget(self.row_position_log_entry, 5)
                 combobox = widget.findChild(QComboBox, 'combobox')
-                combobox.row = self.rowPosition_log_entry
+                combobox.row = self.row_position_log_entry
                 combobox.setCurrentIndex(combobox.findData(log_entry.get_vector_id))
                 combobox.currentIndexChanged.connect(lambda: self.__add_node(combobox.row, combobox.currentData()))
-        self.rowPosition_log_entry += 1
+        self.row_position_log_entry += 1
 
     def __construct_log_table(self):
         """Constructs the log table for the active vector."""
-        print("here")
 
         self.logFileTable.blockSignals(True)
 
         self.logFileTable.setRowCount(0)
-        self.rowPosition_log_file = 0
+        self.row_position_log_file = 0
 
         for log_file_id, l in self.log_file_dictionary.items():
             print(l.file_name)
-            self.logFileTable.insertRow(self.rowPosition_log_file)
-            self.logFileTable.setItem(self.rowPosition_log_file, 0, QTableWidgetItem(log_file_id))
-            self.logFileTable.setItem(self.rowPosition_log_file, 1, QTableWidgetItem(l.file_name))
-            self.logFileTable.setItem(self.rowPosition_log_file, 2, QTableWidgetItem(l.file_path))
-            self.__insert_status_icon(self.rowPosition_log_file, 3, l.get_cleansing_status(), self.logFileTable)
-            self.__insert_status_icon(self.rowPosition_log_file, 4, l.get_validation_status(), self.logFileTable)
-            self.__insert_status_icon(self.rowPosition_log_file, 5, l.get_ingestion_status(), self.logFileTable)
-            self.__insert_status_icon(self.rowPosition_log_file, 6, l.get_acknowledged_status(), self.logFileTable)
-            self.rowPosition_log_file += 1
+            self.logFileTable.insertRow(self.row_position_log_file)
+            self.logFileTable.setItem(self.row_position_log_file, 0, QTableWidgetItem(log_file_id))
+            self.logFileTable.setItem(self.row_position_log_file, 1, QTableWidgetItem(l.file_name))
+            self.logFileTable.setItem(self.row_position_log_file, 2, QTableWidgetItem(l.file_path))
+            self.__insert_status_icon(self.row_position_log_file, 3, l.get_cleansing_status(), self.logFileTable)
+            self.__insert_status_icon(self.row_position_log_file, 4, l.get_validation_status(), self.logFileTable)
+            self.__insert_status_icon(self.row_position_log_file, 5, l.get_ingestion_status(), self.logFileTable)
+            self.__insert_status_icon(self.row_position_log_file, 6, l.get_acknowledged_status(), self.logFileTable)
+            self.row_position_log_file += 1
 
         self.logFileTable.blockSignals(False)
 
     def __construct_node_table(self):
         """Constructs the node table for the active vector."""
+
         self.nodeTable.blockSignals(True)
 
         self.nodeTable.setRowCount(0)
@@ -562,9 +600,10 @@ class Ui(QMainWindow):
         :param vector_id: str
             Vector UID to add the node to.
         """
-        print('Adding node from row %d to vector %s' % (row, vector_id))
-        print('Node Source: %s' % self.logEntryTable.item(row, 2).text())
-        print('Node Event: %s' % self.logEntryTable.item(row, 4).text())
+
+        # print('Adding node from row %d to vector %s' % (row, vector_id))
+        # print('Node Source: %s' % self.logEntryTable.item(row, 2).text())
+        # print('Node Event: %s' % self.logEntryTable.item(row, 4).text())
 
         log_entry_id_table = self.logEntryTable.item(row, 0).text()
         log_entry = self.log_entry_dictionary.get(log_entry_id_table)
@@ -620,10 +659,12 @@ class Ui(QMainWindow):
             return
 
     def __update_ear_table(self):
+        """Updates the Enforcement Action Report table."""
+
         self.earTable.blockSignals(True)
         rows = self.logFileTable.selectionModel().selectedRows()
         self.earTable.setRowCount(0)
-        self.rowPosition_ear = 0
+        self.row_position_ear = 0
         indexes = []
         for row in rows:
             indexes.append(row.row())
@@ -639,10 +680,10 @@ class Ui(QMainWindow):
 
             if log_file.get_ear():
                 for line_num, error in log_file.get_ear().items():
-                    self.earTable.insertRow(self.rowPosition_ear)
+                    self.earTable.insertRow(self.row_position_ear)
                     self.earTable.setItem(line_num - 1, 1, QTableWidgetItem(str(line_num)))
                     self.earTable.setItem(line_num - 1, 2, QTableWidgetItem(error))
-                    self.rowPosition_ear += 1
+                    self.row_position_ear += 1
         self.earTable.blockSignals(False)
 
     def __delete_node(self):
@@ -664,6 +705,8 @@ class Ui(QMainWindow):
             self.nodeTable.blockSignals(False)
 
     def __set_node_visibility(self, state: int):
+        """Sets the node visibility."""
+
         if state == 2:
             check = True
         elif state == 0:
@@ -715,9 +758,9 @@ class Ui(QMainWindow):
     def __block_signals(*argv: QObject, block: bool):
         """Sets block of pyQT signals for a list of QObjects.
 
-        :param argv:
+        :param argv: QObject
             List of QObjects.
-        :param block:
+        :param block: bool
             True if to block, false otherwise.
         """
         for arg in argv:
@@ -728,7 +771,7 @@ class Ui(QMainWindow):
 
         :param row: int
             Row index.
-        :param col:  int
+        :param col: int
             Column index.
         :param table: QTableWidget
             Table to insert to.
@@ -747,6 +790,16 @@ class Ui(QMainWindow):
         checkbox.toggled.connect(lambda: self.__update_node_visibility(checkbox.row, checkbox))
 
     def __update_node_visibility(self, row: int, checkbox: QCheckBox):
+        """Updates the node visibility.
+
+        :param row: int
+            The row on the node table.
+        :param checkbox:
+            The node visibility checkbox.
+        :return: bool
+            True if the checkbox is checked, false otherwise.
+        """
+
         node = self.active_vector.vector.node_get(self.nodeTable.item(row, 0).text())
         if checkbox.isChecked():
             node.set_visibility(True)
@@ -781,6 +834,8 @@ class Ui(QMainWindow):
         table.setCellWidget(row, col, cell_widget)
 
     def __select_icon(self):
+        """Assigns the selected icon to a node."""
+
         self.nodeTable.blockSignals(True)
         if self.nodeTable.selectionModel().hasSelection():
             indexes = []
@@ -802,6 +857,18 @@ class Ui(QMainWindow):
 
     @staticmethod
     def __insert_status_icon(row: int, col: int, status: bool, table: QTableWidget):
+        """Inserts a status icon to a table cell.
+
+        :param row: int
+            Row index.
+        :param col: int
+            Column index.
+        :param status: bool
+            The status to determine which icon to be inserted.
+        :param table: QTableWidget
+            The table to insert the status icon into.
+        """
+
         if status is True:
             icon_path = os.path.join(ICON_PATH, 'check.png')
         else:
@@ -815,6 +882,17 @@ class Ui(QMainWindow):
 
     @staticmethod
     def __insert_icon(row: int, col: int, icon_path: str, table: QTableWidget):
+        """Inserts an icon into a table cell.
+
+        :param row: int
+            Row index.
+        :param col: int
+            Column index.
+        :param icon_path: str
+            The file path to the icon to be inserted.
+        :param table: QTableWidget
+            The table to insert the icon into.
+        """
 
         icon = QPixmap(icon_path).scaledToHeight(25).scaledToWidth(25)
         cell_widget = QLabel()
@@ -825,7 +903,7 @@ class Ui(QMainWindow):
     def save_vector_dictionary(self):
         """Saves the vector dictionary to a file."""
 
-        print('Saving dict...')
+        # print('Saving dict...')
         v_dict = {'active': self.active_vector.vector_id}
         for v_id, v in self.vector_dictionary.items():
             vector = {
@@ -846,12 +924,11 @@ class Ui(QMainWindow):
 
         file_util.save_object(v_dict, 'vector_dictionary.pk')
 
-
     def load_vector_dictionary(self):
         """Reads a vector dictionary from a file."""
 
         if file_util.check_file('vector_dictionary.pk'):
-            print('Loading dict...')
+            # print('Loading dict...')
             v_dict = {}
             data = file_util.read_file('vector_dictionary.pk')
             active_vector_id = data.pop('active')
@@ -875,19 +952,12 @@ class Ui(QMainWindow):
     def save_log_file_dictionary(self):
         """Saves the log file dictionary to a file."""
 
-        print('Saving dict...')
-
+        # print('Saving dict...')
         l_dict = {}
         for l_id, l in self.log_file_dictionary.items():
-            log_file = {
-                'file_name': l.file_name,
-                'file_path': l.file_path,
-                'cleansing_status': l.cleansing_status,
-                'validation_status': l.validation_status,
-                'acknowledged_status': l.acknowledged_status,
-                'ingested_status': l.ingested_status
-            }
-            log_file['ear'] = l.get_ear()
+            log_file = {'file_name': l.file_name, 'file_path': l.file_path, 'cleansing_status': l.cleansing_status,
+                        'validation_status': l.validation_status, 'acknowledged_status': l.acknowledged_status,
+                        'ingested_status': l.ingested_status, 'ear': l.get_ear()}
             l_dict[l_id] = log_file
 
         file_util.save_object(l_dict, 'log_file_dictionary.pk')
@@ -896,17 +966,17 @@ class Ui(QMainWindow):
         """Reads a log file dictionary from a file."""
 
         if file_util.check_file('log_file_dictionary.pk'):
-            print('Loading dict...')
+            # print('Loading dict...')
             l_dict = {}
             data = file_util.read_file('log_file_dictionary.pk')
             for l_id, l in data.items():
-                print(l_id)
-                print(l['file_name'])
-                print(l['file_path'])
-                print(l['cleansing_status'])
-                print(l['validation_status'])
-                print(l['cleansing_status'])
-                print(l['ear'])
+                # print(l_id)
+                # print(l['file_name'])
+                # print(l['file_path'])
+                # print(l['cleansing_status'])
+                # print(l['validation_status'])
+                # print(l['cleansing_status'])
+                # print(l['ear'])
 
                 log_file = LogFile(l['file_name'], l['file_path'])
 
