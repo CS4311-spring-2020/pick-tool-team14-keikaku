@@ -1,11 +1,6 @@
-from PyQt5.Qt import QGraphicsItemGroup
-from PyQt5.Qt import QRectF
-from PyQt5.Qt import QPainter
-from PyQt5.Qt import QPen
-from PyQt5.Qt import QBrush
-from PyQt5.Qt import QStyleOptionGraphicsItem
-from PyQt5.Qt import Qt
-from PyQt5.Qt import QGraphicsRectItem
+from typing import List
+from PyQt5.Qt import QGraphicsItemGroup, QGraphicsItem, QRectF, QPen, QGraphicsRectItem, Qt
+from src.model.vector import Vector
 
 
 class VectorItemGroup(QGraphicsItemGroup):
@@ -20,19 +15,28 @@ class VectorItemGroup(QGraphicsItemGroup):
         bound_box : QRectF
             Bound box used to draw tha bounding box of all the items inside this class
     """
-    vector_id: str
+    name: str
     bound_box: QRectF
+    vector : Vector
+    item_list : List[QGraphicsItem] = []
 
-    def __init__(self):
+    def __init__(self, vector : Vector):
         super().__init__()
+        self.name = vector.name
+        self.vector = vector
 
-    '''
-        Draws bounding box that contains all the items inside it.
-    '''
+    def add_to_list(self, item : QGraphicsItem):
+        self.item_list.append(item)
 
-    def get_bound_box_item(self):
-        self.bound_box = self.boundingRect()
-        bound_box_item = QGraphicsRectItem(self.bound_box.x(), self.bound_box.y(), self.bound_box.height(),
-                                           self.bound_box.width())
-        bound_box_item.setPen(QPen(Qt.green, 6))
-        return bound_box_item
+    def remove_from_list(self, item : QGraphicsItem):
+        self.item_list.remove(item)
+
+    def lock_and_hide(self):
+        for item in self.item_list:
+            self.addToGroup(item)
+        self.setVisible(False)
+
+    def unlock_displac(self):
+        for item in self.item_list:
+            item.setVisible(True)
+            self.removeFromGroup(item)

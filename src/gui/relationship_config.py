@@ -37,6 +37,8 @@ class UiRelationshipConfig(QFrame):
     vector: Vector
 
     def __init__(self, vector: Vector):
+        # @TODO Pass reference to GraphEditor and add funtionality to add realtionship
+
         """Initialize the relationship window and set all signals and slots
         associated with it.
 

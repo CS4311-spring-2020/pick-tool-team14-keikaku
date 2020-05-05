@@ -206,9 +206,9 @@ class Ui(QMainWindow):
 
         # Portion to display the graph
         self.splitter = self.findChild(QSplitter, "splitter")
-        self.graph_editor = GraphEditor()
-        self.graph_editor_scene = self.graph_editor.graph_editor_scene
-        self.graph_editor_view = GraphEditorView(self.graph_editor_scene, parent=self.splitter)
+
+
+        self.graph_editor = GraphEditor(parent=self.splitter)
 
         self.show()
 
@@ -458,6 +458,10 @@ class Ui(QMainWindow):
             if hasattr(self, 'relationship_window'):
                 self.relationship_window.construct_relationship_table(self.active_vector.vector)
 
+        # @TODO For adding Vector
+        # self.active_vector.vector VECTOR OBJECT
+
+
     def __construct_log_entry_table(self):
         """Constructs the log entry table."""
 
@@ -553,6 +557,9 @@ class Ui(QMainWindow):
             self.row_position_node += 1
             self.nodeTable.blockSignals(False)
 
+            # @TODO For adding nodes
+            # self.active_vector.vector.node_get(uid)
+
     def __add_node(self, row: int, vector_id: str):
         """Adds a node from row to the vector_id's node table and to the node dictionary.
         Also removes the node from any other vector.
@@ -590,6 +597,9 @@ class Ui(QMainWindow):
 
                 self.row_position_node += 1
             self.nodeTable.blockSignals(False)
+
+            #@TODO For adding created node
+            # uid = self.active_vector.vector.add_node()
 
     def __update_node_cell(self, item: QTableWidgetItem):
         """Updates the node information from the cell that was just edited.

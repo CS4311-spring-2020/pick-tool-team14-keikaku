@@ -1,8 +1,5 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.Qt import *
-from PyQt5.Qt import QGraphicsLineItem
-
+from PyQt5.Qt import Qt, QGraphicsItem, QPainter, QPainterPath, QStyleOptionGraphicsItem, QPen, QBrush, QPoint, QRectF
+from src.model.node import Node
 
 class NodeItem(QGraphicsItem):
     '''
@@ -20,16 +17,16 @@ class NodeItem(QGraphicsItem):
     width: float = 100.0
     height: float = 100.0
     relationships = {}
-    name = None
+    node : Node
+    name = str
 
-    def __init__(self, pos_x: float, post_y: float, name: str, type: str, parent=None):
+    def __init__(self, x: float, y: float, node: Node, parent=None):
         super().__init__(parent)
-        self.pos_x = pos_x
-        self.pos_y = post_y
-        self.name = name
-        self.type = type
+        self.pos_x = x
+        self.pos_y = y
+        self.name = node.name
+        self.node = node
 
-        print(self.pos().x(), self.pos().y(), self.boundingRect().center().x(), self.boundingRect().center().y())
         self.init_ui()
 
     def init_ui(self):
