@@ -92,7 +92,7 @@ class UiRelationshipConfig(QFrame):
             self.relationshipTable.setItem(self.row_position, 0, item)
             self.relationshipTable.setItem(self.row_position, 1, QTableWidgetItem(relationship.parent))
             self.relationshipTable.setItem(self.row_position, 2, QTableWidgetItem(relationship.child))
-            self.relationshipTable.setItem(self.row_position, 2, QTableWidgetItem(relationship.label))
+            self.relationshipTable.setItem(self.row_position, 3, QTableWidgetItem(relationship.label))
             self.row_position += 1
         self.relationshipTable.blockSignals(False)
 

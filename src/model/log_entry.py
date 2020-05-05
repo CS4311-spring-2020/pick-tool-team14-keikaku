@@ -25,7 +25,7 @@ class LogEntry:
     """
 
     line_number: int
-    timestamp: str
+    time_stamp: str
     description: str
     source: str
     vector_id: str
