@@ -546,8 +546,8 @@ class Ui(QMainWindow):
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.logEntryTable.setItem(self.row_position_log_entry, 0, item)
             self.logEntryTable.setItem(self.row_position_log_entry, 1, QTableWidgetItem(str(log_entry.get_line_num())))
-            self.logEntryTable.setItem(self.row_position_log_entry, 2, QTableWidgetItem(log_entry.get_timestamp()))
-            self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_source()))
+            self.logEntryTable.setItem(self.row_position_log_entry, 2, QTableWidgetItem(log_entry.get_source()))
+            self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
             self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
             self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
