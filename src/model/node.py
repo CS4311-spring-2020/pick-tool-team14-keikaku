@@ -31,6 +31,8 @@ class Node:
         Source of the corresponding log entry.
     visibility: bool
         Whether the node is visible or not.
+    uid: str
+        UID of the node.
     """
 
     name: str
@@ -42,15 +44,16 @@ class Node:
     icon_type: str
     source: str
     visibility: bool
+    uid: str
 
     def __init__(self, name: str = '',
-                 timestamp: QDateTime = QDateTime.currentDateTimeUtc().toString('hh:mm MM/dd/yyyy A'),
+                 timestamp: str = QDateTime.currentDateTimeUtc().toString('hh:mm MM/dd/yyyy A'),
                  description: str = '', log_entry_reference: str = '', log_creator: str = '', event_type: str = '',
                  icon_type: str = '', source: str = '', visibility: bool = True):
         """
         :param name: str, optional (default is '')
             Name of the node.
-        :param timestamp: QDateTime, optional  (default is QDateTime().toString('hh:mm MM/dd/yyyy A'))
+        :param timestamp: str, optional  (default is QDateTime().toString('hh:mm MM/dd/yyyy A'))
             Timestamp node event occurred.
         :param description: str, optional  (default is '')
             Description of the node.
@@ -77,11 +80,12 @@ class Node:
         self.icon_type = icon_type
         self.source = source
         self.visibility = visibility
+        self.uid = None
 
     def set_name(self, name: str):
         self.name = name
 
-    def set_timestamp(self, timestamp: QDateTime):
+    def set_timestamp(self, timestamp: str):
         self.timestamp = timestamp
 
     def set_description(self, description: str):

@@ -208,6 +208,9 @@ class Ui(QMainWindow):
         self.progress = self.findChild(QProgressBar, 'fileProcessProgressBar')
         self.progress.setValue(0)
 
+        self.splitter = self.findChild(QSplitter, "splitter")
+        self.graph_editor = GraphEditor(parent=self.splitter)
+
         self.active_vector = ActiveVector()
         self.load_vector_dictionary()
         self.load_log_file_dictionary()
@@ -215,13 +218,6 @@ class Ui(QMainWindow):
         self.vector_dictionary.removed.connect(self.__update_all_vector_info)
         self.vector_dictionary.edited.connect(self.__refresh_vector_info)
 
-        # Portion to display the graph
-        self.splitter = self.findChild(QSplitter, "splitter")
-
-
-        self.graph_editor = GraphEditor(parent=self.splitter)
-
-        #self.log_entry_dictionary = IDDict()
         self.load_log_entry_dictionary()
         self.log_entry_to_vector_dictionary = {}
         #self.splunk_manage = SplunkManager()
@@ -322,7 +318,7 @@ class Ui(QMainWindow):
         self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
         self.log_entry_to_vector_dictionary[log_entry.get_description()] = {'line_num': log_entry.get_line_num(),
-                                                                            'entry_id': uid, 'vector_id': 0}
+                                                                            'entry_id': uid, 'vector_id': '0'}
 
         self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
@@ -418,7 +414,7 @@ class Ui(QMainWindow):
     def __execute_relationship_config(self):
         """Open the relationship configuration window."""
 
-        self.relationship_window = UiRelationshipConfig(self.active_vector.vector)
+        self.relationship_window = UiRelationshipConfig(self.active_vector.vector, self.nodeTable, self.graph_editor)
 
     def __execute_team_config(self):
         """Open the team configuration window."""
@@ -533,9 +529,9 @@ class Ui(QMainWindow):
             if hasattr(self, 'relationship_window'):
                 self.relationship_window.construct_relationship_table(self.active_vector.vector)
 
-        # @TODO For adding Vector
-        # self.active_vector.vector VECTOR OBJECT
-
+        # @TODO Test this to make sure it works
+        if self.active_vector.vector:
+            self.graph_editor.add_vector(self.active_vector.vector)
 
     def __construct_log_entry_table(self):
         """Constructs the log entry table."""
@@ -547,7 +543,7 @@ class Ui(QMainWindow):
         for log_entry_id, log_entry in self.log_entry_dictionary.items():
             self.logEntryTable.insertRow(self.row_position_log_entry)
             item = QTableWidgetItem(log_entry_id)
-            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.logEntryTable.setItem(self.row_position_log_entry, 0, item)
             self.logEntryTable.setItem(self.row_position_log_entry, 1,
                                    QTableWidgetItem(str(log_entry.get_line_num())))
@@ -597,7 +593,7 @@ class Ui(QMainWindow):
         for node_id, n in self.active_vector.vector.node_items():
             self.nodeTable.insertRow(self.row_position_node)
             item = QTableWidgetItem(node_id)
-            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.nodeTable.setItem(self.row_position_node, 0, item)
             self.nodeTable.setItem(self.row_position_node, 1, QTableWidgetItem(n.name))
             self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(n.timestamp))
@@ -625,13 +621,14 @@ class Ui(QMainWindow):
             self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(
                 self.active_vector.vector.node_get(uid).timestamp))
             item = QTableWidgetItem(uid)
-            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.nodeTable.setItem(self.row_position_node, 0, item)
             self.row_position_node += 1
             self.nodeTable.blockSignals(False)
 
             # @TODO For adding nodes
-            # self.active_vector.vector.node_get(uid)
+            if self.active_vector.vector.node_get(uid):
+                self.graph_editor.add_node(self.active_vector.vector.node_get(uid))
 
     def __add_node(self, row: int, vector_id: str):
         """Adds a node from row to the vector_id's node table and to the node dictionary.
@@ -655,7 +652,7 @@ class Ui(QMainWindow):
             self.vector_dictionary.blockSignals(True)
             # remove node from old vector
             v_id = log_entry.get_vector_id()
-            if v_id is not None:  # remove node from old vector
+            if v_id != '0':  # remove node from old vector
                 self.vector_dictionary.get(v_id).delete_node(log_entry.get_node_id())
                 if v_id == self.active_vector.vector_id:  # if vector is active
                     for row in range(self.row_position_node):
@@ -673,7 +670,7 @@ class Ui(QMainWindow):
 
                 self.nodeTable.insertRow(self.row_position_node)
                 item = QTableWidgetItem(uid)
-                item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+                item.setFlags(item.flags() ^ Qt.ItemIsEditable)
                 self.nodeTable.setItem(self.row_position_node, 0, item)
                 self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(log_entry.get_timestamp()))
                 self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(log_entry.get_description()))
@@ -681,11 +678,14 @@ class Ui(QMainWindow):
                 self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
 
                 self.row_position_node += 1
+                # @TODO For adding created node
+                if self.active_vector.vector.node_get(uid):
+                    self.graph_editor.add_node(self.active_vector.vector.node_get(uid))
             self.nodeTable.blockSignals(False)
             self.vector_dictionary.blockSignals(False)
 
-            #@TODO For adding created node
-            # uid = self.active_vector.vector.add_node()
+
+
 
     def __update_node_cell(self, item: QTableWidgetItem):
         """Updates the node information from the cell that was just edited.
@@ -879,7 +879,7 @@ class Ui(QMainWindow):
         cell_widget = QWidget()
         combobox = QComboBox()
         combobox.setObjectName('combobox')
-        combobox.addItem('None', 0)
+        combobox.addItem('None', '0')
         for vector_id, v in vector_dictionary.items():
             combobox.addItem(v.name, vector_id)
 
