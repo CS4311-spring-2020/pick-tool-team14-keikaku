@@ -1,5 +1,8 @@
+from typing import Dict
 from PyQt5.Qt import Qt, QGraphicsItem, QPainter, QPainterPath, QStyleOptionGraphicsItem, QPen, QBrush, QPoint, QRectF
+from PyQt5.QtWidgets import QGraphicsSceneMouseEvent
 from src.model.node import Node
+from src.gui.graph.relationship_item import RelationshipItem
 
 class NodeItem(QGraphicsItem):
     '''
@@ -16,15 +19,15 @@ class NodeItem(QGraphicsItem):
     '''
     width: float = 100.0
     height: float = 100.0
-    relationships = {}
+    relationships : Dict[str, RelationshipItem] = {}
     node : Node
-    name = str
+    id = str
 
     def __init__(self, x: float, y: float, node: Node, parent=None):
         super().__init__(parent)
         self.pos_x = x
         self.pos_y = y
-        self.name = node.name
+        self.id = node.id
         self.node = node
 
         self.init_ui()
@@ -36,7 +39,7 @@ class NodeItem(QGraphicsItem):
         self.setAcceptHoverEvents(True)
 
     '''
-        Returns the center position of a node
+        Grabs the initial boundingRect of this node and translates the current position of the mid point 
     '''
 
     def center_pos(self):
@@ -55,7 +58,8 @@ class NodeItem(QGraphicsItem):
             graphics object that connects to this node       
     '''
 
-    def add_relationship(self, key: str, relationship):
+    def add_relationship(self, key: str, relationship : RelationshipItem):
+        print(type(relationship))
         self.relationships[key] = relationship
 
     '''
@@ -90,11 +94,16 @@ class NodeItem(QGraphicsItem):
         painter.setBrush(QBrush(Qt.red))
         painter.drawPath(node_outline.simplified())
 
-    def mouseMoveEvent(self, QGraphicsSceneMouseEvent):
-        super().mouseMoveEvent(QGraphicsSceneMouseEvent)
-        self.boundingRect()
-        self.dragRelationshipItems()
 
-    def dragRelationshipItems(self):
+    '''
+        Overrides the inherited mouse event so that it can update the coordinates of the connected relationships
+        
+        :param event : QGraphicsSceneMouseEvent
+            mouse event for when this node is click and moved
+    '''
+    def mouseMoveEvent(self, event :QGraphicsSceneMouseEvent):
+        super().mouseMoveEvent(event)
         for rl in self.relationships.values():
-            rl.dragLine(self.name, self.center_pos())
+            rl.dragLine(self.id, self.center_pos())
+
+

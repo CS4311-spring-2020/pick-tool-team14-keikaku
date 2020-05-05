@@ -409,7 +409,7 @@ class Ui(QMainWindow):
     def __execute_relationship_config(self):
         """Open the relationship configuration window."""
 
-        self.relationship_window = UiRelationshipConfig(self.active_vector.vector)
+        self.relationship_window = UiRelationshipConfig(self.active_vector.vector, self.graph_editor)
 
     def __execute_team_config(self):
         """Open the team configuration window."""
@@ -524,8 +524,9 @@ class Ui(QMainWindow):
             if hasattr(self, 'relationship_window'):
                 self.relationship_window.construct_relationship_table(self.active_vector.vector)
 
-        # @TODO For adding Vector
-        # self.active_vector.vector VECTOR OBJECT
+        # @TODO Test this to make sure it works
+        if self.active_vector.vector:
+            self.graph_editor.add_vector(self.active_vector.vector)
 
 
     def __construct_log_entry_table(self):
@@ -625,7 +626,8 @@ class Ui(QMainWindow):
             self.nodeTable.blockSignals(False)
 
             # @TODO For adding nodes
-            # self.active_vector.vector.node_get(uid)
+            if self.active_vector.vector.node_get(uid):
+                self.graph_editor.add_node(self.active_vector.vector.node_get(uid))
 
     def __add_node(self, row: int, vector_id: str):
         """Adds a node from row to the vector_id's node table and to the node dictionary.
@@ -675,11 +677,14 @@ class Ui(QMainWindow):
                 self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
 
                 self.row_position_node += 1
+                # @TODO For adding created node
+                if self.active_vector.vector.node_get(uid):
+                    self.graph_editor.add_node(self.active_vector.vector.node_get(uid))
             self.nodeTable.blockSignals(False)
             self.vector_dictionary.blockSignals(False)
 
-            #@TODO For adding created node
-            # uid = self.active_vector.vector.add_node()
+
+
 
     def __update_node_cell(self, item: QTableWidgetItem):
         """Updates the node information from the cell that was just edited.

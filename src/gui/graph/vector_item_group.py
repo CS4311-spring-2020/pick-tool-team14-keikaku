@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict
 from PyQt5.Qt import QGraphicsItemGroup, QGraphicsItem, QRectF, QPen, QGraphicsRectItem, Qt
 from src.model.vector import Vector
 
@@ -15,28 +15,26 @@ class VectorItemGroup(QGraphicsItemGroup):
         bound_box : QRectF
             Bound box used to draw tha bounding box of all the items inside this class
     """
-    name: str
+    id: str
     bound_box: QRectF
     vector : Vector
-    item_list : List[QGraphicsItem] = []
+    item_dictionary : Dict[str, QGraphicsItem] = {}
 
     def __init__(self, vector : Vector):
         super().__init__()
-        self.name = vector.name
+        self.id = vector.id
         self.vector = vector
 
-    def add_to_list(self, item : QGraphicsItem):
-        self.item_list.append(item)
+    def add_to_list(self, id : str, item : QGraphicsItem):
+        self.item_dictionary[id] = item
 
-    def remove_from_list(self, item : QGraphicsItem):
-        self.item_list.remove(item)
+    def remove_from_list(self, id: str):
+        self.item_dictionary.pop(id)
 
-    def lock_and_hide(self):
-        for item in self.item_list:
+    def lock_hide(self):
+        for item in self.item_dictionary.values():
             self.addToGroup(item)
-        self.setVisible(False)
 
-    def unlock_displac(self):
-        for item in self.item_list:
-            item.setVisible(True)
+    def unlock_display(self):
+        for item in self.item_dictionary.values():
             self.removeFromGroup(item)
