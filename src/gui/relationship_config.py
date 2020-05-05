@@ -18,6 +18,7 @@ from PyQt5.uic import loadUi
 
 from definitions import UI_PATH
 from src.model.vector import Vector
+from src.gui.graph.graph_editor import GraphEditor
 
 
 class UiRelationshipConfig(QFrame):
@@ -36,8 +37,7 @@ class UiRelationshipConfig(QFrame):
     vector: Vector
     node_table: QTableWidget
 
-    def __init__(self, vector: Vector, node_table: QTableWidget):
-        # @TODO Pass reference to GraphEditor and add funtionality to add realtionship
+    def __init__(self, vector: Vector, node_table: QTableWidget, graph_editor: GraphEditor):
 
         """Initialize the relationship window and set all signals and slots
         associated with it.
@@ -46,8 +46,12 @@ class UiRelationshipConfig(QFrame):
             The vector for whom to display its relationship table.
         """
 
+
         super(UiRelationshipConfig, self).__init__()
         loadUi(os.path.join(UI_PATH, 'relationship_config.ui'), self)
+
+        # @TODO Pass reference to GraphEditor and add funtionality to add realtionship
+        self.graph_editor = graph_editor
 
         self.relationshipTable = self.findChild(QTableWidget, 'relationshipTable')
         # self.relationshipTable.setColumnHidden(0, True)

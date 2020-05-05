@@ -207,17 +207,15 @@ class Ui(QMainWindow):
         self.progress = self.findChild(QProgressBar, 'fileProcessProgressBar')
         self.progress.setValue(0)
 
+        self.splitter = self.findChild(QSplitter, "splitter")
+        self.graph_editor = GraphEditor(parent=self.splitter)
+
         self.active_vector = ActiveVector()
         self.load_vector_dictionary()
         self.load_log_file_dictionary()
         self.vector_dictionary.added.connect(self.__update_all_vector_info)
         self.vector_dictionary.removed.connect(self.__update_all_vector_info)
         self.vector_dictionary.edited.connect(self.__refresh_vector_info)
-
-        # Portion to display the graph
-        self.splitter = self.findChild(QSplitter, "splitter")
-
-        self.graph_editor = GraphEditor(parent=self.splitter)
 
         self.load_log_entry_dictionary()
         self.log_entry_to_vector_dictionary = {}
@@ -408,7 +406,7 @@ class Ui(QMainWindow):
     def __execute_relationship_config(self):
         """Open the relationship configuration window."""
 
-        self.relationship_window = UiRelationshipConfig(self.active_vector.vector, self.nodeTable)
+        self.relationship_window = UiRelationshipConfig(self.active_vector.vector, self.nodeTable, self.graph_editor)
 
     def __execute_team_config(self):
         """Open the team configuration window."""
@@ -523,9 +521,9 @@ class Ui(QMainWindow):
             if hasattr(self, 'relationship_window'):
                 self.relationship_window.construct_relationship_table(self.active_vector.vector)
 
-        # @TODO For adding Vector
-        # self.active_vector.vector VECTOR OBJECT
-
+        # @TODO Test this to make sure it works
+        if self.active_vector.vector:
+            self.graph_editor.add_vector(self.active_vector.vector)
 
     def __construct_log_entry_table(self):
         """Constructs the log entry table."""
@@ -621,7 +619,8 @@ class Ui(QMainWindow):
             self.nodeTable.blockSignals(False)
 
             # @TODO For adding nodes
-            # self.active_vector.vector.node_get(uid)
+            if self.active_vector.vector.node_get(uid):
+                self.graph_editor.add_node(self.active_vector.vector.node_get(uid))
 
     def __add_node(self, row: int, vector_id: str):
         """Adds a node from row to the vector_id's node table and to the node dictionary.
@@ -671,11 +670,14 @@ class Ui(QMainWindow):
                 self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
 
                 self.row_position_node += 1
+                # @TODO For adding created node
+                if self.active_vector.vector.node_get(uid):
+                    self.graph_editor.add_node(self.active_vector.vector.node_get(uid))
             self.nodeTable.blockSignals(False)
             self.vector_dictionary.blockSignals(False)
 
-            #@TODO For adding created node
-            # uid = self.active_vector.vector.add_node()
+
+
 
     def __update_node_cell(self, item: QTableWidgetItem):
         """Updates the node information from the cell that was just edited.
