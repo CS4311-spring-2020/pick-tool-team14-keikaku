@@ -50,7 +50,7 @@ class Node:
         """
         :param name: str, optional (default is '')
             Name of the node.
-        :param timestamp: QDateTime, optional  (default is QDateTime().toString('hh:mm MM/dd/yyyy A'))
+        :param timestamp: str, optional  (default is QDateTime().toString('hh:mm MM/dd/yyyy A'))
             Timestamp node event occurred.
         :param description: str, optional  (default is '')
             Description of the node.
@@ -81,7 +81,7 @@ class Node:
     def set_name(self, name: str):
         self.name = name
 
-    def set_timestamp(self, timestamp: QDateTime):
+    def set_timestamp(self, timestamp: str):
         self.timestamp = timestamp
 
     def set_description(self, description: str):
