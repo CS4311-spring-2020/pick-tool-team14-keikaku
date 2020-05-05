@@ -47,7 +47,7 @@ class Vector:
     uid: str
 
     def __init__(self, vector_name: str = 'New Vector', vector_desc: str = '', property_visibility: int = 0,
-                 nodes: dict = {}, relationships: dict = {}):
+                 nodes: dict = None, relationships: dict = None):
         """
         :param vector_name: str, optional (default is 'New Vector')
             Name of the vector.
@@ -55,9 +55,9 @@ class Vector:
             Description of the vector.
         :param property_visibility: int, optional (default is 0)
             Vector property visibility flags.
-        :param nodes: dict, optional (default is {})
+        :param nodes: dict, optional (default is None)
             A dictionary of nodes.
-        :param relationships: dict, optional (default is {})
+        :param relationships: dict, optional (default is None)
             A dictionary of relationships.
         """
 

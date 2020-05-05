@@ -1,7 +1,7 @@
 import os
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMessageBox
 from PyQt5.uic import loadUi
 
 from definitions import UI_PATH

@@ -84,17 +84,5 @@ class LogFile:
     def set_acknowledged_status(self, status):
         self.acknowledged_status = status
 
-    def add_log_entry(self, line_number: str, source: str, time_stamp: str, description: str):
-        return self.log_entries.add(LogEntry(line_number, source, time_stamp, description))
-
-    def remove_log_entry(self, log_entry_id: str):
-        self.log_entries.delete(log_entry_id)
-
-    def get_log_entry(self, log_entry_id: str) -> LogEntry:
-        return self.log_entries.get(log_entry_id)
-
     def get_ear(self) -> dict:
         return self.ear.get_ear()
-
-    def log_entries(self) -> IDDict:
-        return self.log_entries

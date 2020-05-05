@@ -1,5 +1,7 @@
 from typing import Dict
+
 from PyQt5.Qt import QGraphicsLineItem, QGraphicsItem, QPoint, QPen, Qt
+
 from src.model.relationship import Relationship
 
 

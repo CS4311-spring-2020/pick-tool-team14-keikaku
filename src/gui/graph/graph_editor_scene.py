@@ -1,10 +1,11 @@
 import math
-from PyQt5.QtWidgets import QGraphicsScene
+
 from PyQt5.QtCore import QLine
-from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QPen
-from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import QRectF
+from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QPainter
+from PyQt5.QtGui import QPen
+from PyQt5.QtWidgets import QGraphicsScene
 
 
 class GraphEditorScene(QGraphicsScene):

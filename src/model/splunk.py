@@ -1,20 +1,15 @@
 """splunk.py: Managing routines for Splunk.
-
-    Attributes
-    ----------
-    splunk_config: dict
-        Splunk authentication details.
 """
 
 __author__ = "Team Keikaku"
 __version__ = "0.8"
 
+import json
 from typing import List
 
 import splunklib.client as client
 import splunklib.results as results
 from splunklib.binding import AuthenticationError
-import json
 
 
 class SplunkManager:

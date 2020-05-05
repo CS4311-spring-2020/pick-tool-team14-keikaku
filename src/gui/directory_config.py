@@ -101,8 +101,8 @@ class UiDirectoryConfig(QDialog):
         valid_structure = False
 
         for root, dirs, files in os.walk(self.rootText.text()):
-            for dir in dirs:
-                dir_match.append(os.path.join(root, dir))
+            for d in dirs:
+                dir_match.append(os.path.join(root, d))
 
         if len(dir_match) == 3:
             valid_structure = True

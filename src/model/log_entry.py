@@ -12,7 +12,7 @@ class LogEntry:
         ----------
         line_number: int
             The line number in the log file this log entry refers to.
-        timestamp: str
+        time_stamp: str
             The timestamp the log entry refers to.
         description: str
             A description of the log entry.

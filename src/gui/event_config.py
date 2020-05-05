@@ -12,7 +12,6 @@ __version__ = "1.0"
 
 import os
 
-from PyQt5.QtCore import QDateTime
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QLineEdit, QDateTimeEdit, QMessageBox
 from PyQt5.uic import loadUi
 

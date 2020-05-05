@@ -24,12 +24,10 @@ __author__ = "Team Keikaku"
 __version__ = "1.0"
 
 import csv
+import datetime
 import os
 import re
 import string
-import datetime
-from shutil import copyfile
-from typing import TextIO
 
 from dateutil.parser import parse
 
@@ -52,8 +50,9 @@ def remove_non_printable(line: str) -> str:
     :return: str
         The line with non-printable characters removed.
     """
-
+    print(line)
     cleansed_line = "".join(list(filter(lambda s: s in string.printable, line)))
+    print(f'cleansed_line: {cleansed_line}')
     return cleansed_line
 
 
@@ -74,56 +73,53 @@ def create_file_copy(log_file_path: str, directory_path: str) -> str:
     file = os.path.basename(log_file_path)
     file_name = file.split(".")
     copy_log_file_path = f"/{directory_path}/{file_name[0]}.{file_name[1]}"
-    print(log_file_path)
-    copyfile(log_file_path, copy_log_file_path)
 
     return copy_log_file_path
 
 
-def cleanse_log_file(log_file_path: str):
+def cleanse_log_file(log_file_path: str, log_file_copy_path: str):
     """Cleanses a log file of invalid elements.
     
     :param log_file_path: str
         The log file path to the file to cleanse.
+    :param log_file_copy_path: str
+        The log file path to the copy.
     """
 
-    if os.path.isfile(log_file_path) and os.path.getsize(log_file_path) > 0:
-        try:
-            with open(log_file_path) as in_file, open(log_file_path, 'r+') as out_file:
-                for line in in_file:
-                    if line.strip():
-                        clean_line = remove_non_printable(line)
-                        out_file.writelines(clean_line)
-                out_file.truncate()
-        except IOError as e:
-            print(e)
+    if os.path.isfile(log_file_path) > 0:
+        with open(log_file_path, 'r') as in_file, open(log_file_copy_path, 'w+') as out_file:
+            for line in in_file:
+                if line.strip():
+                    clean_line = remove_non_printable(line)
+                    out_file.write(clean_line)
     else:
         print("file is empty or does not exist", log_file_path)
 
 
-def cleanse_csv_file(csv_file_path: str):
+def cleanse_csv_file(csv_file_path: str, csv_file_copy_path: str):
     """Cleanses a csv file of invalid elements.
 
     :param csv_file_path: str
         The csv file path to the file to cleanse.
+    :param csv_file_copy_path: str
+        The csv file path to the copy.
     """
 
-    if os.path.isfile(csv_file_path) and os.path.getsize(csv_file_path) > 0:
-        with open(csv_file_path) as in_file, open(csv_file_path, 'r+') as out_file:
+    if os.path.isfile(csv_file_path) and os.path.getsize(csv_file_copy_path) > 0:
+        with open(csv_file_path, 'r') as in_file, open(csv_file_copy_path, 'w+') as out_file:
             writer = csv.writer(out_file)
             for row in csv.reader(in_file):
                 clean_row = " ".join(row)
                 if clean_row.strip():
                     writer.writerow(row)
-            out_file.truncate()
     else:
         print("file is empty or does not exist", csv_file_path)
 
 
-def validate_log_file(log_file: TextIO):
+def validate_log_file(log_file):
     """Validates a log file.
 
-    :param log_file: TextIO
+    :param log_file
         The log file to validate.
     """
 
@@ -161,10 +157,10 @@ def validate_log_file(log_file: TextIO):
     return errors
 
 
-def validate_csv_file(csv_file: TextIO):
+def validate_csv_file(csv_file):
     """Validates a csv file.
 
-    :param csv_file: TextIO
+    :param csv_file
         The csv file to validate.
     """
 

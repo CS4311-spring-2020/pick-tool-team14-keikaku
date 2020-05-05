@@ -22,9 +22,9 @@ from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
 from src.gui.filter_config import UiFilterConfig
-from src.gui.splunk_config import UiSplunkConfig
 from src.gui.graph.graph_editor import GraphEditor
 from src.gui.relationship_config import UiRelationshipConfig
+from src.gui.splunk_config import UiSplunkConfig
 from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
 from src.gui.vector_db_analyst import UiVectorDBAnalyst
@@ -227,7 +227,7 @@ class Ui(QMainWindow):
 
     def __splunk_connect(self, splunk_manage: SplunkManager):
 
-        splunk_connection = splunk_manage.connect('localhost','8089','admin')
+        splunk_connection = splunk_manage.connect('localhost', '8089', 'admin')
 
         if not splunk_connection:
             self.splunk_manage.wipe_out_index("testindex")
@@ -1027,7 +1027,6 @@ class Ui(QMainWindow):
             l_dict = {}
             data = file_util.read_file('log_file_dictionary.pk')
             for l_id, l in data.items():
-
                 log_file = LogFile(l['file_name'], l['file_path'])
                 log_file.set_cleansing_status(l['cleansing_status'])
                 log_file.set_validation_status(l['validation_status'])

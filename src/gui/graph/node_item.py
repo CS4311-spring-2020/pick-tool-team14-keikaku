@@ -1,9 +1,11 @@
 from typing import Dict
+
 from PyQt5.Qt import Qt, QGraphicsItem, QPainter, QPainterPath, QStyleOptionGraphicsItem, QPen, QBrush, QPoint, \
     QRectF, QGraphicsSimpleTextItem
 from PyQt5.QtWidgets import QGraphicsSceneMouseEvent
-from src.model.node import Node
+
 from src.gui.graph.relationship_item import RelationshipItem
+from src.model.node import Node
 
 
 class NodeItem(QGraphicsItem):

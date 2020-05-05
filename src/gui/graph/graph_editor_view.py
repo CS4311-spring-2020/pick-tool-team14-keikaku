@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QGraphicsView
-from PyQt5.QtGui import QPainter
-from PyQt5.Qt import QGraphicsScene
 from PyQt5.Qt import QWheelEvent
+from PyQt5.QtGui import QPainter
+from PyQt5.QtWidgets import QGraphicsView
+
 from src.gui.graph.graph_editor_scene import GraphEditorScene
 
 

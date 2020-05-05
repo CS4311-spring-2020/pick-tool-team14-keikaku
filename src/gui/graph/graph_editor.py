@@ -1,12 +1,13 @@
 from typing import Dict
-from src.gui.graph.graph_editor_view import GraphEditorView
+
 from src.gui.graph.graph_editor_scene import GraphEditorScene
+from src.gui.graph.graph_editor_view import GraphEditorView
 from src.gui.graph.node_item import NodeItem
 from src.gui.graph.relationship_item import RelationshipItem
 from src.gui.graph.vector_item_group import VectorItemGroup
-from src.model.vector import Vector
 from src.model.node import Node
 from src.model.relationship import Relationship
+from src.model.vector import Vector
 
 
 class GraphEditor:
