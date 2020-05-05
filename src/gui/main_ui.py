@@ -318,7 +318,7 @@ class Ui(QMainWindow):
         self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
         self.log_entry_to_vector_dictionary[log_entry.get_description()] = {'line_num': log_entry.get_line_num(),
-                                                                            'entry_id': uid, 'vector_id': '0'}
+                                                                            'entry_id': uid, 'vector_id': None}
 
         self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
@@ -648,7 +648,7 @@ class Ui(QMainWindow):
             self.vector_dictionary.blockSignals(True)
             # remove node from old vector
             v_id = log_entry.get_vector_id()
-            if v_id != '0':  # remove node from old vector
+            if v_id is not None:  # remove node from old vector
                 self.vector_dictionary.get(v_id).delete_node(log_entry.get_node_id())
                 if v_id == self.active_vector.vector_id:  # if vector is active
                     for row in range(self.row_position_node):
@@ -658,7 +658,7 @@ class Ui(QMainWindow):
                             break
             log_entry.set_node_id(None)
             log_entry.set_vector_id(vector_id)
-            if vector_id != '0':  # add node to new vector
+            if vector_id is not None:  # add node to new vector
                 uid = self.vector_dictionary.get(vector_id).add_node()
                 log_entry.set_node_id(uid)
                 node = self.vector_dictionary.get(vector_id).node_get(uid)
@@ -874,7 +874,7 @@ class Ui(QMainWindow):
         cell_widget = QWidget()
         combobox = QComboBox()
         combobox.setObjectName('combobox')
-        combobox.addItem('None', '0')
+        combobox.addItem('None', None)
         for vector_id, v in vector_dictionary.items():
             combobox.addItem(v.name, vector_id)
 
@@ -1071,8 +1071,7 @@ class Ui(QMainWindow):
         le_dict = {}
         for le_id, le in self.log_entry_dictionary.items():
             log_entry = {'line_number': le.line_number, 'source': le.source, 'timestamp': le.time_stamp,
-                        'description': le.description,
-                         'vector_id': le.vector_id}
+                         'description': le.description, 'vector_id': le.vector_id}
             le_dict[le_id] = log_entry
 
         file_util.save_object(le_dict, 'log_entry_dictionary.pk')
