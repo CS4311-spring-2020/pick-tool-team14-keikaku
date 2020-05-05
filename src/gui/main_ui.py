@@ -883,7 +883,7 @@ class Ui(QMainWindow):
         for vector_id, v in vector_dictionary.items():
             combobox.addItem(v.name, vector_id)
 
-        combobox.currentIndexChanged.connect(lambda r=row: self.__add_node(r, combobox.currentData()))
+        combobox.currentIndexChanged.connect(lambda: self.__add_node(row, combobox.currentData()))
         layout = QHBoxLayout(cell_widget)
         layout.addWidget(combobox)
         layout.setAlignment(Qt.AlignCenter)
