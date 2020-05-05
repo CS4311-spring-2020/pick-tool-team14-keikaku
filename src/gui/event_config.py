@@ -30,16 +30,16 @@ class UiEventConfig(QDialog):
         Name of the adversarial assessment.
     description: str
         Description of the adversarial assessment.
-    start_time: QDateTime
+    start_time: QDateTimeEdit
         Start time of the adversarial assessment
-    end_time: QDateTime
+    end_time: QDateTimeEdit
         End time of the adversarial assessment.
     """
 
     name: str
     description: str
-    start_time: QDateTime
-    end_time: QDateTime
+    start_time: QDateTimeEdit
+    end_time: QDateTimeEdit
 
     def __init__(self):
         """Initialize the event window and set all signals and slots
@@ -77,9 +77,9 @@ class UiEventConfig(QDialog):
             event.saved = True
             event.name = self.name.text()
             event.description = self.description.text()
-            event.start_time = self.start_time.dateTime().toPyDateTime()
+            event.start_time = self.start_time.dateTime()
             # print(event.start_time)
-            event.end_time = self.end_time.dateTime().toPyDateTime()
+            event.end_time = self.end_time.dateTime()
             # print(event.end_time)
             event.save()
             self.close()
