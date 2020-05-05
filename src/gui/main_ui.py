@@ -652,7 +652,7 @@ class Ui(QMainWindow):
                 self.vector_dictionary.get(v_id).delete_node(log_entry.get_node_id())
                 if v_id == self.active_vector.vector_id:  # if vector is active
                     for row in range(self.row_position_node):
-                        if self.nodeTable.item(row, 4).text() == log_entry_id_table:
+                        if self.nodeTable.item(row, 0).text() == log_entry_id_table:
                             self.nodeTable.removeRow(row)
                             self.row_position_node -= 1
                             break
@@ -878,7 +878,7 @@ class Ui(QMainWindow):
         for vector_id, v in vector_dictionary.items():
             combobox.addItem(v.name, vector_id)
 
-        combobox.currentIndexChanged.connect(lambda r=row: self.__add_node(r, combobox.currentData()))
+        combobox.currentIndexChanged.connect(lambda: self.__add_node(row, combobox.currentData()))
         layout = QHBoxLayout(cell_widget)
         layout.addWidget(combobox)
         layout.setAlignment(Qt.AlignCenter)
