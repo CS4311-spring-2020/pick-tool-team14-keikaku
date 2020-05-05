@@ -1,7 +1,7 @@
 import os
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton, QMessageBox
 from PyQt5.uic import loadUi
 
 from definitions import UI_PATH
@@ -15,7 +15,7 @@ class UiSplunkConfig(QDialog):
         A pyQT signal emitted when connection established.
     """
 
-    connect = pyqtSignal(SplunkManager)
+    connected = pyqtSignal(object)
 
     def __init__(self):
         """Initialize the directory window and set all signals and slots
@@ -51,12 +51,11 @@ class UiSplunkConfig(QDialog):
 
             if not splunk_connection:
                 self.msg.setText("<font color='green'>Connection Established!</font>")
-                self.connect.emit(splunk_manage)
+                self.connected.emit(splunk_manage)
 
             else:
-                self.msg.setText("<font color='green'>Connection Established!</font>")
-                self.msg.setText(splunk_connection)
-                self.connect.emit(None)
+                self.msg.setText(f"<font color='red'>{splunk_connection}!</font>")
+                self.connected.emit(None)
 
         self.msg.exec()
 

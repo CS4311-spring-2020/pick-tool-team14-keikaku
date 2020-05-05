@@ -40,6 +40,8 @@ from src.model.vector import ActiveVector, Vector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
 from src.util import file_util
 
+import string
+
 
 class Ui(QMainWindow):
     """The main window which serves as an entry point to the application
@@ -97,6 +99,8 @@ class Ui(QMainWindow):
         self.eventAction.triggered.connect(self.__execute_event_config)
         self.exportAction = self.findChild(QAction, 'exportAction')
         self.exportAction.triggered.connect(self.__execute_export_config)
+        self.splunkAction = self.findChild(QAction, 'splunkAction')
+        self.splunkAction.triggered.connect(self.__execute_splunk_config)
 
         self.vectorButton = self.findChild(QPushButton, 'vectorButton')
         self.vectorButton.clicked.connect(self.__execute_vector_config)
@@ -220,27 +224,25 @@ class Ui(QMainWindow):
 
         self.load_log_entry_dictionary()
         self.log_entry_to_vector_dictionary = {}
-        self.splunk_manage = SplunkManager()
+        self.splunk_manage = None
+        self.acknowledgeButton.setEnabled(False)
+        self.ingestButton.setEnabled(False)
+        self.validateButton.setEnabled(False)
+        self.directoryButton.setEnabled(False)
         self.__splunk_connect(self.splunk_manage)
 
         self.show()
 
     def __splunk_connect(self, splunk_manage: SplunkManager):
+        "Sets splunk instance if connection established"
 
-        splunk_connection = splunk_manage.connect('localhost','8089','admin')
-
-        if not splunk_connection:
-            self.splunk_manage.wipe_out_index("testindex")
+        if splunk_manage is not None:
+            self.splunk_manage = splunk_manage
             self.acknowledgeButton.setEnabled(True)
             self.ingestButton.setEnabled(True)
             self.validateButton.setEnabled(True)
             self.directoryButton.setEnabled(True)
             self.load_log_entry_to_vector_dictionary()
-        else:
-            self.acknowledgeButton.setEnabled(False)
-            self.ingestButton.setEnabled(False)
-            self.validateButton.setEnabled(False)
-            self.directoryButton.setEnabled(False)
 
     def __start_ingestion(self):
         """Begins file ingestion."""
@@ -378,7 +380,7 @@ class Ui(QMainWindow):
         """Open the splunk configuration window."""
 
         self.splunk_window = UiSplunkConfig()
-        self.splunk_window.connect.connect(self.__splunk_connect())
+        self.splunk_window.connected.connect(self.__splunk_connect)
 
     def __execute_commit_config(self):
         """Open the change configuration window."""
@@ -564,7 +566,6 @@ class Ui(QMainWindow):
         self.row_position_log_file = 0
 
         for log_file_id, l in self.log_file_dictionary.items():
-            print(l.file_name)
             self.logFileTable.insertRow(self.row_position_log_file)
             self.logFileTable.setItem(self.row_position_log_file, 0, QTableWidgetItem(log_file_id))
             self.logFileTable.setItem(self.row_position_log_file, 1, QTableWidgetItem(l.file_name))
@@ -1089,8 +1090,6 @@ class Ui(QMainWindow):
             data = file_util.read_file('log_entry_dictionary.pk')
             for le_id, le in data.items():
                 log_entry = LogEntry(le['line_number'], le['source'], le['timestamp'], le['description'])
-                print(le['vector_id'])
-
                 log_entry.set_vector_id(le['vector_id'])
 
                 le_dict[le_id] = log_entry

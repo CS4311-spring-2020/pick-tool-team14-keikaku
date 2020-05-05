@@ -1,5 +1,4 @@
 """validator.py: A set of routines to determine the validity of a file.
-
     Attributes
     ----------
     formats: List[str]
@@ -46,7 +45,6 @@ formats = [r'\d{1,2}[-/](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-/]\d{
 
 def remove_non_printable(line: str) -> str:
     """Removes non-printable characters from a string.
-
     :param line: str
         The line to remove non-printable characters from.
     :return: str
@@ -59,7 +57,6 @@ def remove_non_printable(line: str) -> str:
 
 def create_file_copy(log_file_path: str, directory_path: str) -> str:
     """Creates a copy of a file into a different directory.
-
     :param log_file_path: str
         The log file path to the file to make a copy of.
     :param directory_path: str
@@ -82,7 +79,7 @@ def create_file_copy(log_file_path: str, directory_path: str) -> str:
 
 def cleanse_log_file(log_file_path: str):
     """Cleanses a log file of invalid elements.
-    
+
     :param log_file_path: str
         The log file path to the file to cleanse.
     """
@@ -103,7 +100,6 @@ def cleanse_log_file(log_file_path: str):
 
 def cleanse_csv_file(csv_file_path: str):
     """Cleanses a csv file of invalid elements.
-
     :param csv_file_path: str
         The csv file path to the file to cleanse.
     """
@@ -122,7 +118,6 @@ def cleanse_csv_file(csv_file_path: str):
 
 def validate_log_file(log_file: TextIO):
     """Validates a log file.
-
     :param log_file: TextIO
         The log file to validate.
     """
@@ -163,7 +158,6 @@ def validate_log_file(log_file: TextIO):
 
 def validate_csv_file(csv_file: TextIO):
     """Validates a csv file.
-
     :param csv_file: TextIO
         The csv file to validate.
     """
@@ -208,7 +202,6 @@ def validate_csv_file(csv_file: TextIO):
 
 def __convert_to_standard(date_time_str: str) -> datetime:
     """Converts a datetime string into a standard datetime object.
-
     :param date_time_str: str
         The datetime string to convert to a standard format.
     :return: datetime
@@ -226,7 +219,6 @@ def __convert_to_standard(date_time_str: str) -> datetime:
 
 def __timestamp_bounds(date_time: datetime.datetime) -> str:
     """Prints a message detailing if the date_time is not within bounds.
-
     :param date_time: datetime
         The datetime to determine if within bounds set.
     :return: str
@@ -240,5 +232,3 @@ def __timestamp_bounds(date_time: datetime.datetime) -> str:
         return "Bounds Error: Timestamp is before start of event!"
     elif date_time > end_time + datetime.timedelta(seconds=59, minutes=59, hours=23):
         return "Bounds Error: Timestamp is after end of event!"
-
-    return ""
