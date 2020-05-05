@@ -38,19 +38,6 @@ class GraphEditor:
 
         self.graph_editor_scene = GraphEditorScene(self.scene_width, self.scene_height)
         self.graph_editor_view = GraphEditorView(self.graph_editor_scene, parent)
-        # self.test()
-
-    # def test(self):
-    #     vector = Vector(vector_name="V1")
-    #     self.add_vector(vector)
-    #     node1 = Node(name="Test_Node1")
-    #     node2 = Node(name="Test_Node2")
-    #     self.add_node(node1)
-    #     self.add_node(node2)
-    #
-    #     relationship = Relationship(node1.id, node2.id, "Test_Relationship1")
-    #     self.add_relationship(relationship)
-    #     self.remove_vector(vector)
 
     '''
         Handles what VectorItemGroup should be displayed in the View and sets the working vector for this object
@@ -77,7 +64,7 @@ class GraphEditor:
     def toggle_visibility(self, vector: Vector):
         # Toggle the visibility of the selected VectorItemGroup and hide the others
         for vector_group in self.vector_dictionary.values():
-            if vector.uid == vector_group.id:
+            if vector.uid == vector_group.uid:
                 vector_group.unlock_display()
                 vector_group.setVisible(False)
             else:
@@ -96,6 +83,7 @@ class GraphEditor:
         self.vector_dictionary[vector.uid] = new_vector
         self.selected_vector_item_group = new_vector
         self.toggle_visibility(vector)
+        print("Vector added ", self.selected_vector_item_group.uid)
 
     '''
         Used Node to create a NodeItem to be added to the GraphEditorScene
@@ -104,12 +92,14 @@ class GraphEditor:
     '''
 
     def add_node(self, node: Node):
-        polygon = self.graph_editor_view.mapFromScene(self.graph_editor_scene.sceneRect())
-        point = polygon.boundingRect().center()
-        node_item = NodeItem(point.x(), point.y(), node)
+        point = self.graph_editor_view.viewport().rect().center()
+        center_point = self.graph_editor_view.mapToScene(point)
+        # print(self.graph_editor_view.alignment())
+        node_item = NodeItem(center_point.x(), center_point.y(), node)
         self.graph_editor_scene.addItem(node_item)
         self.node_dictionary[node.uid] = node_item
         self.selected_vector_item_group.add_to_list(node_item.uid, node_item)
+        print("Node added ", node_item.uid)
 
     '''
           Used Relationship to create a RelationshipItem to be added to the GraphEditorScene
@@ -119,6 +109,7 @@ class GraphEditor:
 
     def add_relationship(self, relationship: Relationship):
         # Find the nodes for this relationship in the node dictionary
+        print(relationship.parent, relationship.child)
         parent_node_item = self.node_dictionary[relationship.parent]
         child_node_item = self.node_dictionary[relationship.child]
 

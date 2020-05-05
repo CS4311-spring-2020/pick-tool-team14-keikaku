@@ -15,21 +15,21 @@ class VectorItemGroup(QGraphicsItemGroup):
         bound_box : QRectF
             Bound box used to draw tha bounding box of all the items inside this class
     """
-    id: str
+    uid: str
     bound_box: QRectF
     vector: Vector
     item_dictionary: Dict[str, QGraphicsItem] = {}
 
     def __init__(self, vector: Vector):
         super().__init__()
-        self.id = vector.uid
+        self.uid = vector.uid
         self.vector = vector
 
-    def add_to_list(self, id: str, item: QGraphicsItem):
-        self.item_dictionary[id] = item
+    def add_to_list(self, uid: str, item: QGraphicsItem):
+        self.item_dictionary[uid] = item
 
-    def remove_from_list(self, id: str):
-        self.item_dictionary.pop(id)
+    def remove_from_list(self, uid: str):
+        self.item_dictionary.pop(uid)
 
     def lock_hide(self):
         for item in self.item_dictionary.values():
