@@ -22,6 +22,7 @@ from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
 from src.gui.filter_config import UiFilterConfig
+from src.gui.splunk_config import UiSplunkConfig
 from src.gui.graph.graph_editor import GraphEditor
 from src.gui.relationship_config import UiRelationshipConfig
 from src.gui.team_config import UiTeamConfig
@@ -223,15 +224,16 @@ class Ui(QMainWindow):
         #self.log_entry_dictionary = IDDict()
         self.load_log_entry_dictionary()
         self.log_entry_to_vector_dictionary = {}
-        self.splunk_manage = SplunkManager()
-        self.__splunk_connect()
+        #self.splunk_manage = SplunkManager()
+#        self.__splunk_connect()
 
         self.show()
 
-    def __splunk_connect(self):
-        splunk_connection = self.splunk_manage.connect("localhost", 8089, "admin")
+    def __splunk_connect(self, splunk_manage: SplunkManager):
 
-        if not splunk_connection:
+        self.splunk_manage = splunk_manage
+
+        if not splunk_manage:
             #self.splunk_manage.wipe_out_index("testindex")
             self.acknowledgeButton.setEnabled(True)
             self.ingestButton.setEnabled(True)
@@ -375,6 +377,12 @@ class Ui(QMainWindow):
             self.thread.file_updated.connect(self.__on_file_update)
             self.thread.entry_status.connect(self.__on_entry_status)
             self.thread.start()
+
+    def __execute_splunk_config(self):
+        """Open the splunk configuration window."""
+
+        self.splunk_window = UiSplunkConfig()
+        self.splunk_window.connect.connect(self.__splunk_connect())
 
     def __execute_commit_config(self):
         """Open the change configuration window."""
