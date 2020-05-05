@@ -4,8 +4,9 @@ from src.gui.graph.relationship_item import RelationshipItem
 from src.gui.graph.vector_item_group import VectorItemGroup
 import time
 
+
 class GraphEditor:
-    '''
+    """
         This class handle the functions that will be performed on the graph editor which mostly includes adding and
         deleting items from the the GraphEditorScene
 
@@ -19,11 +20,12 @@ class GraphEditor:
             dictionary containing all the RelationshipItems
         graph_editor_scene : GraphEditorScene
             The GraphEditorScene that we give the items created by this class
-    '''
+    """
+
     vectors: dict
     nodes: dict
     relationships: dict
-    graph_editor_scene : GraphEditorScene
+    graph_editor_scene: GraphEditorScene
 
     def __init__(self):
         self.vectors = {}
@@ -35,11 +37,9 @@ class GraphEditor:
 
         self.init_ui()
 
-    '''
-        Initializes parameters for this class
-    '''
-
     def init_ui(self):
+        """Initializes parameters for this class."""
+
         self.graph_editor_scene = GraphEditorScene(self.scene_width, self.scene_height)
         # @TODO The following is hard coded and will be automated later
         self.add_vector()
@@ -54,15 +54,13 @@ class GraphEditor:
         self.graph_editor_scene.addItem(self.vector.get_bound_box_item())
         time.sleep(10)
 
-
-
     def add_vector(self):
         self.vector = VectorItemGroup()
 
     def add_node_to_vector(self, node):
         self.vector.addToGroup(node)
 
-    def add_node(self, x, y, name :str):
+    def add_node(self, x, y, name: str):
         node_item = NodeItem(x, x, name, "Red")
         self.graph_editor_scene.addItem(node_item)
         return node_item
@@ -82,4 +80,3 @@ class GraphEditor:
 
     def remove_relationship(self, key):
         self.relationships.pop(key)
-

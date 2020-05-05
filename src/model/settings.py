@@ -72,7 +72,7 @@ def toggle_lead():
 def save():
     """Saves this settings instance to a file "settings"."""
 
-    print('Saving settings...')
+    # print('Saving settings...')
     file_util.save_object([lead_status, tab_index, hostname, host_ip_address, target_ip_address,
                            red_team_folder, blue_team_folder, white_team_folder], __filename)
 
@@ -81,7 +81,7 @@ def load():
     """Reads a settings instance from a file "settings"."""
 
     if file_util.check_file(__filename):
-        print('Loading settings...')
+        # print('Loading settings...')
         global lead_status, tab_index, hostname, host_ip_address, target_ip_address, \
             red_team_folder, blue_team_folder, white_team_folder
         (lead_status, tab_index, hostname, host_ip_address, target_ip_address,
