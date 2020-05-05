@@ -42,7 +42,7 @@ saved: bool = False
 def save():
     """Saves this settings instance to a file "settings"."""
 
-    print('Saving event...')
+    # print('Saving event...')
     file_util.save_object([name, description, start_time.toString('hh:mm MM/dd/yyyy A'),
                            end_time.toString('hh:mm MM/dd/yyyy A')], __filename)
 
@@ -52,12 +52,12 @@ def load():
     global name, description, start_time, end_time
 
     if file_util.check_file(__filename):
-        print('Loading event...')
+        # print('Loading event...')
         name, description, start, end = file_util.read_file(__filename)
         start_time = QDateTime.fromString(start, 'hh:mm MM/dd/yyyy A')
         end_time = QDateTime.fromString(end, 'hh:mm MM/dd/yyyy A')
     else:
-        print('Creating event...')
+        # print('Creating event...')
         name = ''
         description = ''
         start_time = QDateTime()

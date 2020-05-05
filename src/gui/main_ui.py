@@ -217,7 +217,6 @@ class Ui(QMainWindow):
         # Portion to display the graph
         self.splitter = self.findChild(QSplitter, "splitter")
 
-
         self.graph_editor = GraphEditor(parent=self.splitter)
 
         self.log_entry_dictionary = IDDict()
