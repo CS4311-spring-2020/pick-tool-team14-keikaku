@@ -318,7 +318,7 @@ class Ui(QMainWindow):
         self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
         self.log_entry_to_vector_dictionary[log_entry.get_description()] = {'line_num': log_entry.get_line_num(),
-                                                                            'entry_id': uid, 'vector_id': '0'}
+                                                                            'entry_id': uid, 'vector_id': None}
 
         self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
@@ -648,39 +648,39 @@ class Ui(QMainWindow):
             self.vector_dictionary.blockSignals(True)
             # remove node from old vector
             v_id = log_entry.get_vector_id()
-            if v_id != '0':  # remove node from old vector
-                print(v_id)
+            if v_id is not None:  # remove node from old vector
                 self.vector_dictionary.get(v_id).delete_node(log_entry.get_node_id())
                 if v_id == self.active_vector.vector_id:  # if vector is active
                     for row in range(self.row_position_node):
-                        if self.nodeTable.item(row, 4).text() == log_entry_id_table:
+                        if self.nodeTable.item(row, 0).text() == log_entry_id_table:
                             self.nodeTable.removeRow(row)
                             self.row_position_node -= 1
                             break
             log_entry.set_node_id(None)
             log_entry.set_vector_id(vector_id)
             if vector_id is not None:  # add node to new vector
-                uid = self.active_vector.vector.add_node()
+                uid = self.vector_dictionary.get(vector_id).add_node()
                 log_entry.set_node_id(uid)
-                node = self.active_vector.vector.node_get(uid)
-                # TODO: add values to the node object
+                node = self.vector_dictionary.get(vector_id).node_get(uid)
+                node.set_timestamp(log_entry.get_timestamp())
+                node.set_description(log_entry.get_description())
+                node.set_source(log_entry.get_source())
+                if v_id == self.active_vector.vector_id:  # if vector is active
+                    self.nodeTable.insertRow(self.row_position_node)
+                    item = QTableWidgetItem(uid)
+                    item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+                    self.nodeTable.setItem(self.row_position_node, 0, item)
+                    self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(log_entry.get_timestamp()))
+                    self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(log_entry.get_description()))
+                    self.nodeTable.setItem(self.row_position_node, 8, QTableWidgetItem(log_entry.get_source()))
+                    self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
 
-                self.nodeTable.insertRow(self.row_position_node)
-                item = QTableWidgetItem(uid)
-                item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-                self.nodeTable.setItem(self.row_position_node, 0, item)
-                self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(log_entry.get_timestamp()))
-                self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(log_entry.get_description()))
-                self.nodeTable.setItem(self.row_position_node, 8, QTableWidgetItem(log_entry.get_source()))
-                self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
-
-                self.row_position_node += 1
+                    self.row_position_node += 1
                 # @TODO For adding created node
                 if self.active_vector.vector.node_get(uid):
                     self.graph_editor.add_node(self.active_vector.vector.node_get(uid))
             self.nodeTable.blockSignals(False)
             self.vector_dictionary.blockSignals(False)
-
 
     def __update_node_cell(self, item: QTableWidgetItem):
         """Updates the node information from the cell that was just edited.
@@ -874,7 +874,7 @@ class Ui(QMainWindow):
         cell_widget = QWidget()
         combobox = QComboBox()
         combobox.setObjectName('combobox')
-        combobox.addItem('None', '0')
+        combobox.addItem('None', None)
         for vector_id, v in vector_dictionary.items():
             combobox.addItem(v.name, vector_id)
 
@@ -1071,8 +1071,7 @@ class Ui(QMainWindow):
         le_dict = {}
         for le_id, le in self.log_entry_dictionary.items():
             log_entry = {'line_number': le.line_number, 'source': le.source, 'timestamp': le.time_stamp,
-                        'description': le.description,
-                         'vector_id': le.vector_id}
+                         'description': le.description, 'vector_id': le.vector_id}
             le_dict[le_id] = log_entry
 
         file_util.save_object(le_dict, 'log_entry_dictionary.pk')

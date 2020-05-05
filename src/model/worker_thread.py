@@ -194,8 +194,7 @@ class ForceIngestWorker(QThread):
         print(log_entries)
 
         for index in range(len(log_entries)):
-            log_entry = LogEntry(line_num, log_entries[index]['source'],
-                                 log_entries[index]['time'],
+            log_entry = LogEntry(line_num, log_entries[index]['source'], log_entries[index]['time'],
                                  log_entries[index]['_raw'])
 
             self.entry_status.emit(log_entry)

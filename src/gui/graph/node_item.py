@@ -19,9 +19,9 @@ class NodeItem(QGraphicsItem):
     '''
     width: float = 100.0
     height: float = 100.0
-    relationships : Dict[str, RelationshipItem] = {}
-    node : Node
-    id = str
+    relationships: Dict[str, RelationshipItem] = {}
+    node: Node
+    uid = str
 
     def __init__(self, x: float, y: float, node: Node, parent=None):
         super().__init__(parent)
