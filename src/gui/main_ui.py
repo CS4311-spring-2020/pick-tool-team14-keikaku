@@ -23,7 +23,6 @@ from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
 from src.gui.filter_config import UiFilterConfig
 from src.gui.graph.graph_editor import GraphEditor
-from src.gui.graph.graph_editor_view import GraphEditorView
 from src.gui.relationship_config import UiRelationshipConfig
 from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
@@ -35,9 +34,9 @@ from src.model.log_entry import LogEntry
 from src.model.log_file import LogFile
 from src.model.node import Node
 from src.model.relationship import Relationship
+from src.model.splunk import SplunkManager
 from src.model.vector import ActiveVector, Vector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
-from src.model.splunk import SplunkManager
 from src.util import file_util
 
 
@@ -218,10 +217,9 @@ class Ui(QMainWindow):
         # Portion to display the graph
         self.splitter = self.findChild(QSplitter, "splitter")
 
-
         self.graph_editor = GraphEditor(parent=self.splitter)
 
-        self.log_entry_dictionary = IDDict()
+        self.load_log_entry_dictionary()
         self.log_entry_to_vector_dictionary = {}
         self.splunk_manage = SplunkManager()
         self.__splunk_connect()
@@ -232,7 +230,7 @@ class Ui(QMainWindow):
         splunk_connection = self.splunk_manage.connect("localhost", 8089, "admin")
 
         if not splunk_connection:
-            self.splunk_manage.wipe_out_index("testindex")
+            #self.splunk_manage.wipe_out_index("testindex")
             self.acknowledgeButton.setEnabled(True)
             self.ingestButton.setEnabled(True)
             self.validateButton.setEnabled(True)
@@ -320,7 +318,7 @@ class Ui(QMainWindow):
         self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
         self.log_entry_to_vector_dictionary[log_entry.get_description()] = {'line_num': log_entry.get_line_num(),
-                                                                            'entry_id': uid, 'vector_id': 0}
+                                                                            'entry_id': uid, 'vector_id': '0'}
 
         self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
@@ -384,6 +382,7 @@ class Ui(QMainWindow):
         self.change_window.load.connect(self.load_vector_dictionary)
         self.change_window.save.connect(self.save_log_file_dictionary)
         self.change_window.save.connect(self.save_log_entry_to_vector_dictionary)
+        self.change_window.save.connect(self.save_log_entry_dictionary)
 
     def __execute_directory_config(self):
         """Open the directory configuration window."""
@@ -409,7 +408,7 @@ class Ui(QMainWindow):
     def __execute_relationship_config(self):
         """Open the relationship configuration window."""
 
-        self.relationship_window = UiRelationshipConfig(self.active_vector.vector, self.graph_editor)
+        self.relationship_window = UiRelationshipConfig(self.active_vector.vector, self.nodeTable)
 
     def __execute_team_config(self):
         """Open the team configuration window."""
@@ -532,31 +531,28 @@ class Ui(QMainWindow):
     def __construct_log_entry_table(self):
         """Constructs the log entry table."""
 
+        self.logEntryTable.blockSignals(True)
         self.logEntryTable.setRowCount(0)
         self.row_position_log_entry = 0
 
-        for log_id, log in self.log_file_dictionary.items():
-            for log_entry_id, log_entry in log.log_entries.items():
-                self.logEntryTable.insertRow(self.row_position_log_entry)
-                item = QTableWidgetItem(log_entry_id)
-                item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
-                self.logEntryTable.setItem(self.row_position_log_entry, 0, item)
-                self.logEntryTable.setItem(self.row_position_log_entry, 1,
-                                           QTableWidgetItem(str(log_entry.get_line_num())))
-                self.logEntryTable.setItem(self.row_position_log_entry, 2,
-                                           QTableWidgetItem(log_entry.get_source()))
-                self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
-                self.logEntryTable.setItem(self.row_position_log_entry, 4,
-                                           QTableWidgetItem(log_entry.get_description()))
+        for log_entry_id, log_entry in self.log_entry_dictionary.items():
+            self.logEntryTable.insertRow(self.row_position_log_entry)
+            item = QTableWidgetItem(log_entry_id)
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+            self.logEntryTable.setItem(self.row_position_log_entry, 0, item)
+            self.logEntryTable.setItem(self.row_position_log_entry, 1,
+                                   QTableWidgetItem(str(log_entry.get_line_num())))
+            self.logEntryTable.setItem(self.row_position_log_entry, 2,
+                                   QTableWidgetItem(log_entry.get_source()))
+            self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
+            self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
-                self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable,
-                                              self.vector_dictionary.items())
-                widget = self.logEntryTable.cellWidget(self.row_position_log_entry, 5)
-                combobox = widget.findChild(QComboBox, 'combobox')
-                combobox.row = self.row_position_log_entry
-                combobox.setCurrentIndex(combobox.findData(log_entry.get_vector_id))
-                combobox.currentIndexChanged.connect(lambda: self.__add_node(combobox.row, combobox.currentData()))
-        self.row_position_log_entry += 1
+            self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable,
+                                      self.vector_dictionary)
+
+            self.row_position_log_entry += 1
+
+        self.logEntryTable.blockSignals(False)
 
     def __construct_log_table(self):
         """Constructs the log table for the active vector."""
@@ -592,7 +588,7 @@ class Ui(QMainWindow):
         for node_id, n in self.active_vector.vector.node_items():
             self.nodeTable.insertRow(self.row_position_node)
             item = QTableWidgetItem(node_id)
-            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.nodeTable.setItem(self.row_position_node, 0, item)
             self.nodeTable.setItem(self.row_position_node, 1, QTableWidgetItem(n.name))
             self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(n.timestamp))
@@ -620,7 +616,7 @@ class Ui(QMainWindow):
             self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(
                 self.active_vector.vector.node_get(uid).timestamp))
             item = QTableWidgetItem(uid)
-            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.nodeTable.setItem(self.row_position_node, 0, item)
             self.row_position_node += 1
             self.nodeTable.blockSignals(False)
@@ -651,7 +647,7 @@ class Ui(QMainWindow):
             self.vector_dictionary.blockSignals(True)
             # remove node from old vector
             v_id = log_entry.get_vector_id()
-            if v_id is not None:  # remove node from old vector
+            if v_id != '0':  # remove node from old vector
                 self.vector_dictionary.get(v_id).delete_node(log_entry.get_node_id())
                 if v_id == self.active_vector.vector_id:  # if vector is active
                     for row in range(self.row_position_node):
@@ -669,7 +665,7 @@ class Ui(QMainWindow):
 
                 self.nodeTable.insertRow(self.row_position_node)
                 item = QTableWidgetItem(uid)
-                item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
+                item.setFlags(item.flags() ^ Qt.ItemIsEditable)
                 self.nodeTable.setItem(self.row_position_node, 0, item)
                 self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(log_entry.get_timestamp()))
                 self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(log_entry.get_description()))
@@ -878,7 +874,7 @@ class Ui(QMainWindow):
         cell_widget = QWidget()
         combobox = QComboBox()
         combobox.setObjectName('combobox')
-        combobox.addItem('None', 0)
+        combobox.addItem('None', '0')
         for vector_id, v in vector_dictionary.items():
             combobox.addItem(v.name, vector_id)
 
@@ -1067,6 +1063,37 @@ class Ui(QMainWindow):
         else:
             self.log_file_dictionary = IDDict()
         self.__construct_log_table()
+
+    def save_log_entry_dictionary(self):
+        """Saves the log entry dictionary to a file."""
+
+        # print('Saving dict...')
+        le_dict = {}
+        for le_id, le in self.log_entry_dictionary.items():
+            log_entry = {'line_number': le.line_number, 'timestamp': le.time_stamp, 'description': le.description,
+                        'source': le.source, 'vector_id': le.vector_id}
+            le_dict[le_id] = log_entry
+
+        file_util.save_object(le_dict, 'log_entry_dictionary.pk')
+
+    def load_log_entry_dictionary(self):
+        """loads the log entry dictionary to a file."""
+        if file_util.check_file('log_entry_dictionary.pk'):
+            # print('Loading dict...')
+            le_dict = {}
+            data = file_util.read_file('log_entry_dictionary.pk')
+            for le_id, le in data.items():
+                log_entry = LogEntry(le['line_number'], le['timestamp'], le['description'], le['source'])
+
+                log_entry.set_vector_id(le['vector_id'])
+
+                le_dict[le_id] = log_entry
+
+            self.log_entry_dictionary = IDDict(le_dict)
+
+        else:
+            self.log_entry_dictionary = IDDict()
+        self.__construct_log_entry_table()
 
 
 if __name__ == "__main__":

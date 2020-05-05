@@ -27,16 +27,17 @@ class UiRelationshipConfig(QFrame):
 
     Attributes
     ----------
-    rowPosition: int
+    row_position: int
         The index of the last row on the relation table.
     vector: Vector
         The vector for whom to display its relationship table.
     """
 
-    rowPosition: int
+    row_position: int
     vector: Vector
+    node_table: QTableWidget
 
-    def __init__(self, vector: Vector, graph_editor : GraphEditor):
+    def __init__(self, vector: Vector, node_table: QTableWidget, graph_editor : GraphEditor):
 
         """Initialize the relationship window and set all signals and slots
         associated with it.
@@ -66,6 +67,10 @@ class UiRelationshipConfig(QFrame):
         # self.vector = vector
         if vector:
             self.construct_relationship_table(vector)
+            self.node_table = node_table
+        else:
+            self.vector = None
+            self.node_table = None
 
         self.show()
 
@@ -78,17 +83,17 @@ class UiRelationshipConfig(QFrame):
         self.relationshipTable.blockSignals(True)
         self.vector = vector
         self.relationshipTable.setRowCount(0)
-        self.rowPosition = 0
+        self.row_position = 0
         # print('Constructing relationship table for: ' + str(vector.name))
         for relationship_id, relationship in vector.relationship_items():
-            self.relationshipTable.insertRow(self.rowPosition)
+            self.relationshipTable.insertRow(self.row_position)
             item = QTableWidgetItem(relationship_id)
-            item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
-            self.relationshipTable.setItem(self.rowPosition, 0, item)
-            self.relationshipTable.setItem(self.rowPosition, 1, QTableWidgetItem(relationship.parent))
-            self.relationshipTable.setItem(self.rowPosition, 2, QTableWidgetItem(relationship.child))
-            self.relationshipTable.setItem(self.rowPosition, 2, QTableWidgetItem(relationship.label))
-            self.rowPosition += 1
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+            self.relationshipTable.setItem(self.row_position, 0, item)
+            self.relationshipTable.setItem(self.row_position, 1, QTableWidgetItem(relationship.parent))
+            self.relationshipTable.setItem(self.row_position, 2, QTableWidgetItem(relationship.child))
+            self.relationshipTable.setItem(self.row_position, 2, QTableWidgetItem(relationship.label))
+            self.row_position += 1
         self.relationshipTable.blockSignals(False)
 
     def clear(self):
@@ -96,21 +101,30 @@ class UiRelationshipConfig(QFrame):
 
         self.vector = None
         self.relationshipTable.setRowCount(0)
-        self.rowPosition = 0
+        self.row_position = 0
 
     def __add_relation(self):
         """Adds a relation to the relation table and to the relation dictionary."""
 
-        self.relationshipTable.blockSignals(True)
-        self.relationshipTable.insertRow(self.rowPosition)
-        uid = self.vector.add_relationship()
-        # @TODO test if this works
-        self.graph_editor.add_vector(self.vector.relationship_get(uid))
-        item = QTableWidgetItem(uid)
-        item.setFlags(item.flags() ^ (Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable))
-        self.relationshipTable.setItem(self.rowPosition, 0, item)
-        self.rowPosition += 1
-        self.relationshipTable.blockSignals(False)
+        if self.vector:
+            self.relationshipTable.blockSignals(True)
+            self.relationshipTable.insertRow(self.row_position)
+            if self.node_table:
+                rows = self.node_table.selectionModel().selectedRows()
+                print('Size '+ str(len(rows)))
+                if len(rows) == 2:
+                    i = 1
+                    for row in rows:
+
+                        self.relationshipTable.setItem(self.row_position, i,
+                                                       QTableWidgetItem(self.node_table.item(row.row(), 0).text()))
+                        i += 1
+            uid = self.vector.add_relationship()
+            item = QTableWidgetItem(uid)
+            item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+            self.relationshipTable.setItem(self.row_position, 0, item)
+            self.row_position += 1
+            self.relationshipTable.blockSignals(False)
 
     def __delete_relation(self):
         """Removes the selected relation from the relation table and from the relation dictionary."""
@@ -125,7 +139,7 @@ class UiRelationshipConfig(QFrame):
             for rowid in indexes:
                 self.vector.delete_relationship(self.relationshipTable.item(rowid, 0).text())
                 self.relationshipTable.removeRow(rowid)
-                self.rowPosition -= 1
+                self.row_position -= 1
         self.relationshipTable.blockSignals(False)
 
 

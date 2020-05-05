@@ -27,7 +27,7 @@ import csv
 import os
 import re
 import string
-from datetime import datetime
+import datetime
 from shutil import copyfile
 from typing import TextIO
 
@@ -224,7 +224,7 @@ def __convert_to_standard(date_time_str: str) -> datetime:
     return date_time
 
 
-def __timestamp_bounds(date_time: datetime) -> str:
+def __timestamp_bounds(date_time: datetime.datetime) -> str:
     """Prints a message detailing if the date_time is not within bounds.
 
     :param date_time: datetime
@@ -233,8 +233,8 @@ def __timestamp_bounds(date_time: datetime) -> str:
         A string message explaining if the date_time is not within bounds.
     """
 
-    start_time = event.start_time
-    end_time = event.end_time
+    start_time = event.start_time.toPyDateTime()
+    end_time = event.end_time.toPyDateTime()
 
     if date_time < start_time - datetime.timedelta(seconds=59, minutes=59, hours=23):
         return "Bounds Error: Timestamp is before start of event!"
