@@ -5,8 +5,6 @@ __author__ = "Team Keikaku"
 __version__ = "1.0"
 
 from src.model.enforcement_action_report import EnforcementActionReport
-from src.model.id_dictionary import IDDict
-from src.model.log_entry import LogEntry
 
 
 class LogFile:

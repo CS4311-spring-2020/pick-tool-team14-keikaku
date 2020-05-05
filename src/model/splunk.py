@@ -9,7 +9,6 @@ from typing import List
 
 import splunklib.client as client
 import splunklib.results as results
-from splunklib.binding import AuthenticationError
 
 
 class SplunkManager:

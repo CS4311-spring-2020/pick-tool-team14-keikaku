@@ -22,9 +22,9 @@ from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
 from src.gui.filter_config import UiFilterConfig
-from src.gui.splunk_config import UiSplunkConfig
 from src.gui.graph.graph_editor import GraphEditor
 from src.gui.relationship_config import UiRelationshipConfig
+from src.gui.splunk_config import UiSplunkConfig
 from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
 from src.gui.vector_db_analyst import UiVectorDBAnalyst
@@ -39,8 +39,6 @@ from src.model.splunk import SplunkManager
 from src.model.vector import ActiveVector, Vector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
 from src.util import file_util
-
-import string
 
 
 class Ui(QMainWindow):
