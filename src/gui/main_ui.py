@@ -689,6 +689,8 @@ class Ui(QMainWindow):
         node = self.active_vector.vector.node_get(self.nodeTable.item(item.row(), 0).text())
         if item.column() == 1:
             node.set_name(item.text())
+            note_item = self.graph_editor.selected_vector_item_group.item_dictionary[node.uid]
+            note_item.change_text(item.text())
         elif item.column() == 2:
             node.set_timestamp(item.text())
         elif item.column() == 3:
@@ -748,9 +750,12 @@ class Ui(QMainWindow):
                 indexes = sorted(indexes, reverse=True)
                 for rowid in indexes:
                     # print('Removing node from: ' + str(v.name))
-                    self.active_vector.vector.delete_node(self.nodeTable.item(rowid, 0).text())
+                    uid = self.nodeTable.item(rowid, 0).text()
+                    self.active_vector.vector.delete_node(uid)
                     self.nodeTable.removeRow(rowid)
                     self.row_position_node -= 1
+                    node = self.active_vector.vector.node_get(uid)
+                    self.graph_editor.remove_node(node)
             self.nodeTable.blockSignals(False)
 
     def __set_node_visibility(self, state: int):

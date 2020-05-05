@@ -110,6 +110,7 @@ class UiRelationshipConfig(QFrame):
             self.relationshipTable.blockSignals(True)
             self.relationshipTable.insertRow(self.row_position)
             uid = self.vector.add_relationship()
+            relationship = self.vector.relationship_get(uid)
             item = QTableWidgetItem(uid)
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.relationshipTable.setItem(self.row_position, 0, item)
@@ -126,6 +127,7 @@ class UiRelationshipConfig(QFrame):
                             self.vector.relationship_get(uid).child = n_id
                         i += 1
             self.row_position += 1
+            self.graph_editor.add_relationship(relationship)
             self.relationshipTable.blockSignals(False)
 
     def __delete_relation(self):

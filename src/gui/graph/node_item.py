@@ -1,8 +1,10 @@
 from typing import Dict
-from PyQt5.Qt import Qt, QGraphicsItem, QPainter, QPainterPath, QStyleOptionGraphicsItem, QPen, QBrush, QPoint, QRectF
+from PyQt5.Qt import Qt, QGraphicsItem, QPainter, QPainterPath, QStyleOptionGraphicsItem, QPen, QBrush, QPoint, \
+    QRectF, QGraphicsSimpleTextItem
 from PyQt5.QtWidgets import QGraphicsSceneMouseEvent
 from src.model.node import Node
 from src.gui.graph.relationship_item import RelationshipItem
+
 
 class NodeItem(QGraphicsItem):
     '''
@@ -19,24 +21,35 @@ class NodeItem(QGraphicsItem):
     '''
     width: float = 100.0
     height: float = 100.0
-    relationships : Dict[str, RelationshipItem] = {}
-    node : Node
-    id = str
+    relationships: Dict[str, RelationshipItem] = {}
+    node: Node
+    uid: str
+    text: QGraphicsSimpleTextItem
 
     def __init__(self, x: float, y: float, node: Node, parent=None):
         super().__init__(parent)
         self.pos_x = x
         self.pos_y = y
-        self.id = node.uid
+        self.uid = node.uid
         self.node = node
-
+        self.set_text_item(node.name)
         self.init_ui()
 
     def init_ui(self):
+        self.setZValue(1)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)
         self.setAcceptHoverEvents(True)
+
+    def set_text_item(self, text: str):
+        self.text = QGraphicsSimpleTextItem(text, self)
+        self.text.setBrush(QBrush(Qt.white))
+        self.text.setX(self.pos().x() - 20)
+        self.text.setY(self.pos().y() - 20)
+
+    def change_text(self, text):
+        self.text.setText(text)
 
     '''
         Grabs the initial boundingRect of this node and translates the current position of the mid point 
@@ -58,7 +71,7 @@ class NodeItem(QGraphicsItem):
             graphics object that connects to this node       
     '''
 
-    def add_relationship(self, key: str, relationship : RelationshipItem):
+    def add_relationship(self, key: str, relationship: RelationshipItem):
         print(type(relationship))
         self.relationships[key] = relationship
 
@@ -94,16 +107,14 @@ class NodeItem(QGraphicsItem):
         painter.setBrush(QBrush(Qt.red))
         painter.drawPath(node_outline.simplified())
 
-
     '''
         Overrides the inherited mouse event so that it can update the coordinates of the connected relationships
         
         :param event : QGraphicsSceneMouseEvent
             mouse event for when this node is click and moved
     '''
-    def mouseMoveEvent(self, event :QGraphicsSceneMouseEvent):
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
         super().mouseMoveEvent(event)
         for rl in self.relationships.values():
-            rl.dragLine(self.id, self.center_pos())
-
-
+            rl.dragLine(self.uid, self.center_pos())

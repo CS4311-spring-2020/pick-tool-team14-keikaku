@@ -18,7 +18,7 @@ class RelationshipItem(QGraphicsLineItem):
     child_node: str
     coordinates: Dict[str, QPoint] = {}
     relationship: Relationship
-    id: str
+    uid: str
 
     def __init__(self, parent_node: str, child_node: str, parent_point: QPoint, child_point: QPoint,
                  relationship: Relationship, parent=None):
@@ -27,9 +27,9 @@ class RelationshipItem(QGraphicsLineItem):
         self.child_node = child_node
         self.coordinates[parent_node] = parent_point
         self.coordinates[child_node] = child_point
-        self.id = relationship.uid
+        self.uid = relationship.uid
         self.setPen(QPen(Qt.yellow, 6))
-
+        self.setZValue(-1)
         self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)
         self.setAcceptHoverEvents(True)
 
