@@ -649,6 +649,7 @@ class Ui(QMainWindow):
             # remove node from old vector
             v_id = log_entry.get_vector_id()
             if v_id != '0':  # remove node from old vector
+                print(v_id)
                 self.vector_dictionary.get(v_id).delete_node(log_entry.get_node_id())
                 if v_id == self.active_vector.vector_id:  # if vector is active
                     for row in range(self.row_position_node):
@@ -679,8 +680,6 @@ class Ui(QMainWindow):
                     self.graph_editor.add_node(self.active_vector.vector.node_get(uid))
             self.nodeTable.blockSignals(False)
             self.vector_dictionary.blockSignals(False)
-
-
 
 
     def __update_node_cell(self, item: QTableWidgetItem):
