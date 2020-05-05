@@ -42,6 +42,12 @@ class NodeItem(QGraphicsItem):
         self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)
         self.setAcceptHoverEvents(True)
 
+    '''
+        This method sets the QGraphicsSimpleTextItem for this class
+        :param text : str
+            The text to set up for the text box of this node
+    '''
+
     def set_text_item(self, text: str):
         self.text = QGraphicsSimpleTextItem(text, self)
         self.text.setBrush(QBrush(Qt.white))

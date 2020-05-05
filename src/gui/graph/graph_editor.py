@@ -38,23 +38,6 @@ class GraphEditor:
 
         self.graph_editor_scene = GraphEditorScene(self.scene_width, self.scene_height)
         self.graph_editor_view = GraphEditorView(self.graph_editor_scene, parent)
-        self.test()
-
-    def test(self):
-
-        vector = Vector(vector_name="V1")
-        self.add_vector(vector)
-        node1 = Node(name="Test_Node1")
-        node1.uid = "1"
-        node2 = Node(name="Test_Node2")
-    #
-    #     node2.uid = "2"
-        self.add_node(node1)
-    #     self.add_node(node2)
-    #
-    #     relationship = Relationship(node1.uid, node2.uid, "Test_Relationship1")
-    #     self.add_relationship(relationship)
-        # self.remove_vector(vector)
 
     '''
         Handles what VectorItemGroup should be displayed in the View and sets the working vector for this object
