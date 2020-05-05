@@ -1392,7 +1392,7 @@
      <x>0</x>
      <y>0</y>
      <width>1076</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1402,7 +1402,7 @@
     <addaction name="teamAction"/>
     <addaction name="eventAction"/>
     <addaction name="separator"/>
-    <addaction name="actionSplunk"/>
+    <addaction name="splunkAction"/>
     <addaction name="exportAction"/>
     <addaction name="separator"/>
     <addaction name="exitAction"/>
@@ -1430,7 +1430,7 @@
     <string>Export</string>
    </property>
   </action>
-  <action name="actionSplunk">
+  <action name="splunkAction">
    <property name="text">
     <string>Splunk</string>
    </property>

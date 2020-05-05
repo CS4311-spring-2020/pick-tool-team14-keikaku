@@ -24,8 +24,8 @@ class SplunkManager:
         error = ""
         try: # Create service instance to use
             self.service = client.connect(Host=host, port=port, username=username, password=password)
-        except (AuthenticationError, ConnectionRefusedError) as e:
-            error = e
+        except Exception as e:
+            error = str(e)
         print(self.service)
 
         return error
