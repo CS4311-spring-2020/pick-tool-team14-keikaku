@@ -32,8 +32,8 @@ __filename: str = "event.pk"
 
 name: str = ''
 description: str = ''
-start_time: QDateTime = QDateTime()
-end_time: QDateTime = QDateTime()
+start_time: QDateTime = QDateTime().currentDateTime()
+end_time: QDateTime = QDateTime().currentDateTime()
 saved: bool = False
 
 
