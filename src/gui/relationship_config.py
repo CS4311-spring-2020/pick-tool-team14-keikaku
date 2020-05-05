@@ -105,20 +105,22 @@ class UiRelationshipConfig(QFrame):
         if self.vector:
             self.relationshipTable.blockSignals(True)
             self.relationshipTable.insertRow(self.row_position)
-            if self.node_table:
-                rows = self.node_table.selectionModel().selectedRows()
-                print('Size '+ str(len(rows)))
-                if len(rows) == 2:
-                    i = 1
-                    for row in rows:
-
-                        self.relationshipTable.setItem(self.row_position, i,
-                                                       QTableWidgetItem(self.node_table.item(row.row(), 0).text()))
-                        i += 1
             uid = self.vector.add_relationship()
             item = QTableWidgetItem(uid)
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.relationshipTable.setItem(self.row_position, 0, item)
+            if self.node_table:
+                rows = self.node_table.selectionModel().selectedRows()
+                if len(rows) == 2:
+                    i = 1
+                    for row in rows:
+                        n_id = self.node_table.item(row.row(), 0).text()
+                        self.relationshipTable.setItem(self.row_position, i, QTableWidgetItem(n_id))
+                        if i == 1:
+                            self.vector.relationship_get(uid).parent = n_id
+                        else:
+                            self.vector.relationship_get(uid).child = n_id
+                        i += 1
             self.row_position += 1
             self.relationshipTable.blockSignals(False)
 

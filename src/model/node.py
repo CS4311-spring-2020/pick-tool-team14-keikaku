@@ -31,6 +31,8 @@ class Node:
         Source of the corresponding log entry.
     visibility: bool
         Whether the node is visible or not.
+    uid: str
+        UID of the node.
     """
 
     name: str
@@ -42,6 +44,7 @@ class Node:
     icon_type: str
     source: str
     visibility: bool
+    uid: str
 
     def __init__(self, name: str = '',
                  timestamp: str = QDateTime.currentDateTimeUtc().toString('hh:mm MM/dd/yyyy A'),
@@ -77,6 +80,7 @@ class Node:
         self.icon_type = icon_type
         self.source = source
         self.visibility = visibility
+        self.uid = None
 
     def set_name(self, name: str):
         self.name = name

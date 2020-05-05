@@ -35,6 +35,8 @@ class Vector:
         A dictionary of nodes.
     relationships: dict
         A dictionary of relationships.
+    uid: str
+        UID of the vector.
     """
 
     name: str
@@ -42,6 +44,7 @@ class Vector:
     property_visibility: int
     nodes: IDDict
     relationships: IDDict
+    uid: str
 
     def __init__(self, vector_name: str = 'New Vector', vector_desc: str = '', property_visibility: int = 0,
                  nodes: dict = {}, relationships: dict = {}):
@@ -63,6 +66,7 @@ class Vector:
         self.property_visibility = property_visibility
         self.nodes = IDDict(dictionary=nodes)
         self.relationships = IDDict(dictionary=relationships)
+        self.uid = None
 
     def edit_name(self, vector_name: str):
         """Updates the name of a vector.

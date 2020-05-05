@@ -86,6 +86,8 @@ class IDDict(QObject):
 		"""
 
 		uid = uuid.uuid4().__str__()
+		if hasattr(thing, 'uid'):
+			thing.uid = uid
 		self.dictionary[uid] = thing
 		self.added.emit()
 		return uid

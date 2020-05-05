@@ -17,11 +17,14 @@ class Relationship:
         UUID of the child node.
     label: str
         Label of the relationship.
+    uid: str
+        UID of the relationship.
     """
 
     parent: str
     child: str
     label: str
+    uid: str
 
     def __init__(self, parent: str = '', child: str = '', label: str = ''):
         """
@@ -36,3 +39,4 @@ class Relationship:
         self.parent = parent
         self.child = child
         self.label = label
+        self.uid = None
