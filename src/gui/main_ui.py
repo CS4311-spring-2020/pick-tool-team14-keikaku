@@ -654,30 +654,29 @@ class Ui(QMainWindow):
                             break
             log_entry.set_node_id(None)
             log_entry.set_vector_id(vector_id)
-            if vector_id is not None:  # add node to new vector
-                uid = self.active_vector.vector.add_node()
+            if vector_id != '0':  # add node to new vector
+                uid = self.vector_dictionary.get(vector_id).add_node()
                 log_entry.set_node_id(uid)
-                node = self.active_vector.vector.node_get(uid)
-                # TODO: add values to the node object
+                node = self.vector_dictionary.get(vector_id).node_get(uid)
+                node.set_timestamp(log_entry.get_timestamp())
+                node.set_description(log_entry.get_description())
+                node.set_source(log_entry.get_source())
+                if v_id == self.active_vector.vector_id:  # if vector is active
+                    self.nodeTable.insertRow(self.row_position_node)
+                    item = QTableWidgetItem(uid)
+                    item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+                    self.nodeTable.setItem(self.row_position_node, 0, item)
+                    self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(log_entry.get_timestamp()))
+                    self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(log_entry.get_description()))
+                    self.nodeTable.setItem(self.row_position_node, 8, QTableWidgetItem(log_entry.get_source()))
+                    self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
 
-                self.nodeTable.insertRow(self.row_position_node)
-                item = QTableWidgetItem(uid)
-                item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-                self.nodeTable.setItem(self.row_position_node, 0, item)
-                self.nodeTable.setItem(self.row_position_node, 2, QTableWidgetItem(log_entry.get_timestamp()))
-                self.nodeTable.setItem(self.row_position_node, 3, QTableWidgetItem(log_entry.get_description()))
-                self.nodeTable.setItem(self.row_position_node, 8, QTableWidgetItem(log_entry.get_source()))
-                self.__insert_checkbox(self.row_position_node, 9, self.nodeTable)
-
-                self.row_position_node += 1
+                    self.row_position_node += 1
                 # @TODO For adding created node
                 if self.active_vector.vector.node_get(uid):
                     self.graph_editor.add_node(self.active_vector.vector.node_get(uid))
             self.nodeTable.blockSignals(False)
             self.vector_dictionary.blockSignals(False)
-
-
-
 
     def __update_node_cell(self, item: QTableWidgetItem):
         """Updates the node information from the cell that was just edited.
