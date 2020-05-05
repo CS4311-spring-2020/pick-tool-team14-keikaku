@@ -220,17 +220,17 @@ class Ui(QMainWindow):
 
         self.load_log_entry_dictionary()
         self.log_entry_to_vector_dictionary = {}
-        #self.splunk_manage = SplunkManager()
-#        self.__splunk_connect()
+        self.splunk_manage = SplunkManager()
+        self.__splunk_connect(self.splunk_manage)
 
         self.show()
 
     def __splunk_connect(self, splunk_manage: SplunkManager):
 
-        self.splunk_manage = splunk_manage
+        splunk_connection = splunk_manage.connect('localhost','8089','admin')
 
-        if not splunk_manage:
-            #self.splunk_manage.wipe_out_index("testindex")
+        if not splunk_connection:
+            self.splunk_manage.wipe_out_index("testindex")
             self.acknowledgeButton.setEnabled(True)
             self.ingestButton.setEnabled(True)
             self.validateButton.setEnabled(True)
@@ -546,8 +546,8 @@ class Ui(QMainWindow):
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.logEntryTable.setItem(self.row_position_log_entry, 0, item)
             self.logEntryTable.setItem(self.row_position_log_entry, 1, QTableWidgetItem(str(log_entry.get_line_num())))
-            self.logEntryTable.setItem(self.row_position_log_entry, 2, QTableWidgetItem(log_entry.get_timestamp()))
-            self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_source()))
+            self.logEntryTable.setItem(self.row_position_log_entry, 2, QTableWidgetItem(log_entry.get_source()))
+            self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
             self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
             self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
@@ -1070,8 +1070,9 @@ class Ui(QMainWindow):
         # print('Saving dict...')
         le_dict = {}
         for le_id, le in self.log_entry_dictionary.items():
-            log_entry = {'line_number': le.line_number, 'timestamp': le.time_stamp, 'description': le.description,
-                        'source': le.source, 'vector_id': le.vector_id}
+            log_entry = {'line_number': le.line_number, 'source': le.source, 'timestamp': le.time_stamp,
+                        'description': le.description,
+                         'vector_id': le.vector_id}
             le_dict[le_id] = log_entry
 
         file_util.save_object(le_dict, 'log_entry_dictionary.pk')
