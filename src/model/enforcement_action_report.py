@@ -1,4 +1,4 @@
-"""queue.py: A collection of information representing an Enforcement Action Report.
+"""enforcement_action_report.py: A collection of information representing an Enforcement Action Report.
 """
 
 __author__ = "Team Keikaku"
