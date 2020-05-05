@@ -1406,6 +1406,7 @@
     <addaction name="teamAction"/>
     <addaction name="eventAction"/>
     <addaction name="separator"/>
+    <addaction name="actionSplunk"/>
     <addaction name="exportAction"/>
     <addaction name="separator"/>
     <addaction name="exitAction"/>
@@ -1431,6 +1432,11 @@
   <action name="exportAction">
    <property name="text">
     <string>Export</string>
+   </property>
+  </action>
+  <action name="actionSplunk">
+   <property name="text">
+    <string>Splunk</string>
    </property>
   </action>
  </widget>
