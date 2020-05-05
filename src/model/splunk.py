@@ -16,28 +16,24 @@ import splunklib.results as results
 from splunklib.binding import AuthenticationError
 import json
 
-splunk_config = {'host': "localhost",  # Configuration details
-                 'port': 8089,
-                 'username': "admin"}
-
 
 class SplunkManager:
     """A collection of managing routines for Splunk."""
 
     def __init__(self):
-        self.connect()
+        self.service = None
 
-    def connect(self):
+    def connect(self, host, port, username, password=""):
         """Establishes a connection to Splunk."""
 
-        global splunk_config
+        error = ""
+        try: # Create service instance to use
+            self.service = client.connect(Host=host, port=port, username=username, password=password)
+        except (AuthenticationError, ConnectionRefusedError) as e:
+            error = e
+        print(self.service)
 
-        try:
-            self.service = client.connect(Host=splunk_config['host'],  # Create service instance to use
-                                          port=splunk_config['port'],
-                                          username=splunk_config['username'])
-        except AuthenticationError:
-            print("Authentication Error!")
+        return error
 
     def create_index(self, index_name: str):
         """Creates a new index in Splunk.
@@ -80,6 +76,7 @@ class SplunkManager:
             A list of string entries found in Splunk.
         """
 
+        print(self.service)
         entries = []
         jobs = self.service.jobs
 

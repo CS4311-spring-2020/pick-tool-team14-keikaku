@@ -58,7 +58,7 @@ class LogFile:
         return self.file_path
 
     def get_file_name(self) -> str:
-        return self.file_path
+        return self.file_name
 
     def get_cleansing_status(self) -> bool:
         return self.cleansing_status

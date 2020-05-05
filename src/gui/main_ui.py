@@ -37,6 +37,7 @@ from src.model.node import Node
 from src.model.relationship import Relationship
 from src.model.vector import ActiveVector, Vector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
+from src.model.splunk import SplunkManager
 from src.util import file_util
 
 
@@ -54,6 +55,8 @@ class Ui(QMainWindow):
         Vector dictionary to interface with.
     log_entry_dictionary: IDDict
         Vector dictionary to interface with.
+    log_entry_to_vector_dictionary: dict
+        Log entry to vector dictionary to interface with.
     row_position_node: int
         Index of the last row on the node table.
     row_position_log_file: int
@@ -68,6 +71,7 @@ class Ui(QMainWindow):
     vector_dictionary: IDDict
     log_file_dictionary: IDDict
     log_entry_dictionary: IDDict
+    log_entry_to_vector_dictionary: dict
 
     row_position_node: int
     row_position_log_file: int
@@ -84,7 +88,6 @@ class Ui(QMainWindow):
         self.thread = None
         self.selected_log_file_uid = None
         self.dialog = QFileDialog
-        self.log_entry_dictionary = IDDict()
 
         loadUi(os.path.join(UI_PATH, 'main_window.ui'), self)
 
@@ -218,7 +221,28 @@ class Ui(QMainWindow):
         self.graph_editor_scene = self.graph_editor.graph_editor_scene
         self.graph_editor_view = GraphEditorView(self.graph_editor_scene, parent=self.splitter)
 
+        self.log_entry_dictionary = IDDict()
+        self.log_entry_to_vector_dictionary = {}
+        self.splunk_manage = SplunkManager()
+        self.__splunk_connect()
+
         self.show()
+
+    def __splunk_connect(self):
+        splunk_connection = self.splunk_manage.connect("localhost", 8089, "admin")
+
+        if not splunk_connection:
+            self.splunk_manage.wipe_out_index("testindex")
+            self.acknowledgeButton.setEnabled(True)
+            self.ingestButton.setEnabled(True)
+            self.validateButton.setEnabled(True)
+            self.directoryButton.setEnabled(True)
+            self.load_log_entry_to_vector_dictionary()
+        else:
+            self.acknowledgeButton.setEnabled(False)
+            self.ingestButton.setEnabled(False)
+            self.validateButton.setEnabled(False)
+            self.directoryButton.setEnabled(False)
 
     def __start_ingestion(self):
         """Begins file ingestion."""
@@ -234,7 +258,7 @@ class Ui(QMainWindow):
             self.ingestButton.setEnabled(False)
             self.validateButton.setEnabled(False)
             self.directoryButton.setEnabled(False)
-            self.thread = IngestWorker(settings.root_folder, COPIED_FILES)
+            self.thread = IngestWorker(settings.root_folder, COPIED_FILES, self.splunk_manage)
             self.thread.finished.connect(self.__on_finished)
             self.thread.file_status.connect(self.__on_file_status)
             self.thread.entry_status.connect(self.__on_entry_status)
@@ -244,11 +268,11 @@ class Ui(QMainWindow):
         """Cleans up ingestion thread completion."""
 
         self.thread.quit()
+        self.progress.setValue(0)
         self.acknowledgeButton.setEnabled(True)
         self.ingestButton.setEnabled(True)
         self.validateButton.setEnabled(True)
         self.directoryButton.setEnabled(True)
-        self.progress.setValue(0)
 
     def __on_file_status(self, log_file: LogFile, value: float):
         """Inserts a new log file to the log file table.
@@ -295,6 +319,9 @@ class Ui(QMainWindow):
         self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
         self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
 
+        self.log_entry_to_vector_dictionary[log_entry.get_description()] = {'line_num': log_entry.get_line_num(),
+                                                                            'entry_id': uid, 'vector_id': 0}
+
         self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
         self.row_position_log_entry += 1
@@ -306,7 +333,7 @@ class Ui(QMainWindow):
         if self.selected_log_file_uid is not None:
             log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
             print(log_file.get_file_name())
-            self.thread = ValidateWorker(log_file)
+            self.thread = ValidateWorker(log_file, self.splunk_manage)
             self.thread.file_updated.connect(self.__on_file_update)
             self.thread.entry_status.connect(self.__on_entry_status)
             self.thread.start()
@@ -344,7 +371,7 @@ class Ui(QMainWindow):
         if self.selected_log_file_uid is not None:
             log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
             print(log_file.get_file_name())
-            self.thread = ForceIngestWorker(log_file)
+            self.thread = ForceIngestWorker(log_file, self.splunk_manage)
             self.thread.file_updated.connect(self.__on_file_update)
             self.thread.entry_status.connect(self.__on_entry_status)
             self.thread.start()
@@ -356,6 +383,7 @@ class Ui(QMainWindow):
         self.change_window.save.connect(self.save_vector_dictionary)
         self.change_window.load.connect(self.load_vector_dictionary)
         self.change_window.save.connect(self.save_log_file_dictionary)
+        self.change_window.save.connect(self.save_log_entry_to_vector_dictionary)
 
     def __execute_directory_config(self):
         """Open the directory configuration window."""
@@ -983,16 +1011,8 @@ class Ui(QMainWindow):
             l_dict = {}
             data = file_util.read_file('log_file_dictionary.pk')
             for l_id, l in data.items():
-                # print(l_id)
-                # print(l['file_name'])
-                # print(l['file_path'])
-                # print(l['cleansing_status'])
-                # print(l['validation_status'])
-                # print(l['cleansing_status'])
-                # print(l['ear'])
 
                 log_file = LogFile(l['file_name'], l['file_path'])
-
                 log_file.set_cleansing_status(l['cleansing_status'])
                 log_file.set_validation_status(l['validation_status'])
                 log_file.set_acknowledged_status(l['acknowledged_status'])
@@ -1002,6 +1022,32 @@ class Ui(QMainWindow):
                 l_dict[l_id] = log_file
 
             self.log_file_dictionary = IDDict(l_dict)
+
+        else:
+            self.log_file_dictionary = IDDict()
+        self.__construct_log_table()
+
+    def save_log_entry_to_vector_dictionary(self):
+        """Saves the log entry to vector id dictionary to a file."""
+
+        print('Saving dict...')
+
+        file_util.save_object(self.log_entry_to_vector_dictionary, 'log_entry_to_vector_dictionary.pk')
+
+    def load_log_entry_to_vector_dictionary(self):
+        """Reads a log entry to vector id dictionary from a file."""
+
+        if file_util.check_file('log_entry_to_vector_dictionary.pk'):
+            print('Loading dict...')
+            data = file_util.read_file('log_entry_to_vector_dictionary.pk')
+            print(data)
+
+            for ev_id, entry_dict in data.items():
+                print(data[ev_id]["line_num"])
+                print(data[ev_id]["entry_id"])
+                print(data[ev_id]["vector_id"])
+
+            self.log_entry_to_vector_dictionary = data
 
         else:
             self.log_file_dictionary = IDDict()
