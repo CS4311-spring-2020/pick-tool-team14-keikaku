@@ -24,6 +24,8 @@ adversarial assessment.
 __author__ = "Team Keikaku"
 __version__ = "1.0"
 
+import datetime
+
 from PyQt5.QtCore import QDateTime
 
 from src.util import file_util

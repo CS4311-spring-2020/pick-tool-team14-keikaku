@@ -23,7 +23,6 @@ from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
 from src.gui.filter_config import UiFilterConfig
 from src.gui.graph.graph_editor import GraphEditor
-from src.gui.graph.graph_editor_view import GraphEditorView
 from src.gui.relationship_config import UiRelationshipConfig
 from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
@@ -35,9 +34,9 @@ from src.model.log_entry import LogEntry
 from src.model.log_file import LogFile
 from src.model.node import Node
 from src.model.relationship import Relationship
+from src.model.splunk import SplunkManager
 from src.model.vector import ActiveVector, Vector
 from src.model.worker_thread import IngestWorker, ValidateWorker, ForceIngestWorker
-from src.model.splunk import SplunkManager
 from src.util import file_util
 
 

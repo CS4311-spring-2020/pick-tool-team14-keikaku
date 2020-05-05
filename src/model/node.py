@@ -44,7 +44,7 @@ class Node:
     visibility: bool
 
     def __init__(self, name: str = '',
-                 timestamp: QDateTime = QDateTime.currentDateTimeUtc().toString('hh:mm MM/dd/yyyy A'),
+                 timestamp: str = QDateTime.currentDateTimeUtc().toString('hh:mm MM/dd/yyyy A'),
                  description: str = '', log_entry_reference: str = '', log_creator: str = '', event_type: str = '',
                  icon_type: str = '', source: str = '', visibility: bool = True):
         """
