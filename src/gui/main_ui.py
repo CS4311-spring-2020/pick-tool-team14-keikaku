@@ -232,7 +232,7 @@ class Ui(QMainWindow):
         splunk_connection = self.splunk_manage.connect("localhost", 8089, "admin")
 
         if not splunk_connection:
-            self.splunk_manage.wipe_out_index("testindex")
+            #self.splunk_manage.wipe_out_index("testindex")
             self.acknowledgeButton.setEnabled(True)
             self.ingestButton.setEnabled(True)
             self.validateButton.setEnabled(True)

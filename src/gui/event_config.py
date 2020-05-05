@@ -77,9 +77,9 @@ class UiEventConfig(QDialog):
             event.saved = True
             event.name = self.name.text()
             event.description = self.description.text()
-            event.start_time = self.start_time.dateTime().toPyDateTime()
+            event.start_time = self.start_time
             # print(event.start_time)
-            event.end_time = self.end_time.dateTime().toPyDateTime()
+            event.end_time = self.end_time
             # print(event.end_time)
             event.save()
             self.close()
