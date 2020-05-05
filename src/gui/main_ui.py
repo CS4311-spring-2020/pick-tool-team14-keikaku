@@ -22,6 +22,7 @@ from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
 from src.gui.filter_config import UiFilterConfig
+from src.gui.splunk_config import UiSplunkConfig
 from src.gui.graph.graph_editor import GraphEditor
 from src.gui.relationship_config import UiRelationshipConfig
 from src.gui.team_config import UiTeamConfig
@@ -219,15 +220,16 @@ class Ui(QMainWindow):
 
         self.load_log_entry_dictionary()
         self.log_entry_to_vector_dictionary = {}
-        self.splunk_manage = SplunkManager()
-        self.__splunk_connect()
+        #self.splunk_manage = SplunkManager()
+#        self.__splunk_connect()
 
         self.show()
 
-    def __splunk_connect(self):
-        splunk_connection = self.splunk_manage.connect("localhost", 8089, "admin")
+    def __splunk_connect(self, splunk_manage: SplunkManager):
 
-        if not splunk_connection:
+        self.splunk_manage = splunk_manage
+
+        if not splunk_manage:
             #self.splunk_manage.wipe_out_index("testindex")
             self.acknowledgeButton.setEnabled(True)
             self.ingestButton.setEnabled(True)
@@ -371,6 +373,12 @@ class Ui(QMainWindow):
             self.thread.file_updated.connect(self.__on_file_update)
             self.thread.entry_status.connect(self.__on_entry_status)
             self.thread.start()
+
+    def __execute_splunk_config(self):
+        """Open the splunk configuration window."""
+
+        self.splunk_window = UiSplunkConfig()
+        self.splunk_window.connect.connect(self.__splunk_connect())
 
     def __execute_commit_config(self):
         """Open the change configuration window."""
@@ -537,15 +545,11 @@ class Ui(QMainWindow):
             item = QTableWidgetItem(log_entry_id)
             item.setFlags(item.flags() ^ Qt.ItemIsEditable)
             self.logEntryTable.setItem(self.row_position_log_entry, 0, item)
-            self.logEntryTable.setItem(self.row_position_log_entry, 1,
-                                   QTableWidgetItem(str(log_entry.get_line_num())))
-            self.logEntryTable.setItem(self.row_position_log_entry, 2,
-                                   QTableWidgetItem(log_entry.get_source()))
-            self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_timestamp()))
+            self.logEntryTable.setItem(self.row_position_log_entry, 1, QTableWidgetItem(str(log_entry.get_line_num())))
+            self.logEntryTable.setItem(self.row_position_log_entry, 2, QTableWidgetItem(log_entry.get_timestamp()))
+            self.logEntryTable.setItem(self.row_position_log_entry, 3, QTableWidgetItem(log_entry.get_source()))
             self.logEntryTable.setItem(self.row_position_log_entry, 4, QTableWidgetItem(log_entry.get_description()))
-
-            self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable,
-                                      self.vector_dictionary)
+            self.__insert_vector_combobox(self.row_position_log_entry, 5, self.logEntryTable, self.vector_dictionary)
 
             self.row_position_log_entry += 1
 
@@ -1079,7 +1083,8 @@ class Ui(QMainWindow):
             le_dict = {}
             data = file_util.read_file('log_entry_dictionary.pk')
             for le_id, le in data.items():
-                log_entry = LogEntry(le['line_number'], le['timestamp'], le['description'], le['source'])
+                log_entry = LogEntry(le['line_number'], le['source'], le['timestamp'], le['description'])
+                print(le['vector_id'])
 
                 log_entry.set_vector_id(le['vector_id'])
 
