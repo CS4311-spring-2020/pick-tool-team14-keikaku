@@ -61,6 +61,11 @@ class UiDirectoryConfig(QDialog):
         self.ingest = self.findChild(QPushButton, "startDataIngestionButton")
         self.ingest.clicked.connect(self.__start_ingestion)
 
+        self.rootText.setText(settings.root_folder)
+        self.redTeamText.setText(settings.red_team_folder)
+        self.blueTeamText.setText(settings.blue_team_folder)
+        self.whiteTeamText.setText(settings.white_team_folder)
+
         self.msg = QMessageBox()
 
         self.show()

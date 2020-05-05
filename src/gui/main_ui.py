@@ -616,7 +616,7 @@ class Ui(QMainWindow):
             v_id = log_entry.get_vector_id()
             if v_id is not None:  # remove node from old vector
                 self.vector_dictionary.get(v_id).delete_node(log_entry.get_node_id())
-                if v_id == self.active_vector.vector_id: # if vector is active
+                if v_id == self.active_vector.vector_id:  # if vector is active
                     for row in range(self.row_position_node):
                         if self.nodeTable.item(row, 4).text() == log_entry_id_table:
                             self.nodeTable.removeRow(row)
