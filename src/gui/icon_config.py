@@ -5,21 +5,22 @@
     UiIconConfig(QDialog)
         Initialize the icon window and set all signals and slots
         associated with it.
+
+    @DEPRECIATED
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.1"
+__version__ = "0.5"
 
 import os
 
 from PyQt5.Qt import QLabel, QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QDialog, QTableWidget, QPushButton, QTableWidgetItem, QFileDialog
-from src.model.id_dictionary import IDDict
 from PyQt5.uic import loadUi
 
 from definitions import UI_PATH, ICON_PATH
+from src.model.id_dictionary import IDDict
 
 
 class UiIconConfig(QDialog):
@@ -58,7 +59,6 @@ class UiIconConfig(QDialog):
 
         self.show()
 
-
     def __add_icon(self):
         """Adds a icon to the icon table and to the icon dictionary."""
 
@@ -75,9 +75,9 @@ class UiIconConfig(QDialog):
         self.row_position += 1
         self.iconTable.blockSignals(False)
 
-
     def __remove_icon(self):
         """Removes the selected icon from the icon table and from the icon dictionary."""
+
         self.iconTable.blockSignals(True)
         if self.iconTable.selectionModel().hasSelection():
             rows = self.iconTable.selectionModel().selectedRows()
@@ -92,8 +92,8 @@ class UiIconConfig(QDialog):
                 self.row_position -= 1
         self.iconTable.blockSignals(False)
 
-
     def __select_icon(self):
+        """Assigns the selected icon to the table cell."""
 
         self.iconTable.blockSignals(True)
         if self.iconTable.selectionModel().hasSelection():
@@ -116,12 +116,11 @@ class UiIconConfig(QDialog):
                         self.__update_cell(source_item)
         self.iconTable.blockSignals(False)
 
-
     def __update_cell(self, item: QTableWidgetItem):
         """Updates the icon information from the cell that was just edited.
 
         :param item: QTableWidgetItem
-        The item in the table cell which contains the information to update.
+            The item in the table cell which contains the information to update.
         """
         icon = self.icon_dictionary.get(self.iconTable.item(item.row(), 0).text())
         if item.column() == 1:
@@ -137,9 +136,19 @@ class UiIconConfig(QDialog):
 
         self.icon_dictionary.edit()
 
-
     @staticmethod
     def __insert_icon(row: int, col: int, icon_path: str, table: QTableWidget):
+        """Inserts an icon into a table cell.
+
+        :param row: int
+            The row of the cell.
+        :param col: int
+            The col of the cell.
+        :param icon_path: str
+            The file path directory of the icon.
+        :param table: QTableWidget
+            The table containing the cell.
+        """
 
         icon = QPixmap(icon_path).scaledToHeight(25).scaledToWidth(25)
         cell_widget = QLabel()

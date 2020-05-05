@@ -11,6 +11,8 @@ adversarial assessment.
         Start time of the adversarial assessment
     end_time: str
         End time of the adversarial assessment.
+    saved: bool
+        Whether the event has been saved or not.
     Methods
     -------
     save():
@@ -20,8 +22,7 @@ adversarial assessment.
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.1"
+__version__ = "1.0"
 
 from PyQt5.QtCore import QDateTime
 
@@ -29,11 +30,11 @@ from src.util import file_util
 
 __filename: str = "event.pk"
 
-saved: bool = False
 name: str = ''
 description: str = ''
 start_time: QDateTime = QDateTime()
 end_time: QDateTime = QDateTime()
+saved: bool = False
 
 
 def save():

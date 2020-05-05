@@ -8,8 +8,7 @@
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.1"
+__version__ = "0.4"
 
 import os
 
@@ -37,6 +36,9 @@ class UiCommitConfig(QDialog):
     def __init__(self, vector_dictionary: IDDict):
         """Initialize the commit window and set all signals and slots
         associated with it.
+
+        :param vector_dictionary: IDDict
+            The vector dictionary to display changes for.
         """
 
         super(UiCommitConfig, self).__init__()

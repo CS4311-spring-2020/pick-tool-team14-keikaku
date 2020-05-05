@@ -1,29 +1,47 @@
+"""splunk.py: Managing routines for Splunk.
+
+    Attributes
+    ----------
+    splunk_config: dict
+        Splunk authentication details.
+"""
+
+__author__ = "Team Keikaku"
+__version__ = "0.8"
+
+from typing import List
+
 import splunklib.client as client
 import splunklib.results as results
 from splunklib.binding import AuthenticationError
 import json
 
-splunk_config = {'host': "localhost",  # Configuration details
-                 'port': 8089,
-                 'username': "admin"}
-
 
 class SplunkManager:
+    """A collection of managing routines for Splunk."""
 
     def __init__(self):
-        self.connect()
+        self.service = None
 
-    def connect(self):
-        global splunk_config
+    def connect(self, host, port, username, password=""):
+        """Establishes a connection to Splunk."""
 
-        try:
-            self.service = client.connect(Host=splunk_config['host'],  # Create service instance to use
-                                          port=splunk_config['port'],
-                                          username=splunk_config['username'])
-        except AuthenticationError:
-            print("Authentication Error!")
+        error = ""
+        try: # Create service instance to use
+            self.service = client.connect(Host=host, port=port, username=username, password=password)
+        except (AuthenticationError, ConnectionRefusedError) as e:
+            error = e
+        print(self.service)
+
+        return error
 
     def create_index(self, index_name: str):
+        """Creates a new index in Splunk.
+
+        :param index_name: str
+            The name of the index to create.
+        """
+
         indexes = self.service.indexes
 
         if index_name.lower() not in indexes:
@@ -32,6 +50,14 @@ class SplunkManager:
             print("Index already exists!")
 
     def add_file(self, file_path: str, index_name: str):
+        """Adds a file int a Splunk index.
+
+        :param file_path: str
+            The file path to the file to upload to Splunk.
+        :param index_name: str
+            The name of the index.
+        """
+
         indexes = self.service.indexes
         # TODO exception handling
 
@@ -41,7 +67,16 @@ class SplunkManager:
         else:
             print("No such Index exists!")
 
-    def search(self, query: str) -> dict:
+    def search(self, query: str) -> List[str]:
+        """Searches Splunk with a query.
+
+        :param query: str
+            The query to give to Splunk.
+        :return: List[str]
+            A list of string entries found in Splunk.
+        """
+
+        print(self.service)
         entries = []
         jobs = self.service.jobs
 
@@ -57,9 +92,21 @@ class SplunkManager:
         return entries
 
     def wipe_out_index(self, index_name: str):
+        """Empties a Splunk index.
+
+        :param index_name: str
+             The name of the index.
+        """
+
         index = self.service.indexes[index_name]
         timeout = 60
         index.clean(timeout)
 
     def delete_index(self, index_name: str):
+        """Deletes a Splunk index.
+
+        :param index_name: str
+            The name of the index.
+        """
+
         self.service.delete(index_name.lower())

@@ -1,5 +1,18 @@
+"""enforcement_action_report.py: A collection of information representing an Enforcement Action Report.
+"""
+
+__author__ = "Team Keikaku"
+__version__ = "1.0"
+
 
 class EnforcementActionReport:
+    """A collection of information representing an Enforcement Action Report.
+
+        Attributes
+        ----------
+        errors_dictionary: dict
+            A dictionary of errors.
+    """
 
     def __init__(self):
         self.errors_dictionary = {}

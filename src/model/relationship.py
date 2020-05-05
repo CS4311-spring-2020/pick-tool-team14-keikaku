@@ -3,8 +3,7 @@ link between a parent and child event in a vector.
 """
 
 __author__ = "Team Keikaku"
-
-__version__ = "0.2"
+__version__ = "1.0"
 
 
 class Relationship:

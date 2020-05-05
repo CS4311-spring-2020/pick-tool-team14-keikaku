@@ -1,3 +1,10 @@
+"""main.py: Entry point of the program.
+    Handles program entry and exit routines.
+"""
+
+__author__ = "Team Keikaku"
+__version__ = "1.0"
+
 import atexit
 
 from PyQt5.QtWidgets import QApplication
