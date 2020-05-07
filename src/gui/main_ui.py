@@ -330,7 +330,7 @@ class Ui(QMainWindow):
 
         if self.selected_log_file_uid is not None:
             log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
-            print(log_file.get_file_name())
+            print(log_file.get_file_path())
             self.thread = ValidateWorker(log_file, self.splunk_manage)
             self.thread.file_updated.connect(self.__on_file_update)
             self.thread.entry_status.connect(self.__on_entry_status)

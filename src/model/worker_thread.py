@@ -106,24 +106,19 @@ class ValidateWorker(QThread):
     entry_status = pyqtSignal(LogEntry)
     log_file: LogFile
 
-    def __init__(self, log_file, copies_directory_path, splunk_manage):
+    def __init__(self, log_file, splunk_manage):
         self.files_to_process = Queue()
         self.splunk_manage = splunk_manage
-        self.copies_directory_path = copies_directory_path
         self.log_file = log_file
         QThread.__init__(self)
 
     def run(self):
         line_num = 1
         file_path = self.log_file.get_file_path()
-        file_copy_path = validator.create_file_copy(file_path, self.copies_directory_path)
-        file = os.path.basename(file_copy_path)
+        file = os.path.basename(file_path)
         file_name = file.split('.')
 
         if file_name[1] == 'csv':
-            print(file_path)
-            validator.cleanse_csv_file(file_path, file_copy_path)
-            self.log_file.set_cleansing_status(True)
             if self.log_file.get_cleansing_status() is True:
                 validation_errors = validator.validate_csv_file(file_path)
                 if validation_errors:
@@ -134,7 +129,6 @@ class ValidateWorker(QThread):
                     self.log_file.ear.set_ear(validation_errors)
 
         if file_name[1] == 'log':
-            validator.cleanse_log_file(file_path, file_copy_path)
             self.log_file.set_cleansing_status(True)
             if self.log_file.get_cleansing_status() is True:
                 validation_errors = validator.validate_log_file(file_path)

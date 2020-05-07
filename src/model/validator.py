@@ -89,6 +89,7 @@ def cleanse_log_file(log_file_path: str, log_file_copy_path: str):
     if os.path.isfile(log_file_path) > 0:
         with open(log_file_path, 'r') as in_file, open(log_file_copy_path, 'w+') as out_file:
             for line in in_file:
+                print(f'path: {line}')
                 if line.strip():
                     clean_line = remove_non_printable(line)
                     out_file.write(clean_line)
