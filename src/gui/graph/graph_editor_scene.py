@@ -37,11 +37,12 @@ class GraphEditorScene(QGraphicsScene):
         self.scene_width, self.scene_height = scene_width, scene_height
         self.init_background_params()
 
-    '''
-        Sets parameters that will draw the grid background
-    '''
+
 
     def init_background_params(self):
+        """
+        Sets parameters that will draw the grid background
+        """
         # Size and color of the grid squares
         self._gridSize = 20
         self._gridSquares = 5
@@ -59,18 +60,15 @@ class GraphEditorScene(QGraphicsScene):
         # sets scene rectangle
         self.setSceneRect(-self.scene_width // 2, -self.scene_height // 2, self.scene_width, self.scene_height)
 
-    """
-           Draws the grid of the graphics scene background.
-
-           Parameters
-           ----------
-           painter : QPainter
-               Performs low-level painting on widgets such as QPen for drawing the grid.
-           rect : QRectF
-               Defines a rectangle in the plane using floating point precision.
-    """
 
     def drawBackground(self, painter: QPainter, rect: QRectF):
+        """
+        Draws the grid of the graphics scene background.
+        :param painter: QPainter
+               Performs low-level painting on widgets such as QPen for drawing the grid.
+        :param rect: QRectF
+               Defines a rectangle in the plane using floating point precision.
+        """
         super().drawBackground(painter, rect)
 
         # here we create our grid

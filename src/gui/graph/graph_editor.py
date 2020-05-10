@@ -39,13 +39,12 @@ class GraphEditor:
         self.graph_editor_scene = GraphEditorScene(self.scene_width, self.scene_height)
         self.graph_editor_view = GraphEditorView(self.graph_editor_scene, parent)
 
-    '''
+    def display_vector(self, vector: Vector):
+        """
         Handles what VectorItemGroup should be displayed in the View and sets the working vector for this object
         :param vector : Vector
-            The given vector for the realted VectorItemGroup 
-    '''
-
-    def display_vector(self, vector: Vector):
+            The given vector for the realted VectorItemGroup
+        """
         # First check if the vector is in the dictionary if not then create it
         if vector.uid in self.vector_dictionary:
             self.selected_vector_item_group = self.vector_dictionary[vector.uid]
@@ -55,13 +54,12 @@ class GraphEditor:
 
         self.toggle_visibility(vector)
 
-    '''
+    def toggle_visibility(self, vector: Vector):
+        """
         Toggles the visibility of the current VectorItemGroup to the related Vector
         :param vector : Vector
             The vector to be made visible through VectorItemGroup
-    '''
-
-    def toggle_visibility(self, vector: Vector):
+        """
         # Toggle the visibility of the selected VectorItemGroup and hide the others
         for vector_group in self.vector_dictionary.values():
             if vector.uid == vector_group.uid:
@@ -71,13 +69,12 @@ class GraphEditor:
                 vector_group.lock_hide()
                 vector_group.hide()
 
-    '''
-        Creates a new VectorItem and toggles the view to it so that we can edit it
-        :param vector:
-            the vector used to create the VectorItemGroup
-    '''
-
     def add_vector(self, vector: Vector):
+        """
+        Creates a new VectorItem and toggles the view to it so that we can edit it
+        :param vector: vector
+            the vector used to create the VectorItemGroup
+        """
         new_vector = VectorItemGroup(vector)
         self.graph_editor_scene.addItem(new_vector)
         self.vector_dictionary[vector.uid] = new_vector
@@ -85,13 +82,12 @@ class GraphEditor:
         self.toggle_visibility(vector)
         print("Vector added ", self.selected_vector_item_group.uid)
 
-    '''
+    def add_node(self, node: Node):
+        """
         Used Node to create a NodeItem to be added to the GraphEditorScene
         :param node : Node
             The node used to create a new NodeItem
-    '''
-
-    def add_node(self, node: Node):
+        """
         point = self.graph_editor_view.viewport().rect().center()
         center_point = self.graph_editor_view.mapToScene(point)
         # print(self.graph_editor_view.alignment())
@@ -101,13 +97,12 @@ class GraphEditor:
         self.selected_vector_item_group.add_to_list(node_item.uid, node_item)
         print("Node added ", node_item.uid)
 
-    '''
-          Used Relationship to create a RelationshipItem to be added to the GraphEditorScene
-          :param relationship : Relationship
-              The Relationship used to create a new RelationshipItem
-    '''
-
     def add_relationship(self, relationship: Relationship):
+        """
+        Used Relationship to create a RelationshipItem to be added to the GraphEditorScene
+        :param relationship : Relationship
+              The Relationship used to create a new RelationshipItem
+        """
         # Find the nodes for this relationship in the node dictionary
         print(relationship.parent, relationship.child)
         parent_node_item = self.node_dictionary[relationship.parent]
@@ -125,38 +120,33 @@ class GraphEditor:
         self.relationship_dictionary[relationship.uid] = relationship_item
         self.selected_vector_item_group.add_to_list(relationship_item.uid, relationship_item)
 
-    '''
+    def remove_vector(self, vector: Vector):
+        """
         Removes the VectorItemGroup related to the given Vector and all the QGraphicsItems inside of it
         :param vector : Vector
             The Vector related to the VectorItemGroup to be deleted
-    '''
-
-    def remove_vector(self, vector: Vector):
+        """
         vector_item = self.vector_dictionary.pop(vector.uid)
         for item in vector_item.item_dictionary.values():
             self.graph_editor_scene.removeItem(item)
         self.graph_editor_scene.removeItem(vector_item)
 
-    '''
+    def remove_node(self, node: Node):
+        """
         Removes the NodeItem related to the given Node and all the RelationshipItems within it
         :param node : Node
             The Node related to the NodeItem to be deleted
-                
-    '''
-
-    def remove_node(self, node: Node):
+        """
         node_item = self.selected_vector_item_group.item_dictionary.pop(node.uid)
         for relationship in node_item.relationships.values():
             self.graph_editor_scene.removeItem(relationship)
         self.graph_editor_scene.removeItem(node_item)
 
-    '''
+    def remove_relationship(self, relationship: Relationship):
+        """
         Removes the RelationshipItem related to the given Relationship
         :param relationship : Relationship
             The Relationship related to the RelationshipItem to be deleted
-            
-    '''
-
-    def remove_relationship(self, relationship: Relationship):
+        """
         relationship_item = self.selected_vector_item_group.item_dictionary.pop(relationship.uid)
         self.graph_editor_scene.removeItem(relationship_item)

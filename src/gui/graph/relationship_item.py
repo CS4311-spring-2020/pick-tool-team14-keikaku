@@ -33,15 +33,14 @@ class RelationshipItem(QGraphicsLineItem):
         self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)
         self.setAcceptHoverEvents(True)
 
-    '''
-        Method used to drag this RelationsItem's line with the new node positions
-        :param node_id : str
-            unique identifier for the changing node
-        :param node_point : QPoint
-            represents the midpoint of the changing node
-    '''
-
     def dragLine(self, node_id: str, node_point: QPoint):
+        """
+        Method used to drag this RelationsItem's line with the new node positions
+        :param node_id: str
+            unique identifier for the changing node
+        :param node_point: QPoint
+            represents the midpoint of the changing node
+        """
         self.coordinates[node_id] = node_point
         parent_point = self.coordinates[self.parent_node]
         child_point = self.coordinates[self.child_node]

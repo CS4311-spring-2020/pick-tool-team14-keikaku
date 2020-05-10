@@ -32,12 +32,13 @@ class GraphEditorView(QGraphicsView):
         self.zoom_step = 1
         self.zoom_range = [0, 10]
 
-    '''
-    Sets graphics and general behavior of to graphics view.
-    '''
+
 
     def init_ui(self):
-        # # remove anti aliasing
+        """
+        Sets graphics and general behavior of to graphics view.
+        """
+        # remove anti aliasing
         self.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing |
                             QPainter.TextAntialiasing | QPainter.SmoothPixmapTransform)
         # Updates graphics so when they overlap they don't erase each other
@@ -46,14 +47,14 @@ class GraphEditorView(QGraphicsView):
         # tracks mouse position for zoom
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
 
-    '''
-    Listen to QWheelEvent and handles zooming in and out of the given GraphEditorScene
 
-    wheel_event: QWheelEvent
-         Class that contains parameters that describe a wheel event.
-    '''
 
     def wheelEvent(self, wheel_event: QWheelEvent):
+        """
+        Listen to QWheelEvent and handles zooming in and out of the given GraphEditorScene
+
+        :param wheel_event: Class that contains parameters that describe a wheel event.
+        """
 
         # calculate zoom factor
         zoom_out_factor = 1 / self.zoom_in_factor
