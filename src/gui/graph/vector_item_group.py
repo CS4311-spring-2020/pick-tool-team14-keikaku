@@ -1,5 +1,7 @@
 from typing import Dict
-from PyQt5.Qt import QGraphicsItemGroup, QGraphicsItem, QRectF, QPen, QGraphicsRectItem, Qt
+
+from PyQt5.Qt import QGraphicsItemGroup, QGraphicsItem, QRectF
+
 from src.model.vector import Vector
 
 

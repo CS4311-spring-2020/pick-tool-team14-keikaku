@@ -17,8 +17,8 @@ from PyQt5.QtWidgets import QApplication, QFrame, QTableWidget, QPushButton, QTa
 from PyQt5.uic import loadUi
 
 from definitions import UI_PATH
-from src.model.vector import Vector
 from src.gui.graph.graph_editor import GraphEditor
+from src.model.vector import Vector
 
 
 class UiRelationshipConfig(QFrame):
@@ -45,7 +45,6 @@ class UiRelationshipConfig(QFrame):
         :param vector: Vector
             The vector for whom to display its relationship table.
         """
-
 
         super(UiRelationshipConfig, self).__init__()
         loadUi(os.path.join(UI_PATH, 'relationship_config.ui'), self)

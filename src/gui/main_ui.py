@@ -22,9 +22,9 @@ from src.gui.directory_config import UiDirectoryConfig
 from src.gui.event_config import UiEventConfig
 from src.gui.export_config import UiExportConfig
 from src.gui.filter_config import UiFilterConfig
-from src.gui.splunk_config import UiSplunkConfig
 from src.gui.graph.graph_editor import GraphEditor
 from src.gui.relationship_config import UiRelationshipConfig
+from src.gui.splunk_config import UiSplunkConfig
 from src.gui.team_config import UiTeamConfig
 from src.gui.vector_config import UiVectorConfig
 from src.gui.vector_db_analyst import UiVectorDBAnalyst
@@ -97,6 +97,8 @@ class Ui(QMainWindow):
         self.eventAction.triggered.connect(self.__execute_event_config)
         self.exportAction = self.findChild(QAction, 'exportAction')
         self.exportAction.triggered.connect(self.__execute_export_config)
+        self.splunkAction = self.findChild(QAction, 'splunkAction')
+        self.splunkAction.triggered.connect(self.__execute_splunk_config)
 
         self.vectorButton = self.findChild(QPushButton, 'vectorButton')
         self.vectorButton.clicked.connect(self.__execute_vector_config)
@@ -220,27 +222,25 @@ class Ui(QMainWindow):
 
         self.load_log_entry_dictionary()
         self.log_entry_to_vector_dictionary = {}
-        self.splunk_manage = SplunkManager()
+        self.splunk_manage = None
+        self.acknowledgeButton.setEnabled(False)
+        self.ingestButton.setEnabled(False)
+        self.validateButton.setEnabled(False)
+        self.directoryButton.setEnabled(False)
         self.__splunk_connect(self.splunk_manage)
 
         self.show()
 
     def __splunk_connect(self, splunk_manage: SplunkManager):
+        "Sets splunk instance if connection established"
 
-        splunk_connection = splunk_manage.connect('localhost','8089','admin')
-
-        if not splunk_connection:
-            self.splunk_manage.wipe_out_index("testindex")
+        if splunk_manage is not None:
+            self.splunk_manage = splunk_manage
             self.acknowledgeButton.setEnabled(True)
             self.ingestButton.setEnabled(True)
             self.validateButton.setEnabled(True)
             self.directoryButton.setEnabled(True)
             self.load_log_entry_to_vector_dictionary()
-        else:
-            self.acknowledgeButton.setEnabled(False)
-            self.ingestButton.setEnabled(False)
-            self.validateButton.setEnabled(False)
-            self.directoryButton.setEnabled(False)
 
     def __start_ingestion(self):
         """Begins file ingestion."""
@@ -330,7 +330,7 @@ class Ui(QMainWindow):
 
         if self.selected_log_file_uid is not None:
             log_file = self.log_file_dictionary.get(self.selected_log_file_uid)
-            print(log_file.get_file_name())
+            print(log_file.get_file_path())
             self.thread = ValidateWorker(log_file, self.splunk_manage)
             self.thread.file_updated.connect(self.__on_file_update)
             self.thread.entry_status.connect(self.__on_entry_status)
@@ -378,7 +378,7 @@ class Ui(QMainWindow):
         """Open the splunk configuration window."""
 
         self.splunk_window = UiSplunkConfig()
-        self.splunk_window.connect.connect(self.__splunk_connect())
+        self.splunk_window.connected.connect(self.__splunk_connect)
 
     def __execute_commit_config(self):
         """Open the change configuration window."""
@@ -564,7 +564,6 @@ class Ui(QMainWindow):
         self.row_position_log_file = 0
 
         for log_file_id, l in self.log_file_dictionary.items():
-            print(l.file_name)
             self.logFileTable.insertRow(self.row_position_log_file)
             self.logFileTable.setItem(self.row_position_log_file, 0, QTableWidgetItem(log_file_id))
             self.logFileTable.setItem(self.row_position_log_file, 1, QTableWidgetItem(l.file_name))
@@ -652,7 +651,7 @@ class Ui(QMainWindow):
                 self.vector_dictionary.get(v_id).delete_node(log_entry.get_node_id())
                 if v_id == self.active_vector.vector_id:  # if vector is active
                     for row in range(self.row_position_node):
-                        if self.nodeTable.item(row, 4).text() == log_entry_id_table:
+                        if self.nodeTable.item(row, 0).text() == log_entry_id_table:
                             self.nodeTable.removeRow(row)
                             self.row_position_node -= 1
                             break
@@ -883,7 +882,7 @@ class Ui(QMainWindow):
         for vector_id, v in vector_dictionary.items():
             combobox.addItem(v.name, vector_id)
 
-        combobox.currentIndexChanged.connect(lambda r=row: self.__add_node(r, combobox.currentData()))
+        combobox.currentIndexChanged.connect(lambda: self.__add_node(row, combobox.currentData()))
         layout = QHBoxLayout(cell_widget)
         layout.addWidget(combobox)
         layout.setAlignment(Qt.AlignCenter)
@@ -1089,8 +1088,6 @@ class Ui(QMainWindow):
             data = file_util.read_file('log_entry_dictionary.pk')
             for le_id, le in data.items():
                 log_entry = LogEntry(le['line_number'], le['source'], le['timestamp'], le['description'])
-                print(le['vector_id'])
-
                 log_entry.set_vector_id(le['vector_id'])
 
                 le_dict[le_id] = log_entry

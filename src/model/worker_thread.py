@@ -5,16 +5,16 @@ __author__ = "Team Keikaku"
 __version__ = "1.0"
 
 import os
+from time import sleep
 
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from src.model import validator
 from src.model.log_entry import LogEntry
 from src.model.log_file import LogFile
-from src.util.queue import Queue
 from src.model.settings import cleansed_files
 from src.model.splunk import SplunkManager
-from time import sleep
+from src.util.queue import Queue
 
 
 class IngestWorker(QThread):
@@ -52,9 +52,9 @@ class IngestWorker(QThread):
             file = os.path.basename(file_copy_path)
             file_name = file.split('.')
             log_file = LogFile(file, file_copy_path)
-            print(file_name[1])
+
             if file_name[1] == 'csv':
-                validator.cleanse_csv_file(file_copy_path)
+                validator.cleanse_csv_file(file_path, file_copy_path)
                 log_file.set_cleansing_status(True)
                 if log_file.get_cleansing_status() is True:
                     validation_errors = validator.validate_csv_file(file_copy_path)
@@ -65,7 +65,7 @@ class IngestWorker(QThread):
                         log_file.set_validation_status(True)
 
             if file_name[1] == 'log':
-                validator.cleanse_log_file(file_copy_path)
+                validator.cleanse_log_file(file_path, file_copy_path)
                 log_file.set_cleansing_status(True)
                 if log_file.get_cleansing_status() is True:
                     validation_errors = validator.validate_log_file(file_copy_path)
@@ -77,19 +77,16 @@ class IngestWorker(QThread):
 
             if log_file.get_validation_status() is True:
                 self.splunk_manage.add_file(file_copy_path, 'testindex')  # add file to index
-                sleep(0.5)
+                sleep(1)
 
                 log_entries = self.splunk_manage.search(
                     f'search index=testindex source={file_copy_path} | eval time=strftime(_time, "%I:%M:%S %m/%d/%Y %p") '
                     f'| table time _raw source host | sort time')  # query to get log entries
 
-                print(log_entries)
                 for index in range(len(log_entries)):
                     log_entry = LogEntry(line_num, log_entries[index]['source'],
                                          log_entries[index]['time'],
                                          log_entries[index]['_raw'])
-
-                    print(log_entry)
 
                     self.entry_status.emit(log_entry)
                     line_num += 1
@@ -122,9 +119,6 @@ class ValidateWorker(QThread):
         file_name = file.split('.')
 
         if file_name[1] == 'csv':
-            print(file_path)
-            validator.cleanse_csv_file(file_path)
-            self.log_file.set_cleansing_status(True)
             if self.log_file.get_cleansing_status() is True:
                 validation_errors = validator.validate_csv_file(file_path)
                 if validation_errors:
@@ -135,8 +129,6 @@ class ValidateWorker(QThread):
                     self.log_file.ear.set_ear(validation_errors)
 
         if file_name[1] == 'log':
-            print(file_path)
-            validator.cleanse_log_file(file_path)
             self.log_file.set_cleansing_status(True)
             if self.log_file.get_cleansing_status() is True:
                 validation_errors = validator.validate_log_file(file_path)
@@ -149,7 +141,7 @@ class ValidateWorker(QThread):
 
         if self.log_file.get_validation_status() is True:
             self.splunk_manage.add_file(file_path, 'testindex')  # add file to index
-            sleep(0.5)
+            sleep(1)
 
             log_entries = self.splunk_manage.search(
                 f'search index=testindex source={file_path} | eval time=strftime(_time, "%I:%M:%S %m/%d/%Y %p") '
@@ -182,10 +174,9 @@ class ForceIngestWorker(QThread):
 
     def run(self):
         file_path = self.log_file.get_file_path()
-        print(file_path)
         line_num = 1
         self.splunk_manage.add_file(file_path, 'testindex')  # add file to index
-        sleep(0.5)
+        sleep(1)
 
         log_entries = self.splunk_manage.search(
             f'search index=testindex source={file_path} | eval time=strftime(_time, "%I:%M:%S %m/%d/%Y %p") '
